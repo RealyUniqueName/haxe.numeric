@@ -3,15 +3,24 @@ package haxe.numeric;
 import haxe.numeric.exceptions.OverflowException;
 
 class Int8Test extends utest.Test {
+	public function specParseBits() {
+		Int8.create(0) == Int8.parseBits('0000 0000');
+		Int8.create(3) == Int8.parseBits('0000 0011');
+		Int8.MAX == Int8.parseBits('0111 1111');
+		Int8.MIN == Int8.parseBits('1000 0000');
+		Int8.create(-3) == Int8.parseBits('1111 1101');
+		Int8.create(-1) == Int8.parseBits('1111 1111');
+	}
+
 	public function testConstructor() {
-		Assert.equals(Int8.MIN, Int8.create(-0xFF));
-		Assert.equals(Int8.MAX, Int8.create(0xFF));
-		Assert.raises(() -> Int8.create(0xFF + 1), OverflowException);
-		Assert.raises(() -> Int8.create(-0xFF - 1), OverflowException);
+		Assert.equals(Int8.MIN, Int8.create(-0x80));
+		Assert.equals(Int8.MAX, Int8.create(0x7F));
+		Assert.raises(() -> Int8.create(0x7F + 1), OverflowException);
+		Assert.raises(() -> Int8.create(-0x80 - 1), OverflowException);
 	}
 
 	public function specNegative() {
-		-Int8.MAX == Int8.MIN;
+		-Int8.create(10) == Int8.create(-10);
 	}
 
 	public function specPrefixIncrement() {
@@ -71,14 +80,14 @@ class Int8Test extends utest.Test {
 	}
 
 	public function specAddition() {
-		Int8.create(0) == Int8.MAX + Int8.MIN;
+		Int8.create(-1) == Int8.MAX + Int8.MIN;
 		Assert.raises(() -> Int8.MAX + Int8.create(1), OverflowException);
 		Assert.raises(() -> Int8.MIN + Int8.create(-1), OverflowException);
 
-		256 == Int8.MAX + 1;
-		-256 == -1 + Int8.MIN;
-		256.0 == Int8.MAX + 1.0;
-		-256.0 == -1.0 + Int8.MIN;
+		128 == Int8.MAX + 1;
+		-129 == -1 + Int8.MIN;
+		128.0 == Int8.MAX + 1.0;
+		-129.0 == -1.0 + Int8.MIN;
 	}
 
 	public function specSubtraction() {
@@ -87,22 +96,22 @@ class Int8Test extends utest.Test {
 		Assert.raises(() -> Int8.MAX - Int8.create(-1), OverflowException);
 		Assert.raises(() -> Int8.MIN - Int8.create(1), OverflowException);
 
-		256 == Int8.MAX - (-1);
-		256 == 1 - Int8.MIN;
-		256.0 == Int8.MAX - (-1.0);
-		256.0 == 1.0 - Int8.MIN;
+		128 == Int8.MAX - (-1);
+		129 == 1 - Int8.MIN;
+		128.0 == Int8.MAX - (-1.0);
+		129.0 == 1.0 - Int8.MIN;
 	}
 
 	public function specMultiplication() {
-		Int8.MAX == Int8.MIN * Int8.create(-1);
-		Int8.MIN == Int8.MAX * Int8.create(-1);
+		Int8.create(50) == Int8.create(5) * Int8.create(10);
+		Int8.create(-50) == Int8.create(5) * Int8.create(-10);
 		Assert.raises(() -> Int8.MAX * Int8.create(2), OverflowException);
 		Assert.raises(() -> Int8.MIN * Int8.create(2), OverflowException);
 
-		510 == Int8.MAX * 2;
-		-510 == 2 * Int8.MIN;
-		510.0 == Int8.MAX * 2.0;
-		-510.0 == 2.0 * Int8.MIN;
+		254 == Int8.MAX * 2;
+		-256 == 2 * Int8.MIN;
+		254.0 == Int8.MAX * 2.0;
+		-256.0 == 2.0 * Int8.MIN;
 	}
 
 	public function specDivision() {
@@ -114,19 +123,19 @@ class Int8Test extends utest.Test {
 
 	public function specModulo() {
 		Int8.create(7) == Int8.MAX % Int8.create(8);
-		Int8.create(-7) == Int8.MIN % Int8.create(8);
+		Int8.create(-2) == Int8.MIN % Int8.create(63);
 		Int8.create(7) == Int8.MAX % Int8.create(-8);
 
 		Int8.create(7) == Int8.MAX % 8;
-		Int8.create(-7) == Int8.MIN % 8;
+		Int8.create(-2) == Int8.MIN % 7;
 		Int8.create(7) == Int8.MAX % -8;
 		Int8.create(1) == 100 % Int8.create(9);
 		Int8.create(1) == 100 % Int8.create(-9);
 		Int8.create(-1) == -100 % Int8.create(-9);
 
-		20.5 == Int8.MAX % 117.25;
-		-20.5 == Int8.MIN % 117.25;
-		-20.5 == Int8.MIN % (-117.25);
+		9.75 == Int8.MAX % 117.25;
+		-10.75 == Int8.MIN % 117.25;
+		-10.75 == Int8.MIN % (-117.25);
 		0.5 == 6.5 % Int8.create(3);
 		-0.5 == -6.5 % Int8.create(3);
 		-0.5 == -6.5 % Int8.create(-3);
@@ -179,4 +188,9 @@ class Int8Test extends utest.Test {
 		9.5 <= Int8.create(10);
 		Int8.create(10) <= 10.5;
 	}
+
+	// public function specNegate() {
+	// 	var two = Int8.create(2); // 0000 0010
+
+	// }
 }

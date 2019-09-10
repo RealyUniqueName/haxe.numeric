@@ -1,14 +1,20 @@
 package haxe.numeric;
 
-import haxe.io.UInt8Array;
 import haxe.numeric.exceptions.OverflowException;
+import haxe.numeric.exceptions.InvalidArgumentException;
+
+using StringTools;
 
 abstract Int8(Int) {
-	static public inline var MIN:Int8 = cast -0xFF;
-	static public inline var MAX:Int8 = cast 0xFF;
+	static inline var MAX_AS_INT = 0x7F;
+	static inline var MIN_AS_INT = -0x80;
 
-	static public inline var MIN_AS_INT = -0xFF;
-	static public inline var MAX_AS_INT = 0xFF;
+	static public inline var MAX:Int8 = cast MAX_AS_INT;
+	static public inline var MIN:Int8 = cast MIN_AS_INT;
+
+	static inline var BITS_COUNT = 8;
+	static inline var SIGN_BIT = 0x80;
+	static inline var SIGN_MASK = 0x7F;
 
 	static public inline function create(value:Int):Int8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {
@@ -17,12 +23,38 @@ abstract Int8(Int) {
 		return new Int8(value);
 	}
 
+	static public function parseBits(bits:String):Int8 {
+		var result = 0;
+		var bitPos = BITS_COUNT;
+
+		for(pos => code in bits) {
+			switch(code) {
+				case ' '.code | '\t'.code:
+				case '0'.code:
+					bitPos--;
+				case '1'.code:
+					bitPos--;
+					result = result | 1 << bitPos;
+				case _:
+					new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
+			}
+		}
+		if(bitPos != 0) {
+			new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
+		}
+		if(result & SIGN_BIT != 0) {
+			result = -(result & SIGN_MASK);
+		}
+
+		return new Int8(result);
+	}
+
 	inline function new(value:Int) {
 		this = value;
 	}
 
 	// TODO: check if all targets can handle `to Int` instead of `@:to Int`
-	@:to public inline function toInt():Int {
+	@:to inline function toInt():Int {
 		return this;
 	}
 
@@ -114,7 +146,13 @@ abstract Int8(Int) {
 	@:op(A <= B) static function floatLessOrEqualFirst(a:Int8, b:Float):Bool;
 	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:Int8):Bool;
 
-	@:op(~A) function negate():Int8;
+	@:op(~A) inline function negate():Int8 {
+		var result = (~this) & 0xFF;
+		if(result & SIGN_MASK != 0) {
+			result = -(result & ~SIGN_MASK);
+		}
+		return new Int8(result);
+	}
 
 	// /**
 	// 	Returns the bitwise AND of `a` and `b`.
