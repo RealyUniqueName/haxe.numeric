@@ -1,5 +1,6 @@
 package haxe.numeric;
 
+import haxe.io.UInt8Array;
 import haxe.numeric.exceptions.OverflowException;
 
 abstract Int8(Int) {
@@ -9,7 +10,7 @@ abstract Int8(Int) {
 	static public inline var MIN_AS_INT = -0xF;
 	static public inline var MAX_AS_INT = 0xF;
 
-	static public function create(value:Int):Int8 {
+	static public inline function create(value:Int):Int8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {
 			throw new OverflowException('$value overflows Int8');
 		}
@@ -21,7 +22,7 @@ abstract Int8(Int) {
 	}
 
 	// TODO: check if all targets can handle `to Int` instead of `@:to Int`
-	@:to inline function toInt():Int {
+	@:to public inline function toInt():Int {
 		return this;
 	}
 
@@ -52,45 +53,66 @@ abstract Int8(Int) {
 	@:op(A + B) inline function addition(b:Int8):Int8 {
 		return create(this + b.toInt());
 	}
-
 	@:op(A + B) @:commutative static function intAddition(a:Int8, b:Int):Int;
+	@:op(A + B) @:commutative static function floatAddition(a:Int8, b:Float):Float;
 
-	// @:op(A - B) inline function subtraction(b:Int8):Int8 {
-	// 	return create(this - b.toInt());
-	// }
+	@:op(A - B) inline function subtraction(b:Int8):Int8 {
+		return create(this - b.toInt());
+	}
+	@:op(A - B) static function intSubtractionFirst(a:Int8, b:Int):Int;
+	@:op(A - B) static function intSubtractionSecond(a:Int, b:Int8):Int;
+	@:op(A - B) static function floatSubtractionFirst(a:Int8, b:Float):Float;
+	@:op(A - B) static function floatSubtractionSecond(a:Float, b:Int8):Float;
 
-	// @:op(A - B) function intSubtractionFirst(b:Int):Int;
-	// @:op(B - A) function intSubtractionSecond(b:Int):Int;
+	@:op(A * B) inline function multiplication(b:Int8):Int8 {
+		return create(this * b.toInt());
+	}
+	@:op(A * B) @:commutative static function intMultiplication(a:Int8, b:Int):Int;
+	@:op(A * B) @:commutative static function floatMultiplication(a:Int8, b:Float):Float;
 
-	// @:op(A * B) inline function multiplication(b:Int8):Int8 {
-	// 	return create(this * b.toInt());
-	// }
+	@:op(A / B) function division(b:Int8):Float;
+	@:op(A / B) static function intDivisionFirst(a:Int8, b:Int):Float;
+	@:op(A / B) static function intDivisionSecond(a:Int, b:Int8):Float;
+	@:op(A / B) static function floatDivisionFirst(a:Int8, b:Float):Float;
+	@:op(A / B) static function floatDivisionSecond(a:Float, b:Int8):Float;
 
-	// @:op(A / B) function division(b:Int8):Float;
-	// @:op(A / B) function intDivisionFirst(b:Int):Float;
-	// @:op(B / A) function intDivisionSecond(b:Int):Float;
-	// @:op(A / B) function floatDivisionFirst(b:Float):Float;
-	// @:op(B / A) function floatDivisionSecond(b:Float):Float;
+	@:op(A % B) function modulo(b:Int8):Int8;
+	@:op(A % B) static function intModuloFirst(a:Int8, b:Int):Int8;
+	@:op(A % B) static function intModuloSecond(a:Int, b:Int8):Int8;
+	@:op(A % B) static function floatModuloFirst(a:Int8, b:Float):Float;
+	@:op(A % B) static function floatModuloSecond(a:Float, b:Int8):Float;
 
-	// @:op(A % B) function modulo(b:Int8):Int8;
+	@:op(A == B) function equal(b:Int8):Bool;
+	@:op(A == B) @:commutative static function intEqual(a:Int8, b:Int):Bool;
+	@:op(A == B) @:commutative static function floatEqual(a:Int8, b:Float):Bool;
 
-	// /**
-	// 	Returns the modulus of `a` divided by `b`.
-	// **/
-	// @:op(A % B) public static inline function mod(a:Int8, b:Int8):Int8
-	// 	return divMod(a, b).modulus;
+	@:op(A != B) function notEqual(b:Int8):Bool;
+	@:op(A != B) @:commutative static function intNotEqual(a:Int8, b:Int):Bool;
+	@:op(A != B) @:commutative static function floatNotEqual(a:Int8, b:Float):Bool;
 
-	// @:op(A % B) static inline function modInt(a:Int8, b:Int):Int8
-	// 	return mod(a, b).toInt();
+	@:op(A > B) function greater(b:Int8):Bool;
+	@:op(A > B) static function intGreaterFirst(a:Int8, b:Int):Bool;
+	@:op(A > B) static function intGreaterSecond(a:Int, b:Int8):Bool;
+	@:op(A > B) static function floatGreaterFirst(a:Int8, b:Float):Bool;
+	@:op(A > B) static function floatGreaterSecond(a:Float, b:Int8):Bool;
 
-	// @:op(A % B) static inline function intMod(a:Int, b:Int8):Int8
-	// 	return mod(a, b).toInt();
+	@:op(A >= B) function greaterOrEqual(b:Int8):Bool;
+	@:op(A >= B) static function intGreaterOrEqualFirst(a:Int8, b:Int):Bool;
+	@:op(A >= B) static function intGreaterOrEqualSecond(a:Int, b:Int8):Bool;
+	@:op(A >= B) static function floatGreaterOrEqualFirst(a:Int8, b:Float):Bool;
+	@:op(A >= B) static function floatGreaterOrEqualSecond(a:Float, b:Int8):Bool;
 
-	// @:op(A == B) public static inline function eq(a:Int8, b:Int8):Bool
-	// 	return a.high == b.high && a.low == b.low;
+	@:op(A < B) function less(b:Int8):Bool;
+	@:op(A < B) static function intLessFirst(a:Int8, b:Int):Bool;
+	@:op(A < B) static function intLessSecond(a:Int, b:Int8):Bool;
+	@:op(A < B) static function floatLessFirst(a:Int8, b:Float):Bool;
+	@:op(A < B) static function floatLessSecond(a:Float, b:Int8):Bool;
 
-	// @:op(A == B) @:commutative static inline function eqInt(a:Int8, b:Int):Bool
-	// 	return eq(a, b);
+	@:op(A <= B) function lessOrEqual(b:Int8):Bool;
+	@:op(A <= B) static function intLessOrEqualFirst(a:Int8, b:Int):Bool;
+	@:op(A <= B) static function intLessOrEqualSecond(a:Int, b:Int8):Bool;
+	@:op(A <= B) static function floatLessOrEqualFirst(a:Int8, b:Float):Bool;
+	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:Int8):Bool;
 
 	// /**
 	// 	Returns `true` if `a` is not equal to `b`.
