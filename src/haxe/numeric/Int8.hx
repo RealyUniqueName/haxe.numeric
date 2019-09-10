@@ -4,11 +4,11 @@ import haxe.io.UInt8Array;
 import haxe.numeric.exceptions.OverflowException;
 
 abstract Int8(Int) {
-	static public inline var MIN:Int8 = cast -0xF;
-	static public inline var MAX:Int8 = cast 0xF;
+	static public inline var MIN:Int8 = cast -0xFF;
+	static public inline var MAX:Int8 = cast 0xFF;
 
-	static public inline var MIN_AS_INT = -0xF;
-	static public inline var MAX_AS_INT = 0xF;
+	static public inline var MIN_AS_INT = -0xFF;
+	static public inline var MAX_AS_INT = 0xFF;
 
 	static public inline function create(value:Int):Int8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {
@@ -114,56 +114,7 @@ abstract Int8(Int) {
 	@:op(A <= B) static function floatLessOrEqualFirst(a:Int8, b:Float):Bool;
 	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:Int8):Bool;
 
-	// /**
-	// 	Returns `true` if `a` is not equal to `b`.
-	// **/
-	// @:op(A != B) public static inline function neq(a:Int8, b:Int8):Bool
-	// 	return a.high != b.high || a.low != b.low;
-
-	// @:op(A != B) @:commutative static inline function neqInt(a:Int8, b:Int):Bool
-	// 	return neq(a, b);
-
-	// @:op(A < B) static inline function lt(a:Int8, b:Int8):Bool
-	// 	return compare(a, b) < 0;
-
-	// @:op(A < B) static inline function ltInt(a:Int8, b:Int):Bool
-	// 	return lt(a, b);
-
-	// @:op(A < B) static inline function intLt(a:Int, b:Int8):Bool
-	// 	return lt(a, b);
-
-	// @:op(A <= B) static inline function lte(a:Int8, b:Int8):Bool
-	// 	return compare(a, b) <= 0;
-
-	// @:op(A <= B) static inline function lteInt(a:Int8, b:Int):Bool
-	// 	return lte(a, b);
-
-	// @:op(A <= B) static inline function intLte(a:Int, b:Int8):Bool
-	// 	return lte(a, b);
-
-	// @:op(A > B) static inline function gt(a:Int8, b:Int8):Bool
-	// 	return compare(a, b) > 0;
-
-	// @:op(A > B) static inline function gtInt(a:Int8, b:Int):Bool
-	// 	return gt(a, b);
-
-	// @:op(A > B) static inline function intGt(a:Int, b:Int8):Bool
-	// 	return gt(a, b);
-
-	// @:op(A >= B) static inline function gte(a:Int8, b:Int8):Bool
-	// 	return compare(a, b) >= 0;
-
-	// @:op(A >= B) static inline function gteInt(a:Int8, b:Int):Bool
-	// 	return gte(a, b);
-
-	// @:op(A >= B) static inline function intGte(a:Int, b:Int8):Bool
-	// 	return gte(a, b);
-
-	// /**
-	// 	Returns the bitwise NOT of `a`.
-	// **/
-	// @:op(~A) static inline function complement(a:Int8):Int8
-	// 	return make(~a.high, ~a.low);
+	@:op(~A) function negate():Int8;
 
 	// /**
 	// 	Returns the bitwise AND of `a` and `b`.

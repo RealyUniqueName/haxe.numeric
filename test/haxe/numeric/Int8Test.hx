@@ -4,10 +4,10 @@ import haxe.numeric.exceptions.OverflowException;
 
 class Int8Test extends utest.Test {
 	public function testConstructor() {
-		Assert.equals(Int8.MIN, Int8.create(-0xF));
-		Assert.equals(Int8.MAX, Int8.create(0xF));
-		Assert.raises(() -> Int8.create(0xF + 1), OverflowException);
-		Assert.raises(() -> Int8.create(-0xF - 1), OverflowException);
+		Assert.equals(Int8.MIN, Int8.create(-0xFF));
+		Assert.equals(Int8.MAX, Int8.create(0xFF));
+		Assert.raises(() -> Int8.create(0xFF + 1), OverflowException);
+		Assert.raises(() -> Int8.create(-0xFF - 1), OverflowException);
 	}
 
 	public function specNegative() {
@@ -75,10 +75,10 @@ class Int8Test extends utest.Test {
 		Assert.raises(() -> Int8.MAX + Int8.create(1), OverflowException);
 		Assert.raises(() -> Int8.MIN + Int8.create(-1), OverflowException);
 
-		16 == Int8.MAX + 1;
-		-16 == -1 + Int8.MIN;
-		16.0 == Int8.MAX + 1.0;
-		-16.0 == -1.0 + Int8.MIN;
+		256 == Int8.MAX + 1;
+		-256 == -1 + Int8.MIN;
+		256.0 == Int8.MAX + 1.0;
+		-256.0 == -1.0 + Int8.MIN;
 	}
 
 	public function specSubtraction() {
@@ -87,10 +87,10 @@ class Int8Test extends utest.Test {
 		Assert.raises(() -> Int8.MAX - Int8.create(-1), OverflowException);
 		Assert.raises(() -> Int8.MIN - Int8.create(1), OverflowException);
 
-		16 == Int8.MAX - (-1);
-		16 == 1 - Int8.MIN;
-		16.0 == Int8.MAX - (-1.0);
-		16.0 == 1.0 - Int8.MIN;
+		256 == Int8.MAX - (-1);
+		256 == 1 - Int8.MIN;
+		256.0 == Int8.MAX - (-1.0);
+		256.0 == 1.0 - Int8.MIN;
 	}
 
 	public function specMultiplication() {
@@ -99,10 +99,10 @@ class Int8Test extends utest.Test {
 		Assert.raises(() -> Int8.MAX * Int8.create(2), OverflowException);
 		Assert.raises(() -> Int8.MIN * Int8.create(2), OverflowException);
 
-		30 == Int8.MAX * 2;
-		-30 == 2 * Int8.MIN;
-		30.0 == Int8.MAX * 2.0;
-		-30.0 == 2.0 * Int8.MIN;
+		510 == Int8.MAX * 2;
+		-510 == 2 * Int8.MIN;
+		510.0 == Int8.MAX * 2.0;
+		-510.0 == 2.0 * Int8.MIN;
 	}
 
 	public function specDivision() {
@@ -124,9 +124,9 @@ class Int8Test extends utest.Test {
 		Int8.create(1) == 100 % Int8.create(-9);
 		Int8.create(-1) == -100 % Int8.create(-9);
 
-		2.5 == Int8.MAX % 6.25;
-		-2.5 == Int8.MIN % 6.25;
-		-2.5 == Int8.MIN % (-6.25);
+		20.5 == Int8.MAX % 117.25;
+		-20.5 == Int8.MIN % 117.25;
+		-20.5 == Int8.MIN % (-117.25);
 		0.5 == 6.5 % Int8.create(3);
 		-0.5 == -6.5 % Int8.create(3);
 		-0.5 == -6.5 % Int8.create(-3);
