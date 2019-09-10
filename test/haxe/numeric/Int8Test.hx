@@ -1,5 +1,6 @@
 package haxe.numeric;
 
+import haxe.numeric.exceptions.InvalidArgumentException;
 import haxe.numeric.exceptions.OverflowException;
 
 class Int8Test extends utest.Test {
@@ -197,8 +198,55 @@ class Int8Test extends utest.Test {
 		Int8.create(10) <= 10.5;
 	}
 
-	// public function specNegate() {
-	// 	var two = Int8.create(2); // 0000 0010
+	public function specNegate() {
+		~Int8.parseBits('0000 0000') == Int8.parseBits('1111 1111');
+		~Int8.parseBits('0000 0010') == Int8.parseBits('1111 1101');
+		~Int8.parseBits('1100 0100') == Int8.parseBits('0011 1011');
+	}
 
-	// }
+	public function specAnd() {
+		Int8.parseBits('0000 0000') & Int8.parseBits('1111 1111') == Int8.parseBits('0000 0000');
+		Int8.parseBits('1110 0111') & Int8.parseBits('0101 1010') == Int8.parseBits('0100 0010');
+		Int8.parseBits('1110 0111') & Int8.parseBits('1101 1010') == Int8.parseBits('1100 0010');
+	}
+
+	public function specOr() {
+		Int8.parseBits('0000 0000') | Int8.parseBits('1111 1111') == Int8.parseBits('1111 1111');
+		Int8.parseBits('1010 0101') | Int8.parseBits('0100 0010') == Int8.parseBits('1110 0111');
+	}
+
+	public function specXor() {
+		Int8.parseBits('0000 0000') ^ Int8.parseBits('1111 1111') == Int8.parseBits('1111 1111');
+		Int8.parseBits('1010 0101') ^ Int8.parseBits('1100 0011') == Int8.parseBits('0110 0110');
+	}
+
+	public function specShiftLeft() {
+		Int8.parseBits('0000 0001') << 2 == Int8.parseBits('0000 0100');
+		Int8.parseBits('0100 0001') << 1 == Int8.parseBits('1000 0010');
+		Int8.parseBits('1000 0001') << 1 == Int8.parseBits('0000 0010');
+
+		Int8.parseBits('0000 0001') << Int8.create(2) == Int8.parseBits('0000 0100');
+
+		Int8.parseBits('1100 0001') << -1 == Int8.parseBits('1000 0000');
+		Int8.parseBits('1100 0010') << -1 == Int8.parseBits('0000 0000');
+		Int8.parseBits('1100 0001') << Int8.create(-1) == Int8.parseBits('1000 0000');
+		Int8.parseBits('1100 0010') << Int8.create(-1) == Int8.parseBits('0000 0000');
+
+		1 << Int8.create(2) == 1 << 2;
+		4 << Int8.create(1) == 4 << 1;
+	}
+
+	public function specUnsignedShiftRight() {
+		Int8.parseBits('1000 0010') >>> 1 == Int8.parseBits('0100 0001');
+		Int8.parseBits('1000 0010') >>> 2 == Int8.parseBits('0010 0000');
+
+		Int8.parseBits('1000 0010') >>> Int8.create(1) == Int8.parseBits('0100 0001');
+		Int8.parseBits('1000 0010') >>> Int8.create(2) == Int8.parseBits('0010 0000');
+
+		Int8.parseBits('1101 0101') >>> -1 == Int8.parseBits('0000 0001');
+		Int8.parseBits('0101 0101') >>> -1 == Int8.parseBits('0000 0000');
+
+		-2 >>> Int8.create(10) == -2 >>> 10;
+		32001 >>> Int8.create(10) == 32001 >>> 10;
+	}
 }

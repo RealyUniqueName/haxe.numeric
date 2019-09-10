@@ -43,11 +43,27 @@ abstract Int8(Int) {
 		if(bitPos != 0) {
 			new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
 		}
-		if(result > MAX_AS_INT) {
-			result = (result - MAX_AS_INT - 1) + MIN_AS_INT;
-		}
 
-		return new Int8(result);
+		return new Int8(bitsToValue(result));
+	}
+
+	/**
+	 * `bits` is not supposed to be less than `MIN_AS_INT`
+	 */
+	static inline function bitsToValue(bits:Int):Int {
+		return if(bits > MAX_AS_INT) {
+			(bits - MAX_AS_INT - 1) + MIN_AS_INT;
+		} else {
+			bits;
+		}
+	}
+
+	static inline function valueToBits(value:Int):Int {
+		return if(value < 0) {
+			value - MIN_AS_INT + 1 + MAX_AS_INT;
+		} else {
+			value;
+		}
 	}
 
 	inline function new(value:Int) {
@@ -147,39 +163,32 @@ abstract Int8(Int) {
 	@:op(A <= B) static function floatLessOrEqualFirst(a:Int8, b:Float):Bool;
 	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:Int8):Bool;
 
-	@:op(~A) inline function negate():Int8 {
-		var result = (~this) & 0xFF;
-		if(result & SIGN_MASK != 0) {
-			result = -(result & ~SIGN_MASK);
-		}
+	@:op(~A) function negate():Int8;
+
+	@:op(A & B) function and(b:Int8):Int8;
+
+	@:op(A | B) function or(b:Int8):Int8;
+
+	@:op(A ^ B) function xor(b:Int8):Int8;
+
+
+	@:op(A << B) inline function shiftLeft(b:Int8):Int8 {
+		return intShiftLeftFirst(b.toInt());
+	}
+	@:op(A << B) inline function intShiftLeftFirst(b:Int):Int8 {
+		var bits = (this << (b & 0x7)) & 0xFF;
+		return new Int8(bitsToValue(bits));
+	}
+	@:op(A << B) static function intShiftLeftSecond(a:Int, b:Int8):Int;
+
+	@:op(A >>> B) inline function unsignedShiftRight(b:Int8):Int8 {
+		return intUnsignedShiftRightFirst(b.toInt());
+	}
+	@:op(A >>> B) inline function intUnsignedShiftRightFirst(b:Int):Int8 {
+		var result = valueToBits(this) >> (b & 0x7);
 		return new Int8(result);
 	}
-
-	// /**
-	// 	Returns the bitwise AND of `a` and `b`.
-	// **/
-	// @:op(A & B) public static inline function and(a:Int8, b:Int8):Int8
-	// 	return make(a.high & b.high, a.low & b.low);
-
-	// /**
-	// 	Returns the bitwise OR of `a` and `b`.
-	// **/
-	// @:op(A | B) public static inline function or(a:Int8, b:Int8):Int8
-	// 	return make(a.high | b.high, a.low | b.low);
-
-	// /**
-	// 	Returns the bitwise XOR of `a` and `b`.
-	// **/
-	// @:op(A ^ B) public static inline function xor(a:Int8, b:Int8):Int8
-	// 	return make(a.high ^ b.high, a.low ^ b.low);
-
-	// /**
-	// 	Returns `a` left-shifted by `b` bits.
-	// **/
-	// @:op(A << B) public static inline function shl(a:Int8, b:Int):Int8 {
-	// 	b &= 63;
-	// 	return if (b == 0) a.copy() else if (b < 32) make((a.high << b) | (a.low >>> (32 - b)), a.low << b) else make(a.low << (b - 32), 0);
-	// }
+	@:op(A >>> B) static function intUnsignedShiftRightSecond(a:Int, b:Int8):Int;
 
 	// /**
 	// 	Returns `a` right-shifted by `b` bits in signed mode.
