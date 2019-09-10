@@ -12,6 +12,14 @@ class Int8Test extends utest.Test {
 		Int8.create(-1) == Int8.parseBits('1111 1111');
 	}
 
+	public function specToString() {
+		'123' == Int8.create(123).toString();
+		'127' == Int8.MAX.toString();
+		'-128' == Int8.MIN.toString();
+		'-1' == Int8.create(-1).toString();
+		'null' == (null:Null<Int8>).toString();
+	}
+
 	public function testConstructor() {
 		Assert.equals(Int8.MIN, Int8.create(-0x80));
 		Assert.equals(Int8.MAX, Int8.create(0x7F));

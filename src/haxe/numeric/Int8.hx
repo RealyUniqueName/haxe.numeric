@@ -26,6 +26,7 @@ abstract Int8(Int) {
 	static public function parseBits(bits:String):Int8 {
 		var result = 0;
 		var bitPos = BITS_COUNT;
+		var negative = false;
 
 		for(pos => code in bits) {
 			switch(code) {
@@ -42,8 +43,8 @@ abstract Int8(Int) {
 		if(bitPos != 0) {
 			new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
 		}
-		if(result & SIGN_BIT != 0) {
-			result = -(result & SIGN_MASK);
+		if(result > MAX_AS_INT) {
+			result = (result - MAX_AS_INT - 1) + MIN_AS_INT;
 		}
 
 		return new Int8(result);
