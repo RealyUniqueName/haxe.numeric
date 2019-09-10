@@ -171,7 +171,7 @@ abstract Int8(Int) {
 
 	@:op(A ^ B) function xor(b:Int8):Int8;
 
-
+	// <<
 	@:op(A << B) inline function shiftLeft(b:Int8):Int8 {
 		return intShiftLeftFirst(b.toInt());
 	}
@@ -181,6 +181,17 @@ abstract Int8(Int) {
 	}
 	@:op(A << B) static function intShiftLeftSecond(a:Int, b:Int8):Int;
 
+	// >>
+	@:op(A >> B) inline function shiftRight(b:Int8):Int8 {
+		return intShiftRightFirst(b.toInt());
+	}
+	@:op(A >> B) inline function intShiftRightFirst(b:Int):Int8 {
+		var result = this >> (b & 0x7);
+		return new Int8(result);
+	}
+	@:op(A >> B) static function intShiftRightSecond(a:Int, b:Int8):Int;
+
+	// >>>
 	@:op(A >>> B) inline function unsignedShiftRight(b:Int8):Int8 {
 		return intUnsignedShiftRightFirst(b.toInt());
 	}
@@ -189,6 +200,7 @@ abstract Int8(Int) {
 		return new Int8(result);
 	}
 	@:op(A >>> B) static function intUnsignedShiftRightSecond(a:Int, b:Int8):Int;
+
 
 	// /**
 	// 	Returns `a` right-shifted by `b` bits in signed mode.

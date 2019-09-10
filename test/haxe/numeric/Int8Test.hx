@@ -236,12 +236,30 @@ class Int8Test extends utest.Test {
 		4 << Int8.create(1) == 4 << 1;
 	}
 
+	public function specShiftRight() {
+		Int8.parseBits('1000 0010') >> 1 == Int8.parseBits('1100 0001');
+		Int8.parseBits('1000 0010') >> 2 == Int8.parseBits('1110 0000');
+		Int8.parseBits('0100 0010') >> 2 == Int8.parseBits('0001 0000');
+
+		Int8.parseBits('1000 0010') >> Int8.create(1) == Int8.parseBits('1100 0001');
+		Int8.parseBits('1000 0010') >> Int8.create(2) == Int8.parseBits('1110 0000');
+		Int8.parseBits('0100 0010') >> Int8.create(2) == Int8.parseBits('0001 0000');
+
+		Int8.parseBits('1101 0101') >> -1 == Int8.parseBits('1111 1111');
+		Int8.parseBits('0101 0101') >> -1 == Int8.parseBits('0000 0000');
+
+		-2 >> Int8.create(10) == -2 >> 10;
+		32001 >> Int8.create(10) == 32001 >> 10;
+	}
+
 	public function specUnsignedShiftRight() {
 		Int8.parseBits('1000 0010') >>> 1 == Int8.parseBits('0100 0001');
 		Int8.parseBits('1000 0010') >>> 2 == Int8.parseBits('0010 0000');
+		Int8.parseBits('0100 0010') >>> 2 == Int8.parseBits('0001 0000');
 
 		Int8.parseBits('1000 0010') >>> Int8.create(1) == Int8.parseBits('0100 0001');
 		Int8.parseBits('1000 0010') >>> Int8.create(2) == Int8.parseBits('0010 0000');
+		Int8.parseBits('0100 0010') >>> Int8.create(2) == Int8.parseBits('0001 0000');
 
 		Int8.parseBits('1101 0101') >>> -1 == Int8.parseBits('0000 0001');
 		Int8.parseBits('0101 0101') >>> -1 == Int8.parseBits('0000 0000');
@@ -249,4 +267,5 @@ class Int8Test extends utest.Test {
 		-2 >>> Int8.create(10) == -2 >>> 10;
 		32001 >>> Int8.create(10) == 32001 >>> 10;
 	}
+
 }
