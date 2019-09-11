@@ -4,13 +4,35 @@ import haxe.numeric.exceptions.InvalidArgumentException;
 import haxe.numeric.exceptions.OverflowException;
 
 class Int8Test extends utest.Test {
+	public function specMinMax() {
+		127 == Int8.MAX;
+		-128 == Int8.MIN;
+
+		Int8.MAX.isTypeInt8();
+		Int8.MIN.isTypeInt8();
+	}
+
 	public function specParseBits() {
-		Int8.create(0) == Int8.parseBits('0000 0000');
-		Int8.create(3) == Int8.parseBits('0000 0011');
-		Int8.MAX == Int8.parseBits('0111 1111');
-		Int8.MIN == Int8.parseBits('1000 0000');
-		Int8.create(-3) == Int8.parseBits('1111 1101');
-		Int8.create(-1) == Int8.parseBits('1111 1111');
+		// Int8.parseBits('0000 0000').isTypeInt8();
+
+		// Int8.create(0) == Int8.parseBits('0000 0000');
+		// Int8.create(3) == Int8.parseBits('0000 0011');
+		// Int8.MAX == Int8.parseBits('0111 1111');
+		// Int8.MIN == Int8.parseBits('1000 0000');
+		// Int8.create(-3) == Int8.parseBits('1111 1101');
+		// Int8.create(-1) == Int8.parseBits('1111 1111');
+
+		// Assert.raises(() -> Int8.parseBits('1234 5678'), InvalidArgumentException);
+		Assert.raises(() -> Int8.parseBits('1111 11111'), InvalidArgumentException);
+	}
+
+	public function specCreate() {
+		Int8.create(-0x80).isTypeInt8();
+
+		Int8.create(-0x80) == Int8.MIN;
+		Int8.create(0x7F) == Int8.MAX;
+		Assert.raises(() -> Int8.create(0x7F + 1), OverflowException);
+		Assert.raises(() -> Int8.create(-0x80 - 1), OverflowException);
 	}
 
 	public function specToString() {
@@ -21,14 +43,15 @@ class Int8Test extends utest.Test {
 		'null' == (null:Null<Int8>).toString();
 	}
 
-	public function testConstructor() {
-		Assert.equals(Int8.MIN, Int8.create(-0x80));
-		Assert.equals(Int8.MAX, Int8.create(0x7F));
-		Assert.raises(() -> Int8.create(0x7F + 1), OverflowException);
-		Assert.raises(() -> Int8.create(-0x80 - 1), OverflowException);
+	public function specToInt() {
+		127 == (Int8.MAX:Int);
+		-128 == (Int8.MIN:Int);
+		-1 == (Int8.parseBits('1111 1111'):Int);
 	}
 
 	public function specNegative() {
+		(-Int8.create(10)).isTypeInt8();
+
 		-Int8.create(10) == Int8.create(-10);
 	}
 
@@ -36,6 +59,13 @@ class Int8Test extends utest.Test {
 		var i8 = Int8.create(0);
 		++i8 == Int8.create(1);
 		i8 == Int8.create(1);
+
+		(++i8).isTypeInt8();
+
+		var i8 = Int8.create(0);
+		var result = ++i8;
+		i8 == Int8.create(1);
+		result == Int8.create(1);
 
 		var i8 = Int8.MAX;
 		try {
@@ -51,6 +81,13 @@ class Int8Test extends utest.Test {
 		i8++ == Int8.create(0);
 		i8 == Int8.create(1);
 
+		(i8++).isTypeInt8();
+
+		var i8 = Int8.create(0);
+		var result:Int8 = i8++;
+		i8 == Int8.create(1);
+		result == Int8.create(0);
+
 		var i8 = Int8.MAX;
 		try {
 			i8++;
@@ -65,6 +102,13 @@ class Int8Test extends utest.Test {
 		--i8 == Int8.create(-1);
 		i8 == Int8.create(-1);
 
+		(--i8).isTypeInt8();
+
+		var i8 = Int8.create(0);
+		var result:Int8 = --i8;
+		i8 == Int8.create(-1);
+		result == Int8.create(-1);
+
 		var i8 = Int8.MIN;
 		try {
 			--i8;
@@ -78,6 +122,13 @@ class Int8Test extends utest.Test {
 		var i8 = Int8.create(0);
 		i8-- == Int8.create(0);
 		i8 == Int8.create(-1);
+
+		(i8--).isTypeInt8();
+
+		var i8 = Int8.create(0);
+		var result:Int8 = i8--;
+		i8 == Int8.create(-1);
+		result == Int8.create(0);
 
 		var i8 = Int8.MIN;
 		try {
@@ -97,6 +148,12 @@ class Int8Test extends utest.Test {
 		-129 == -1 + Int8.MIN;
 		128.0 == Int8.MAX + 1.0;
 		-129.0 == -1.0 + Int8.MIN;
+
+		(Int8.create(0) + Int8.create(0)).isTypeInt8();
+		(Int8.create(0) + 1).isTypeInt();
+		(1 + Int8.create(0)).isTypeInt();
+		(Int8.create(0) + 1.0).isTypeFloat();
+		(1.0 + Int8.create(0)).isTypeFloat();
 	}
 
 	public function specSubtraction() {
@@ -109,6 +166,12 @@ class Int8Test extends utest.Test {
 		129 == 1 - Int8.MIN;
 		128.0 == Int8.MAX - (-1.0);
 		129.0 == 1.0 - Int8.MIN;
+
+		(Int8.create(0) - Int8.create(0)).isTypeInt8();
+		(Int8.create(0) - 1).isTypeInt();
+		(1 - Int8.create(0)).isTypeInt();
+		(Int8.create(0) - 1.0).isTypeFloat();
+		(1.0 - Int8.create(0)).isTypeFloat();
 	}
 
 	public function specMultiplication() {
@@ -121,6 +184,12 @@ class Int8Test extends utest.Test {
 		-256 == 2 * Int8.MIN;
 		254.0 == Int8.MAX * 2.0;
 		-256.0 == 2.0 * Int8.MIN;
+
+		(Int8.create(0) * Int8.create(0)).isTypeInt8();
+		(Int8.create(0) * 1).isTypeInt();
+		(1 * Int8.create(0)).isTypeInt();
+		(Int8.create(0) * 1.0).isTypeFloat();
+		(1.0 * Int8.create(0)).isTypeFloat();
 	}
 
 	public function specDivision() {
@@ -128,6 +197,12 @@ class Int8Test extends utest.Test {
 		7 == 14 / Int8.create(2);
 		7 == Int8.create(14) / 2.0;
 		7 == 14.0 / Int8.create(2);
+
+		(Int8.create(0) / Int8.create(1)).isTypeFloat();
+		(Int8.create(0) / 1).isTypeFloat();
+		(1 / Int8.create(1)).isTypeFloat();
+		(Int8.create(0) / 1.0).isTypeFloat();
+		(1.0 / Int8.create(1)).isTypeFloat();
 	}
 
 	public function specModulo() {
@@ -148,6 +223,12 @@ class Int8Test extends utest.Test {
 		0.5 == 6.5 % Int8.create(3);
 		-0.5 == -6.5 % Int8.create(3);
 		-0.5 == -6.5 % Int8.create(-3);
+
+		(Int8.create(0) % Int8.create(0)).isTypeInt8();
+		(Int8.create(0) % 1).isTypeInt8();
+		(1 % Int8.create(0)).isTypeInt8();
+		(Int8.create(0) % 1.0).isTypeFloat();
+		(1.0 % Int8.create(0)).isTypeFloat();
 	}
 
 	public function specEqual() {
@@ -202,22 +283,45 @@ class Int8Test extends utest.Test {
 		~Int8.parseBits('0000 0000') == Int8.parseBits('1111 1111');
 		~Int8.parseBits('0000 0010') == Int8.parseBits('1111 1101');
 		~Int8.parseBits('1100 0100') == Int8.parseBits('0011 1011');
+
+		(~Int8.MAX).isTypeInt8();
 	}
 
 	public function specAnd() {
 		Int8.parseBits('0000 0000') & Int8.parseBits('1111 1111') == Int8.parseBits('0000 0000');
 		Int8.parseBits('1110 0111') & Int8.parseBits('0101 1010') == Int8.parseBits('0100 0010');
 		Int8.parseBits('1110 0111') & Int8.parseBits('1101 1010') == Int8.parseBits('1100 0010');
+
+		-1 & Int8.create(-1) == -1;
+		Int8.create(-1) & 0 == 0;
+
+		(Int8.MAX & Int8.MAX).isTypeInt8();
+		(Int8.MAX & 1).isTypeInt();
+		(1 & Int8.MAX).isTypeInt();
 	}
 
 	public function specOr() {
 		Int8.parseBits('0000 0000') | Int8.parseBits('1111 1111') == Int8.parseBits('1111 1111');
 		Int8.parseBits('1010 0101') | Int8.parseBits('0100 0010') == Int8.parseBits('1110 0111');
+
+		-1 | Int8.create(0) == -1;
+		Int8.create(0) | -1 == -1;
+
+		(Int8.MAX | Int8.MAX).isTypeInt8();
+		(Int8.MAX | 1).isTypeInt();
+		(1 | Int8.MAX).isTypeInt();
 	}
 
 	public function specXor() {
 		Int8.parseBits('0000 0000') ^ Int8.parseBits('1111 1111') == Int8.parseBits('1111 1111');
 		Int8.parseBits('1010 0101') ^ Int8.parseBits('1100 0011') == Int8.parseBits('0110 0110');
+
+		-1 ^ Int8.create(-1) == 0;
+		Int8.create(-1) ^ -1 == 0;
+
+		(Int8.MAX ^ Int8.MAX).isTypeInt8();
+		(Int8.MAX ^ 1).isTypeInt();
+		(1 ^ Int8.MAX).isTypeInt();
 	}
 
 	public function specShiftLeft() {
@@ -234,6 +338,10 @@ class Int8Test extends utest.Test {
 
 		1 << Int8.create(2) == 1 << 2;
 		4 << Int8.create(1) == 4 << 1;
+
+		(Int8.MAX << Int8.MAX).isTypeInt8();
+		(Int8.MAX << 1).isTypeInt8();
+		(1 << Int8.MAX).isTypeInt();
 	}
 
 	public function specShiftRight() {
@@ -250,6 +358,10 @@ class Int8Test extends utest.Test {
 
 		-2 >> Int8.create(10) == -2 >> 10;
 		32001 >> Int8.create(10) == 32001 >> 10;
+
+		(Int8.MAX >> Int8.MAX).isTypeInt8();
+		(Int8.MAX >> 1).isTypeInt8();
+		(1 >> Int8.MAX).isTypeInt();
 	}
 
 	public function specUnsignedShiftRight() {
@@ -266,6 +378,10 @@ class Int8Test extends utest.Test {
 
 		-2 >>> Int8.create(10) == -2 >>> 10;
 		32001 >>> Int8.create(10) == 32001 >>> 10;
+
+		(Int8.MAX >>> Int8.MAX).isTypeInt8();
+		(Int8.MAX >>> 1).isTypeInt8();
+		(1 >>> Int8.MAX).isTypeInt();
 	}
 
 }

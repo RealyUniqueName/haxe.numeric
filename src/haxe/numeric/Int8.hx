@@ -13,9 +13,12 @@ abstract Int8(Int) {
 	static public inline var MIN:Int8 = cast MIN_AS_INT;
 
 	static inline var BITS_COUNT = 8;
-	static inline var SIGN_BIT = 0x80;
-	static inline var SIGN_MASK = 0x7F;
 
+	/**
+	 * Creates Int8 with `value`.
+	 *
+	 * If `value` is outside of `Int8` bounds then `haxe.numeric.exceptions.OverflowException` is thrown.
+	 */
 	static public inline function create(value:Int):Int8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {
 			throw new OverflowException('$value overflows Int8');
@@ -26,7 +29,6 @@ abstract Int8(Int) {
 	static public function parseBits(bits:String):Int8 {
 		var result = 0;
 		var bitPos = BITS_COUNT;
-		var negative = false;
 
 		for(pos => code in bits) {
 			switch(code) {
@@ -37,18 +39,18 @@ abstract Int8(Int) {
 					bitPos--;
 					result = result | 1 << bitPos;
 				case _:
-					new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
+					throw new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
 			}
 		}
 		if(bitPos != 0) {
-			new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
+			throw new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
 		}
 
 		return new Int8(bitsToValue(result));
 	}
 
 	/**
-	 * `bits` is not supposed to be less than `MIN_AS_INT`
+	 * `bits` must be greater or equal to `MIN_AS_INT`
 	 */
 	static inline function bitsToValue(bits:Int):Int {
 		return if(bits > MAX_AS_INT) {
@@ -58,6 +60,9 @@ abstract Int8(Int) {
 		}
 	}
 
+	/**
+	 * `value` must be in bounds of Int8 range
+	 */
 	static inline function valueToBits(value:Int):Int {
 		return if(value < 0) {
 			value - MIN_AS_INT + 1 + MAX_AS_INT;
@@ -70,8 +75,17 @@ abstract Int8(Int) {
 		this = value;
 	}
 
-	// TODO: check if all targets can handle `to Int` instead of `@:to Int`
-	@:to inline function toInt():Int {
+	public inline function toString():String {
+		return '$this';
+	}
+
+	/**
+	 * Returns current value as `Int`.
+	 *
+	 * It does not interpret bits. That is `-1` of `Int8` becomes `-1` of `Int`, not `255`.
+	 */
+	@:to inline function int():Int {
+		// TODO: check if all targets can handle `to Int` instead of `@:to Int`
 		return this;
 	}
 
@@ -100,13 +114,13 @@ abstract Int8(Int) {
 	}
 
 	@:op(A + B) inline function addition(b:Int8):Int8 {
-		return create(this + b.toInt());
+		return create(this + (b:Int));
 	}
 	@:op(A + B) @:commutative static function intAddition(a:Int8, b:Int):Int;
 	@:op(A + B) @:commutative static function floatAddition(a:Int8, b:Float):Float;
 
 	@:op(A - B) inline function subtraction(b:Int8):Int8 {
-		return create(this - b.toInt());
+		return create(this - (b:Int));
 	}
 	@:op(A - B) static function intSubtractionFirst(a:Int8, b:Int):Int;
 	@:op(A - B) static function intSubtractionSecond(a:Int, b:Int8):Int;
@@ -114,7 +128,7 @@ abstract Int8(Int) {
 	@:op(A - B) static function floatSubtractionSecond(a:Float, b:Int8):Float;
 
 	@:op(A * B) inline function multiplication(b:Int8):Int8 {
-		return create(this * b.toInt());
+		return create(this * (b:Int));
 	}
 	@:op(A * B) @:commutative static function intMultiplication(a:Int8, b:Int):Int;
 	@:op(A * B) @:commutative static function floatMultiplication(a:Int8, b:Float):Float;
@@ -166,14 +180,17 @@ abstract Int8(Int) {
 	@:op(~A) function negate():Int8;
 
 	@:op(A & B) function and(b:Int8):Int8;
+	@:op(A & B) @:commutative static function and(a:Int8, b:Int):Int;
 
 	@:op(A | B) function or(b:Int8):Int8;
+	@:op(A | B) @:commutative static function and(a:Int8, b:Int):Int;
 
 	@:op(A ^ B) function xor(b:Int8):Int8;
+	@:op(A ^ B) @:commutative static function and(a:Int8, b:Int):Int;
 
 	// <<
 	@:op(A << B) inline function shiftLeft(b:Int8):Int8 {
-		return intShiftLeftFirst(b.toInt());
+		return intShiftLeftFirst((b:Int));
 	}
 	@:op(A << B) inline function intShiftLeftFirst(b:Int):Int8 {
 		var bits = (this << (b & 0x7)) & 0xFF;
@@ -183,7 +200,7 @@ abstract Int8(Int) {
 
 	// >>
 	@:op(A >> B) inline function shiftRight(b:Int8):Int8 {
-		return intShiftRightFirst(b.toInt());
+		return intShiftRightFirst((b:Int));
 	}
 	@:op(A >> B) inline function intShiftRightFirst(b:Int):Int8 {
 		var result = this >> (b & 0x7);
@@ -193,34 +210,11 @@ abstract Int8(Int) {
 
 	// >>>
 	@:op(A >>> B) inline function unsignedShiftRight(b:Int8):Int8 {
-		return intUnsignedShiftRightFirst(b.toInt());
+		return intUnsignedShiftRightFirst((b:Int));
 	}
 	@:op(A >>> B) inline function intUnsignedShiftRightFirst(b:Int):Int8 {
 		var result = valueToBits(this) >> (b & 0x7);
 		return new Int8(result);
 	}
 	@:op(A >>> B) static function intUnsignedShiftRightSecond(a:Int, b:Int8):Int;
-
-
-	// /**
-	// 	Returns `a` right-shifted by `b` bits in signed mode.
-	// 	`a` is sign-extended.
-	// **/
-	// @:op(A >> B) public static inline function shr(a:Int8, b:Int):Int8 {
-	// 	b &= 63;
-	// 	return if (b == 0) a.copy() else if (b < 32) make(a.high >> b, (a.high << (32 - b)) | (a.low >>> b)); else make(a.high >> 31, a.high >> (b - 32));
-	// }
-
-	// /**
-	// 	Returns `a` right-shifted by `b` bits in unsigned mode.
-	// 	`a` is padded with zeroes.
-	// **/
-	// @:op(A >>> B) public static inline function ushr(a:Int8, b:Int):Int8 {
-	// 	b &= 63;
-	// 	return if (b == 0) a.copy() else if (b < 32) make(a.high >>> b, (a.high << (32 - b)) | (a.low >>> b)); else make(0, a.high >>> (b - 32));
-	// }
-
-	public inline function toString():String {
-		return '$this';
-	}
 }
