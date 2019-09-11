@@ -13,16 +13,16 @@ class Int8Test extends utest.Test {
 	}
 
 	public function specParseBits() {
-		// Int8.parseBits('0000 0000').isTypeInt8();
+		Int8.parseBits('0000 0000').isTypeInt8();
 
-		// Int8.create(0) == Int8.parseBits('0000 0000');
-		// Int8.create(3) == Int8.parseBits('0000 0011');
-		// Int8.MAX == Int8.parseBits('0111 1111');
-		// Int8.MIN == Int8.parseBits('1000 0000');
-		// Int8.create(-3) == Int8.parseBits('1111 1101');
-		// Int8.create(-1) == Int8.parseBits('1111 1111');
+		Int8.create(0) == Int8.parseBits('0000 0000');
+		Int8.create(3) == Int8.parseBits('0000 0011');
+		Int8.MAX == Int8.parseBits('0111 1111');
+		Int8.MIN == Int8.parseBits('1000 0000');
+		Int8.create(-3) == Int8.parseBits('1111 1101');
+		Int8.create(-1) == Int8.parseBits('1111 1111');
 
-		// Assert.raises(() -> Int8.parseBits('1234 5678'), InvalidArgumentException);
+		Assert.raises(() -> Int8.parseBits('1234 5678'), InvalidArgumentException);
 		Assert.raises(() -> Int8.parseBits('1111 11111'), InvalidArgumentException);
 	}
 
