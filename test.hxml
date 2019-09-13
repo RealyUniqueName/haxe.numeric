@@ -1,8 +1,26 @@
--cp src
--cp test
--main Main
--lib exception
--lib utest
--dce full
--D analyzer-optimize
-# --interp
+common.hxml
+--each
+
+--cmd echo "[Default release]"
+--next
+-js bin/test.js
+--cmd node bin/test.js
+
+--cmd echo "[Default debug]"
+--next
+--debug
+-js bin/test.js
+--cmd node bin/test.js
+
+--cmd echo "[OVERFLOW_THROW release]"
+--next
+-D OVERFLOW_THROW
+-js bin/test.js
+--cmd node bin/test.js
+
+--cmd echo "[OVERFLOW_WRAP debug]"
+--next
+-D OVERFLOW_WRAP
+--debug
+-js bin/test.js
+--cmd node bin/test.js

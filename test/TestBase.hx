@@ -1,4 +1,4 @@
-class Test extends utest.Test {
+class TestBase extends utest.Test {
 	inline function overflow(throws:()->Void, wraps:()->Void) {
 		#if OVERFLOW_THROW
 			throws();

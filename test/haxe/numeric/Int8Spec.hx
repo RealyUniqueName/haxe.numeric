@@ -3,7 +3,7 @@ package haxe.numeric;
 import haxe.numeric.exceptions.InvalidArgumentException;
 import haxe.numeric.exceptions.OverflowException;
 
-class Int8Test extends utest.Test {
+class Int8Spec extends TestBase {
 	public function specMinMax() {
 		127 == Int8.MAX;
 		-128 == Int8.MIN;
@@ -31,8 +31,17 @@ class Int8Test extends utest.Test {
 
 		Int8.create(-0x80) == Int8.MIN;
 		Int8.create(0x7F) == Int8.MAX;
-		Assert.raises(() -> Int8.create(0x7F + 1), OverflowException);
-		Assert.raises(() -> Int8.create(-0x80 - 1), OverflowException);
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int8.create(0x7F + 1), OverflowException);
+				Assert.raises(() -> Int8.create(-0x80 - 1), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int8.MIN == Int8.create(0x7F + 1);
+				Int8.MAX == Int8.create(-0x80 - 1);
+			}
+		);
 	}
 
 	public function specToString() {
@@ -53,6 +62,15 @@ class Int8Test extends utest.Test {
 		(-Int8.create(10)).isTypeInt8();
 
 		-Int8.create(10) == Int8.create(-10);
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> -Int8.MIN, OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				-Int8.MIN == Int8.MIN;
+			}
+		);
 	}
 
 	public function specPrefixIncrement() {
@@ -62,18 +80,22 @@ class Int8Test extends utest.Test {
 
 		(++i8).isTypeInt8();
 
-		var i8 = Int8.create(0);
-		var result = ++i8;
-		i8 == Int8.create(1);
-		result == Int8.create(1);
-
-		var i8 = Int8.MAX;
-		try {
-			++i8;
-			Assert.fail();
-		} catch(e:OverflowException) {
-			Assert.equals(Int8.MAX, i8);
-		}
+		overflow(
+			function OVERFLOW_THROW() {
+				var i8 = Int8.MAX;
+				try {
+					++i8;
+					Assert.fail();
+				} catch(e:OverflowException) {
+					Assert.equals(Int8.MAX, i8);
+				}
+			},
+			function OVERFLOW_WRAP() {
+				var i8 = Int8.MAX;
+				++i8;
+				i8 == Int8.MIN;
+			}
+		);
 	}
 
 	public function specPostfixIncrement() {
@@ -83,18 +105,22 @@ class Int8Test extends utest.Test {
 
 		(i8++).isTypeInt8();
 
-		var i8 = Int8.create(0);
-		var result:Int8 = i8++;
-		i8 == Int8.create(1);
-		result == Int8.create(0);
-
-		var i8 = Int8.MAX;
-		try {
-			i8++;
-			Assert.fail();
-		} catch(e:OverflowException) {
-			Assert.equals(Int8.MAX, i8);
-		}
+		overflow(
+			function OVERFLOW_THROW() {
+				var i8 = Int8.MAX;
+				try {
+					i8++;
+					Assert.fail();
+				} catch(e:OverflowException) {
+					Assert.equals(Int8.MAX, i8);
+				}
+			},
+			function OVERFLOW_WRAP() {
+				var i8 = Int8.MAX;
+				i8++;
+				i8 == Int8.MIN;
+			}
+		);
 	}
 
 	public function specPrefixDecrement() {
@@ -104,18 +130,22 @@ class Int8Test extends utest.Test {
 
 		(--i8).isTypeInt8();
 
-		var i8 = Int8.create(0);
-		var result:Int8 = --i8;
-		i8 == Int8.create(-1);
-		result == Int8.create(-1);
-
-		var i8 = Int8.MIN;
-		try {
-			--i8;
-			Assert.fail();
-		} catch(e:OverflowException) {
-			Assert.equals(Int8.MIN, i8);
-		}
+		overflow(
+			function OVERFLOW_THROW() {
+				var i8 = Int8.MIN;
+				try {
+					--i8;
+					Assert.fail();
+				} catch(e:OverflowException) {
+					Assert.equals(Int8.MIN, i8);
+				}
+			},
+			function OVERFLOW_WRAP() {
+				var i8 = Int8.MIN;
+				--i8;
+				i8 == Int8.MAX;
+			}
+		);
 	}
 
 	public function specPostfixDecrement() {
@@ -125,24 +155,26 @@ class Int8Test extends utest.Test {
 
 		(i8--).isTypeInt8();
 
-		var i8 = Int8.create(0);
-		var result:Int8 = i8--;
-		i8 == Int8.create(-1);
-		result == Int8.create(0);
-
-		var i8 = Int8.MIN;
-		try {
-			i8--;
-			Assert.fail();
-		} catch(e:OverflowException) {
-			Assert.equals(Int8.MIN, i8);
-		}
+		overflow(
+			function OVERFLOW_THROW() {
+				var i8 = Int8.MIN;
+				try {
+					i8--;
+					Assert.fail();
+				} catch(e:OverflowException) {
+					Assert.equals(Int8.MIN, i8);
+				}
+			},
+			function OVERFLOW_WRAP() {
+				var i8 = Int8.MIN;
+				i8--;
+				i8 == Int8.MAX;
+			}
+		);
 	}
 
 	public function specAddition() {
 		Int8.create(-1) == Int8.MAX + Int8.MIN;
-		Assert.raises(() -> Int8.MAX + Int8.create(1), OverflowException);
-		Assert.raises(() -> Int8.MIN + Int8.create(-1), OverflowException);
 
 		128 == Int8.MAX + 1;
 		-129 == -1 + Int8.MIN;
@@ -154,13 +186,22 @@ class Int8Test extends utest.Test {
 		(1 + Int8.create(0)).isTypeInt();
 		(Int8.create(0) + 1.0).isTypeFloat();
 		(1.0 + Int8.create(0)).isTypeFloat();
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int8.MAX + Int8.create(1), OverflowException);
+				Assert.raises(() -> Int8.MIN + Int8.create(-1), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int8.MAX + Int8.create(1) == Int8.MIN;
+				Int8.MIN + Int8.create(-1) == Int8.MAX;
+			}
+		);
 	}
 
 	public function specSubtraction() {
 		Int8.create(0) == Int8.MAX - Int8.MAX;
 		Int8.create(0) == Int8.MIN - Int8.MIN;
-		Assert.raises(() -> Int8.MAX - Int8.create(-1), OverflowException);
-		Assert.raises(() -> Int8.MIN - Int8.create(1), OverflowException);
 
 		128 == Int8.MAX - (-1);
 		129 == 1 - Int8.MIN;
@@ -172,13 +213,22 @@ class Int8Test extends utest.Test {
 		(1 - Int8.create(0)).isTypeInt();
 		(Int8.create(0) - 1.0).isTypeFloat();
 		(1.0 - Int8.create(0)).isTypeFloat();
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int8.MAX - Int8.create(-1), OverflowException);
+				Assert.raises(() -> Int8.MIN - Int8.create(1), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int8.MAX - Int8.create(-1) == Int8.MIN;
+				Int8.MIN - Int8.create(1) == Int8.MAX;
+			}
+		);
 	}
 
 	public function specMultiplication() {
 		Int8.create(50) == Int8.create(5) * Int8.create(10);
 		Int8.create(-50) == Int8.create(5) * Int8.create(-10);
-		Assert.raises(() -> Int8.MAX * Int8.create(2), OverflowException);
-		Assert.raises(() -> Int8.MIN * Int8.create(2), OverflowException);
 
 		254 == Int8.MAX * 2;
 		-256 == 2 * Int8.MIN;
@@ -190,6 +240,17 @@ class Int8Test extends utest.Test {
 		(1 * Int8.create(0)).isTypeInt();
 		(Int8.create(0) * 1.0).isTypeFloat();
 		(1.0 * Int8.create(0)).isTypeFloat();
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int8.MAX * Int8.create(2), OverflowException);
+				Assert.raises(() -> Int8.MIN * Int8.create(2), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int8.parseBits('0111 1111') * Int8.create(2) == Int8.parseBits('1111 1110');
+				Int8.parseBits('1000 0000') * Int8.create(2) == Int8.parseBits('0000 0000');
+			}
+		);
 	}
 
 	public function specDivision() {

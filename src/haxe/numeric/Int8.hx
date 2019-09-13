@@ -17,13 +17,23 @@ abstract Int8(Int) {
 	/**
 	 * Creates Int8 with `value`.
 	 *
+	 * In `-debug` builds or with `-D OVERFLOW_THROW`:
 	 * If `value` is outside of `Int8` bounds then `haxe.numeric.exceptions.OverflowException` is thrown.
+	 *
+	 * In release builds or with `-D OVERFLOW_WRAP`:
+	 * If `value` is outside of `Int8` bounds then only 8 less significant bits are used.
+	 * That is `new Int8(514)` is equal to `new Int8(2)` because `514 & 0xFF == 2`
 	 */
 	static public inline function create(value:Int):Int8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {
+			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			throw new OverflowException('$value overflows Int8');
+			#else
+			return new Int8(bitsToValue(value & 0xFF));
+			#end
+		} else {
+			return new Int8(value);
 		}
-		return new Int8(value);
 	}
 
 	static public function parseBits(bits:String):Int8 {
@@ -50,7 +60,7 @@ abstract Int8(Int) {
 	}
 
 	/**
-	 * `bits` must be greater or equal to `MIN_AS_INT`
+	 * `bits` must be greater or equal to `MIN_AS_INT` and lesser or equal to `0xFF`
 	 */
 	static inline function bitsToValue(bits:Int):Int {
 		return if(bits > MAX_AS_INT) {
@@ -89,7 +99,9 @@ abstract Int8(Int) {
 		return this;
 	}
 
-	@:op(-A) function negative():Int8;
+	@:op(-A) inline function negative():Int8 {
+		return create(-this);
+	}
 
 	@:op(++A) inline function prefixIncrement():Int8 {
 		this = create(this + 1);
