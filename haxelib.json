@@ -1,0 +1,14 @@
+{
+	"name": "haxe.numeric",
+	"url" : "https://github.com/RealyUniqueName/haxe.numeric",
+	"license": "MIT",
+	"tags": ["integer", "unsigned", "in8", "int16", "int32", "int64", "uin8", "uint16", "uint32", "uint64"],
+	"description": "Numeric types with defined ",
+	"classPath": "src",
+	"version": "0.1.0",
+	"releasenote": "initial",
+	"contributors": ["realyuniquename"],
+	"dependencies": {
+		"exception":""
+	}
+}

@@ -1,0 +1,7 @@
+-cp src
+-cp test
+-main Main
+-lib exception
+-lib utest
+-dce full
+-D analyzer-optimize
