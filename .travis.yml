@@ -1,14 +1,14 @@
 sudo: required
-dist: bionic
+dist: trusty
 
 language: haxe
 
 os:
   - linux
   - osx
-  - windows
 
 haxe:
+  - 4.0.0-rc.5
   - development
 
 install:
@@ -16,14 +16,47 @@ install:
   - haxelib run travix install
 
 script:
-  - haxelib run travix interp
-  - haxelib run travix neko
-  - haxelib run travix python
-  - haxelib run travix node
-  - haxelib run travix flash
-  - haxelib run travix java
-  - haxelib run travix cpp
-  - haxelib run travix cs
-  - haxelib run travix php
-  - haxelib run travix lua
-
+  - haxelib run travix interp -D OVERFLOW_THROW
+  - haxelib run travix interp -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix interp -D OVERFLOW_WRAP
+  - haxelib run travix interp -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix neko -D OVERFLOW_THROW
+  - haxelib run travix neko -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix neko -D OVERFLOW_WRAP
+  - haxelib run travix neko -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix python -D OVERFLOW_THROW
+  - haxelib run travix python -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix python -D OVERFLOW_WRAP
+  - haxelib run travix python -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix node -D OVERFLOW_THROW
+  - haxelib run travix node -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix node -D OVERFLOW_WRAP
+  - haxelib run travix node -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix flash -D OVERFLOW_THROW
+  - haxelib run travix flash -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix flash -D OVERFLOW_WRAP
+  - haxelib run travix flash -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix java -D OVERFLOW_THROW
+  - haxelib run travix java -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix java -D OVERFLOW_WRAP
+  - haxelib run travix java -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix cpp -D OVERFLOW_THROW
+  - haxelib run travix cpp -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix cpp -D OVERFLOW_WRAP
+  - haxelib run travix cpp -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix cs -D OVERFLOW_THROW
+  - haxelib run travix cs -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix cs -D OVERFLOW_WRAP
+  - haxelib run travix cs -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix php7 -D OVERFLOW_THROW
+  - haxelib run travix php7 -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix php7 -D OVERFLOW_WRAP
+  - haxelib run travix php7 -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix lua -D OVERFLOW_THROW
+  - haxelib run travix lua -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix lua -D OVERFLOW_WRAP
+  - haxelib run travix lua -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix hl -D OVERFLOW_THROW
+  - haxelib run travix hl -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix hl -D OVERFLOW_WRAP
+  - haxelib run travix hl -D OVERFLOW_WRAP -D analyzer-optimize
