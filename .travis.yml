@@ -53,10 +53,11 @@ script:
   - haxelib run travix php7 -D OVERFLOW_THROW -D analyzer-optimize
   - haxelib run travix php7 -D OVERFLOW_WRAP
   - haxelib run travix php7 -D OVERFLOW_WRAP -D analyzer-optimize
-  - haxelib run travix lua -D OVERFLOW_THROW
-  - haxelib run travix lua -D OVERFLOW_THROW -D analyzer-optimize
-  - haxelib run travix lua -D OVERFLOW_WRAP
-  - haxelib run travix lua -D OVERFLOW_WRAP -D analyzer-optimize
+  # issues with lua setup on OSX
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_THROW; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_THROW -D analyzer-optimize; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_WRAP; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_WRAP -D analyzer-optimize; fi;
   - haxelib run travix hl -D OVERFLOW_THROW
   - haxelib run travix hl -D OVERFLOW_THROW -D analyzer-optimize
   - haxelib run travix hl -D OVERFLOW_WRAP
