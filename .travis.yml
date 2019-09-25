@@ -1,0 +1,64 @@
+sudo: required
+dist: bionic
+
+language: haxe
+
+os:
+  - linux
+  - osx
+
+haxe:
+  - development
+
+install:
+  - haxelib install travix
+  - haxelib run travix install
+
+script:
+  - haxelib run travix interp -D OVERFLOW_THROW
+  - haxelib run travix interp -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix interp -D OVERFLOW_WRAP
+  - haxelib run travix interp -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix neko -D OVERFLOW_THROW
+  - haxelib run travix neko -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix neko -D OVERFLOW_WRAP
+  - haxelib run travix neko -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix python -D OVERFLOW_THROW
+  - haxelib run travix python -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix python -D OVERFLOW_WRAP
+  - haxelib run travix python -D OVERFLOW_WRAP -D analyzer-optimize
+  # issues with node setup on OSX
+  - if [ `uname` = "Linux" ]; then haxelib run travix node -D OVERFLOW_THROW; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix node -D OVERFLOW_THROW -D analyzer-optimize; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix node -D OVERFLOW_WRAP; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix node -D OVERFLOW_WRAP -D analyzer-optimize; fi;
+  # flash setup hangs on travis
+  # - haxelib run travix flash -D OVERFLOW_THROW
+  # - haxelib run travix flash -D OVERFLOW_THROW -D analyzer-optimize
+  # - haxelib run travix flash -D OVERFLOW_WRAP
+  # - haxelib run travix flash -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix java -D OVERFLOW_THROW
+  - haxelib run travix java -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix java -D OVERFLOW_WRAP
+  - haxelib run travix java -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix cpp -D OVERFLOW_THROW
+  - haxelib run travix cpp -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix cpp -D OVERFLOW_WRAP
+  - haxelib run travix cpp -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix cs -D OVERFLOW_THROW
+  - haxelib run travix cs -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix cs -D OVERFLOW_WRAP
+  - haxelib run travix cs -D OVERFLOW_WRAP -D analyzer-optimize
+  - haxelib run travix php7 -D OVERFLOW_THROW
+  - haxelib run travix php7 -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix php7 -D OVERFLOW_WRAP
+  - haxelib run travix php7 -D OVERFLOW_WRAP -D analyzer-optimize
+  # issues with lua setup on OSX
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_THROW; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_THROW -D analyzer-optimize; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_WRAP; fi;
+  - if [ `uname` = "Linux" ]; then haxelib run travix lua -D OVERFLOW_WRAP -D analyzer-optimize; fi;
+  - haxelib run travix hl -D OVERFLOW_THROW
+  - haxelib run travix hl -D OVERFLOW_THROW -D analyzer-optimize
+  - haxelib run travix hl -D OVERFLOW_WRAP
+  - haxelib run travix hl -D OVERFLOW_WRAP -D analyzer-optimize

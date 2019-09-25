@@ -47,7 +47,9 @@ abstract Int8(Int) {
 					bitPos--;
 				case '1'.code:
 					bitPos--;
-					result = result | 1 << bitPos;
+					if(bitPos >= 0) {
+						result = result | 1 << bitPos;
+					}
 				case _:
 					throw new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
 			}

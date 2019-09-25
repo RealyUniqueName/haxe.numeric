@@ -4,4 +4,3 @@
 -lib exception
 -lib utest
 -dce full
--D analyzer-optimize

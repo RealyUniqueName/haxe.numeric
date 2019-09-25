@@ -1,4 +1,4 @@
-common.hxml
+tests.hxml
 --each
 
 --cmd echo "[Default release]"
