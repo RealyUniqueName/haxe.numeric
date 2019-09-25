@@ -31,10 +31,11 @@ script:
   - haxelib run travix node -D OVERFLOW_THROW -D analyzer-optimize
   - haxelib run travix node -D OVERFLOW_WRAP
   - haxelib run travix node -D OVERFLOW_WRAP -D analyzer-optimize
-  - haxelib run travix flash -D OVERFLOW_THROW
-  - haxelib run travix flash -D OVERFLOW_THROW -D analyzer-optimize
-  - haxelib run travix flash -D OVERFLOW_WRAP
-  - haxelib run travix flash -D OVERFLOW_WRAP -D analyzer-optimize
+  # flash setup hangs on travis
+  # - haxelib run travix flash -D OVERFLOW_THROW
+  # - haxelib run travix flash -D OVERFLOW_THROW -D analyzer-optimize
+  # - haxelib run travix flash -D OVERFLOW_WRAP
+  # - haxelib run travix flash -D OVERFLOW_WRAP -D analyzer-optimize
   - haxelib run travix java -D OVERFLOW_THROW
   - haxelib run travix java -D OVERFLOW_THROW -D analyzer-optimize
   - haxelib run travix java -D OVERFLOW_WRAP
