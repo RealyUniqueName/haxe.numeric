@@ -26,7 +26,7 @@ abstract UInt8(Int) {
 			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			throw new OverflowException('$value overflows UInt8');
 			#else
-			return new UInt8(bitsToValue(value & 0xFF));
+			return new UInt8(value & 0xFF);
 			#end
 		} else {
 			return new UInt8(value);
@@ -38,18 +38,7 @@ abstract UInt8(Int) {
 	 */
 	@:noUsing
 	static public function parseBits(bits:String):UInt8 {
-		return new UInt8(UInt8.bitsToValue(inline Numeric.parseBitsInt(bits, UInt8.BITS_COUNT)));
-	}
-
-	/**
-	 * `bits` must be greater or equal to `MIN_AS_INT` and lesser or equal to `0xFF`
-	 */
-	static inline function bitsToValue(bits:Int):Int {
-		return if(bits > MAX_AS_INT) {
-			(bits - MAX_AS_INT - 1) + MIN_AS_INT;
-		} else {
-			bits;
-		}
+		return new UInt8(inline Numeric.parseBitsInt(bits, UInt8.BITS_COUNT));
 	}
 
 	/**
@@ -196,7 +185,7 @@ abstract UInt8(Int) {
 	}
 	@:op(A << B) inline function intShiftLeftFirst(b:Int):UInt8 {
 		var bits = (this << (b & 0x7)) & 0xFF;
-		return new UInt8(bitsToValue(bits));
+		return new UInt8(bits);
 	}
 	@:op(A << B) static function intShiftLeftSecond(a:Int, b:UInt8):Int;
 

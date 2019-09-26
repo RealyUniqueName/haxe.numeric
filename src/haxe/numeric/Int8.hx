@@ -36,7 +36,7 @@ import haxe.numeric.exceptions.OverflowException;
  *
  * Type conversions.
  *
- * `Int8` Can be automatically converted to `Int` by value:
+ * `Int8` can be automatically converted to `Int` by value:
  * ```haxe
  * (Int8.MIN:Int) == -1;
  * ```
