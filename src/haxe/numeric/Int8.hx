@@ -1,9 +1,6 @@
 package haxe.numeric;
 
 import haxe.numeric.exceptions.OverflowException;
-import haxe.numeric.exceptions.InvalidArgumentException;
-
-using StringTools;
 
 abstract Int8(Int) {
 	static inline var MAX_AS_INT = 0x7F;
@@ -37,11 +34,11 @@ abstract Int8(Int) {
 	}
 
 	/**
-	 * Alias for `haxe.numeric.Numeric.parseBitsInt8`
+	 * Same as `Numeric.parseBitsInt()` but returns `Int8`
 	 */
 	@:noUsing
-	static public inline function parseBits(bits:String):Int8 {
-		return Numeric.parseBitsInt8(bits);
+	static public function parseBits(bits:String):Int8 {
+		return new Int8(bitsToValue(inline Numeric.parseBitsInt(bits, BITS_COUNT)));
 	}
 
 	/**
@@ -177,13 +174,19 @@ abstract Int8(Int) {
 	@:op(~A) function negate():Int8;
 
 	@:op(A & B) function and(b:Int8):Int8;
-	@:op(A & B) @:commutative static function and(a:Int8, b:Int):Int;
+	@:op(A & B) @:commutative static inline function andInt(a:Int8, b:Int):Int {
+		return valueToBits(a.int()) & b;
+	}
 
 	@:op(A | B) function or(b:Int8):Int8;
-	@:op(A | B) @:commutative static function and(a:Int8, b:Int):Int;
+	@:op(A | B) @:commutative static inline function orInt(a:Int8, b:Int):Int {
+		return valueToBits(a.int()) | b;
+	}
 
 	@:op(A ^ B) function xor(b:Int8):Int8;
-	@:op(A ^ B) @:commutative static function and(a:Int8, b:Int):Int;
+	@:op(A ^ B) @:commutative static inline function xorInt(a:Int8, b:Int):Int {
+		return valueToBits(a.int()) ^ b;
+	}
 
 	// <<
 	@:op(A << B) inline function shiftLeft(b:Int8):Int8 {

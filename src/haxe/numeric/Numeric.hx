@@ -4,17 +4,31 @@ import haxe.numeric.exceptions.InvalidArgumentException;
 
 using StringTools;
 
-@:access(haxe.numeric)
 class Numeric {
+
+	/**
+	 * Alias for `haxe.numeric.Int8.create`
+	 */
+	static public inline function toInt8(n:Int):Int8 {
+		return Int8.create(n);
+	}
+
+	/**
+	 * Alias for `haxe.numeric.UInt8.create`
+	 */
+	static public inline function toUInt8(n:Int):UInt8 {
+		return UInt8.create(n);
+	}
+
 	/**
 	 * Parse string binary representation of a number into an integer.
 	 * E.g. `parseBits("1000 0010")` will produce `130`.
 	 *
-	 * @param bits	a binary string. Any spaces are ignored.
-	 * @param bitsCount	exact amount of bits to be parsed.
+	 * @param bits - a binary string. Any spaces are ignored.
+	 * @param bitsCount - exact amount of bits allowed in `bits` string.
 	 *
-	 * @throws InvalidArgumentException	if amount of bits in `bits` string does not match `bitsCount`
-	 * 						or if `bits` contains any characters other than `"0"`, `"1"` or space.
+	 * @throws InvalidArgumentException - if amount of bits in `bits` string does not match `bitsCount`
+	 * or if `bits` contains any characters other than `"0"`, `"1"` or space.
 	 *
 	 * @return Int
 	 */
@@ -44,9 +58,16 @@ class Numeric {
 	}
 
 	/**
-	 * Same as `Numeric.parseBitsInt()` but returns `Int8`
+	 * Alias for `haxe.numeric.Numeric.parseBitsInt8`
 	 */
-	static public function parseBitsInt8(bits:String):Int8 {
-		return new Int8(Int8.bitsToValue(inline parseBitsInt(bits, Int8.BITS_COUNT)));
+	static public inline function parseBitsInt8(bits:String):Int8 {
+		return Int8.parseBits(bits);
+	}
+
+	/**
+	 * Alias for `haxe.numeric.Numeric.parseBitsUInt8`
+	 */
+	static public inline function parseBitsUInt8(bits:String):UInt8 {
+		return UInt8.parseBits(bits);
 	}
 }

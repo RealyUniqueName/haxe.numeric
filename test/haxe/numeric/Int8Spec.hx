@@ -353,8 +353,9 @@ class Int8Spec extends TestBase {
 		Int8.parseBits('1110 0111') & Int8.parseBits('0101 1010') == Int8.parseBits('0100 0010');
 		Int8.parseBits('1110 0111') & Int8.parseBits('1101 1010') == Int8.parseBits('1100 0010');
 
-		-1 & Int8.create(-1) == -1;
+		-1 & Int8.create(-1) == Numeric.parseBitsInt('1111 1111', 8);
 		Int8.create(-1) & 0 == 0;
+		Int8.parseBits('1111 1111') & -1 == Numeric.parseBitsInt('1111 1111', 8);
 
 		(Int8.MAX & Int8.MAX).isTypeInt8();
 		(Int8.MAX & 1).isTypeInt();
@@ -367,6 +368,8 @@ class Int8Spec extends TestBase {
 
 		-1 | Int8.create(0) == -1;
 		Int8.create(0) | -1 == -1;
+		0 | Int8.parseBits('1000 0000') == 1 << 7;
+		Int8.parseBits('1000 0000') | 0 == 1 << 7;
 
 		(Int8.MAX | Int8.MAX).isTypeInt8();
 		(Int8.MAX | 1).isTypeInt();
@@ -377,8 +380,10 @@ class Int8Spec extends TestBase {
 		Int8.parseBits('0000 0000') ^ Int8.parseBits('1111 1111') == Int8.parseBits('1111 1111');
 		Int8.parseBits('1010 0101') ^ Int8.parseBits('1100 0011') == Int8.parseBits('0110 0110');
 
-		-1 ^ Int8.create(-1) == 0;
-		Int8.create(-1) ^ -1 == 0;
+		-1 ^ Int8.parseBits('1111 1111') == -1 ^ Numeric.parseBitsInt('1111 1111', 8);
+		Int8.parseBits('1111 1111') ^ -1 == -1 ^ Numeric.parseBitsInt('1111 1111', 8);
+		0 ^ Int8.parseBits('1111 1111') == Numeric.parseBitsInt('1111 1111', 8);
+		Int8.parseBits('1111 1111') ^ 0 == Numeric.parseBitsInt('1111 1111', 8);
 
 		(Int8.MAX ^ Int8.MAX).isTypeInt8();
 		(Int8.MAX ^ 1).isTypeInt();
