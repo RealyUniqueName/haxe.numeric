@@ -9,8 +9,8 @@ abstract Int8(Int) {
 	static inline var MAX_AS_INT = 0x7F;
 	static inline var MIN_AS_INT = -0x80;
 
-	static public inline var MAX:Int8 = cast MAX_AS_INT;
-	static public inline var MIN:Int8 = cast MIN_AS_INT;
+	static public inline var MAX:Int8 = new Int8(MAX_AS_INT);
+	static public inline var MIN:Int8 = new Int8(MIN_AS_INT);
 
 	static inline var BITS_COUNT = 8;
 
@@ -36,29 +36,12 @@ abstract Int8(Int) {
 		}
 	}
 
-	static public function parseBits(bits:String):Int8 {
-		var result = 0;
-		var bitPos = BITS_COUNT;
-
-		for(pos => code in bits) {
-			switch(code) {
-				case ' '.code | '\t'.code:
-				case '0'.code:
-					bitPos--;
-				case '1'.code:
-					bitPos--;
-					if(bitPos >= 0) {
-						result = result | 1 << bitPos;
-					}
-				case _:
-					throw new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
-			}
-		}
-		if(bitPos != 0) {
-			throw new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
-		}
-
-		return new Int8(bitsToValue(result));
+	/**
+	 * Alias for `haxe.numeric.Numeric.parseBitsInt8`
+	 */
+	@:noUsing
+	static public inline function parseBits(bits:String):Int8 {
+		return Numeric.parseBitsInt8(bits);
 	}
 
 	/**
