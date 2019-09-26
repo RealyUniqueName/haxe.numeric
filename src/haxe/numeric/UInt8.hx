@@ -19,7 +19,7 @@ abstract UInt8(Int) {
 	 *
 	 * In release builds or with `-D OVERFLOW_WRAP`:
 	 * If `value` is outside of `UInt8` bounds then only 8 less significant bits are used.
-	 * That is `new UInt8(514)` is equal to `new UInt8(2)` because `514 & 0xFF == 2`
+	 * That is `UInt8.create(514)` is equal to `UInt8.create(2)` because `514 & 0xFF == 2`
 	 */
 	static public inline function create(value:Int):UInt8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {

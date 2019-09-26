@@ -2,24 +2,66 @@ package haxe.numeric;
 
 import haxe.numeric.exceptions.OverflowException;
 
+/**
+ * 8-bit signed integer.
+ * `Int8` represents values ranging from -128 to 127 (including).
+ *
+ * At runtime `Int8` is represented by `Int` of the same value.
+ * That is, `Int8.create(-1)` is `-1` at runtime.
+ * However for bitwise operations actual 8-bit representation is used:
+ * ```haxe
+ * Int8.parseBits('0111 1111') == 127;            // true
+ * Int8.parseBits('0111 1111') << 1 == -2;        // true
+ * // But
+ * (Int8.parseBits('0111 1111'):Int) << 1 == 254; // also true
+ * ```
+ *
+ * Types of arithmetic.
+ *
+ * For binary operations addition, subtraction, multiplication and modulo general rule is
+ * if both operands are `Int8` then the result will be `Int8` too.
+ * Otherwise the type of result will depend on the types of both arguments.
+ * For division the result will always be `Float`.
+ * For exact result types depending on operand types refer to specification tests of `Int8`
+ *
+ * Overflow.
+ *
+ * If the value calculated for `Int8` or provided to `Int8.create(value)`
+ * does not fit `Int8` bounds (from -128 to 127, including) then overflow happens.
+ * The overflow behavior depends on compilation settings.
+ * In `-debug` builds or with `-D OVERFLOW_THROW` an exception of type
+ * `haxe.numeric.exceptions.OverflowException` is thrown.
+ * In release builds or with `-D OVERFLOW_WRAP` only 8 less significant bits are used.
+ * That is `Int8.create(514)` is equal to `Int8.create(2)` because `514 & 0xFF == 2`
+ *
+ * Type conversions.
+ *
+ * `Int8` Can be automatically converted to `Int` by value:
+ * ```haxe
+ * (Int8.MIN:Int) == -1;
+ * ```
+ * To convert `Int8` to other integer types refer to `haxe.numeric.Numeric.Int8Utils` methods.
+ */
 abstract Int8(Int) {
 	static inline var MAX_AS_INT = 0x7F;
 	static inline var MIN_AS_INT = -0x80;
-
-	static public inline var MAX:Int8 = new Int8(MAX_AS_INT);
-	static public inline var MIN:Int8 = new Int8(MIN_AS_INT);
-
 	static inline var BITS_COUNT = 8;
 
+	/** Maximum `Int8` value: `127` */
+	static public inline var MAX:Int8 = new Int8(MAX_AS_INT);
+	/** Minimum `Int8` value: `-128` */
+	static public inline var MIN:Int8 = new Int8(MIN_AS_INT);
+
+
 	/**
-	 * Creates Int8 with `value`.
+	 * Creates Int8 from `value`.
 	 *
 	 * In `-debug` builds or with `-D OVERFLOW_THROW`:
 	 * If `value` is outside of `Int8` bounds then `haxe.numeric.exceptions.OverflowException` is thrown.
 	 *
 	 * In release builds or with `-D OVERFLOW_WRAP`:
 	 * If `value` is outside of `Int8` bounds then only 8 less significant bits are used.
-	 * That is `new Int8(514)` is equal to `new Int8(2)` because `514 & 0xFF == 2`
+	 * That is `Int8.create(514)` is equal to `Int8.create(2)` because `514 & 0xFF == 2`
 	 */
 	static public inline function create(value:Int):Int8 {
 		if(value > MAX_AS_INT || value < MIN_AS_INT) {
@@ -34,7 +76,13 @@ abstract Int8(Int) {
 	}
 
 	/**
-	 * Same as `Numeric.parseBitsInt()` but returns `Int8`
+	 * Parse string binary representation of a number into `Int8` value.
+	 * E.g. `parseBits("1000 0010")` will produce `130`.
+	 *
+	 * @param bits - a binary string. Any spaces are ignored.
+	 *
+	 * @throws InvalidArgumentException - if amount of bits in `bits` string less or greater than 8
+	 * or if `bits` contains any characters other than `"0"`, `"1"` or space.
 	 */
 	@:noUsing
 	static public function parseBits(bits:String):Int8 {
@@ -71,11 +119,6 @@ abstract Int8(Int) {
 		return '$this';
 	}
 
-	/**
-	 * Returns current value as `Int`.
-	 *
-	 * It does not interpret bits. That is `-1` of `Int8` becomes `-1` of `Int`, not `255`.
-	 */
 	@:to inline function int():Int {
 		// TODO: check if all targets can handle `to Int` instead of `@:to Int`
 		return this;
