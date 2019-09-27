@@ -36,7 +36,13 @@ abstract UInt8(Int) {
 	}
 
 	/**
-	 * Same as `Numeric.parseBitsInt()` but returns `UInt8`
+	 * Parse string binary representation of a number into `UInt8` value.
+	 * E.g. `parseBits("1100 1100")` will produce `204`.
+	 *
+	 * @param bits - a binary string. Any spaces are ignored.
+	 *
+	 * @throws InvalidArgumentException - if amount of bits in `bits` string less or greater than 8
+	 * or if `bits` contains any characters other than `"0"`, `"1"` or space.
 	 */
 	@:noUsing
 	static public function parseBits(bits:String):UInt8 {

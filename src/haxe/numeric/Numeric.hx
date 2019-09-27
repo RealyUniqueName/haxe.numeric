@@ -8,7 +8,6 @@ using StringTools;
  * This whole module (not only `Numeric` class) is intended for usage in `using` directives.
  */
 class Numeric {
-
 	@:inheritDoc(haxe.numeric.Int8.create)
 	static public inline function toInt8(n:Int):Int8 {
 		return Int8.create(n);
@@ -62,9 +61,7 @@ class Numeric {
 }
 
 class Int8Utils {
-	/**
-	 * Alias for `haxe.numeric.Int8.parseBits`
-	 */
+	@:inheritDoc(haxe.numeric.Int8.parseBits)
 	static public inline function parseBitsInt8(bits:String):Int8 {
 		return Int8.parseBits(bits);
 	}
@@ -93,9 +90,7 @@ class Int8Utils {
 }
 
 class UInt8Utils {
-	/**
-	 * Alias for `haxe.numeric.UInt8.parseBits`
-	 */
+	@:inheritDoc(haxe.numeric.UInt8.parseBits)
 	static public inline function parseBitsUInt8(bits:String):UInt8 {
 		return UInt8.parseBits(bits);
 	}
