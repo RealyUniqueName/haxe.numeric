@@ -53,9 +53,9 @@ class Int8Spec extends TestBase {
 	}
 
 	public function specToInt() {
-		127 == (Int8.MAX:Int);
-		-128 == (Int8.MIN:Int);
-		-1 == (Int8.parseBits('1111 1111'):Int);
+		127 == Int8.MAX.toInt();
+		-128 == Int8.MIN.toInt();
+		-1 == Int8.parseBits('1111 1111').toInt();
 	}
 
 	public function specNegative() {

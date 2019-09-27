@@ -33,6 +33,14 @@ class Int8UInt8Spec extends TestBase {
 		(UInt8.MAX / Int8.MAX).isTypeFloat();
 	}
 
+	function specModulo() {
+		(-128) % 255 == Int8.MIN % UInt8.MAX;
+		255 % (-128) == UInt8.MAX % Int8.MIN;
+
+		(Int8.MAX % UInt8.MAX).isTypeInt8();
+		(UInt8.MAX % Int8.MAX).isTypeUInt8();
+	}
+
 	function specOr() {
 		Numeric.parseBitsInt('1010 0011', 8) == Int8.parseBits('1000 0001') | UInt8.parseBits('0010 0011');
 		Numeric.parseBitsInt('1010 0011', 8) == UInt8.parseBits('0010 0011') | Int8.parseBits('1000 0001');

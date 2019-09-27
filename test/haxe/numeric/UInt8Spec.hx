@@ -51,8 +51,8 @@ class UInt8Spec extends TestBase {
 	}
 
 	public function specToInt() {
-		255 == (UInt8.MAX:Int);
-		0 == (UInt8.MIN:Int);
+		255 == UInt8.MAX.toInt();
+		0 == UInt8.MIN.toInt();
 	}
 
 	public function specNegative() {

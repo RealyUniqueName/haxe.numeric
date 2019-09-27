@@ -9,16 +9,12 @@ using StringTools;
  */
 class Numeric {
 
-	/**
-	 * Alias for `haxe.numeric.Int8.create`
-	 */
+	@:inheritDoc(haxe.numeric.Int8.create)
 	static public inline function toInt8(n:Int):Int8 {
 		return Int8.create(n);
 	}
 
-	/**
-	 * Alias for `haxe.numeric.UInt8.create`
-	 */
+	@:inheritDoc(haxe.numeric.UInt8.create)
 	static public inline function toUInt8(n:Int):UInt8 {
 		return UInt8.create(n);
 	}
@@ -74,16 +70,6 @@ class Int8Utils {
 	}
 
 	/**
-	 * Convert `Int8` to `Int` by value.
-	 * ```haxe
-	 * Int8.create(-1).toInt() == -1
-	 * ```
-	 */
-	static public inline function toInt(i8:Int8):Int {
-		return i8;
-	}
-
-	/**
 	 * Convert `Int8` to `Int` by bits.
 	 * ```haxe
 	 * Int8.create(-1).toIntBits() == 255
@@ -91,7 +77,7 @@ class Int8Utils {
 	 * because binary representation of `Int8.create(-1)` is `1111 1111`
 	 */
 	static public inline function toIntBits(i8:Int8):Int {
-		return @:privateAccess Int8.valueToBits(i8);
+		return @:privateAccess Int8.valueToBits(i8.toInt());
 	}
 
 	/**
@@ -102,7 +88,7 @@ class Int8Utils {
 	 * because binary representation of `Int8.create(-1)` is `1111 1111`
 	 */
 	static public inline function toUInt8Bits(i8:Int8):UInt8 {
-		return @:privateAccess new UInt8(Int8.valueToBits(i8));
+		return @:privateAccess new UInt8(Int8.valueToBits(i8.toInt()));
 	}
 }
 
@@ -115,20 +101,13 @@ class UInt8Utils {
 	}
 
 	/**
-	 * Convert `UInt8` to `Int`
-	 */
-	static public inline function toInt(i8:Int8):Int {
-		return i8;
-	}
-
-	/**
 	 * Convert `UInt8` to `Int8` by bits.
 	 * ```haxe
-	 * Int8.create(255).toInt8Bits() == -1
+	 * UInt8.create(255).toInt8Bits() == -1
 	 * ```
 	 * because binary representation of `UInt8.create(255)` is `1111 1111`
 	 */
-	static public inline function toInt8Bits(i8:Int8):UInt8 {
-		return @:privateAccess new UInt8(Int8.valueToBits(i8));
+	static public inline function toInt8Bits(u8:UInt8):Int8 {
+		return @:privateAccess new Int8(Int8.bitsToValue(u8.toInt()));
 	}
 }
