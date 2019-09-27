@@ -315,6 +315,7 @@ class UInt8Spec extends TestBase {
 
 	public function specNegate() {
 		~UInt8.parseBits('0000 0000') == UInt8.parseBits('1111 1111');
+		~UInt8.parseBits('1111 1111') == UInt8.parseBits('0000 0000');
 		~UInt8.parseBits('0000 0010') == UInt8.parseBits('1111 1101');
 		~UInt8.parseBits('1100 0100') == UInt8.parseBits('0011 1011');
 

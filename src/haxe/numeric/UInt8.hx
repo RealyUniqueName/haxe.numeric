@@ -41,17 +41,6 @@ abstract UInt8(Int) {
 		return new UInt8(inline Numeric.parseBitsInt(bits, UInt8.BITS_COUNT));
 	}
 
-	/**
-	 * `value` must be in bounds of UInt8 range
-	 */
-	static inline function valueToBits(value:Int):Int {
-		return if(value < 0) {
-			value - MIN_AS_INT + 1 + MAX_AS_INT;
-		} else {
-			value;
-		}
-	}
-
 	inline function new(value:Int) {
 		this = value;
 	}
@@ -161,7 +150,8 @@ abstract UInt8(Int) {
 	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:UInt8):Bool;
 
 	@:op(~A) inline function negate():UInt8 {
-		return new UInt8(valueToBits(~this));
+		var value = ~this;
+		return new UInt8(value < 0 ? value + 1 + MAX_AS_INT : value);
 	}
 
 	@:op(A & B) function and(b:UInt8):UInt8;
@@ -204,7 +194,7 @@ abstract UInt8(Int) {
 		return intUnsignedShiftRightFirst((b:Int));
 	}
 	@:op(A >>> B) inline function intUnsignedShiftRightFirst(b:Int):UInt8 {
-		var result = valueToBits(this) >> (b & 0x7);
+		var result = this >> (b & 0x7);
 		return new UInt8(result);
 	}
 	@:op(A >>> B) static function intUnsignedShiftRightSecond(a:Int, b:UInt8):Int;
