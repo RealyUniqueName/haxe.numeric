@@ -6,14 +6,14 @@ import haxe.numeric.exceptions.OverflowException;
  * 8-bit signed integer.
  * `Int8` represents values ranging from -128 to 127 (including).
  *
- * At runtime `Int8` is represented by `Int` of the same value.
+ * On platforms which don't have native int8 at runtime `Int8` is represented by `Int` of the same value.
  * That is, `Int8.create(-1)` is `-1` at runtime.
  * However for bitwise operations actual 8-bit representation is used:
  * ```haxe
  * Int8.parseBits('0111 1111') == 127;            // true
  * Int8.parseBits('0111 1111') << 1 == -2;        // true
  * // But
- * (Int8.parseBits('0111 1111'):Int) << 1 == 254; // also true
+ * Int8.parseBits('0111 1111').toInt() << 1 == 254; // also true
  * ```
  *
  * Types of arithmetic.
@@ -36,7 +36,7 @@ import haxe.numeric.exceptions.OverflowException;
  *
  * Type conversions.
  *
- * `Int8` can be automatically converted to `Int` by value:
+ * `Int8` can be converted to `Int` by value:
  * ```haxe
  * Int8.MIN.toInt() == -1;
  * ```

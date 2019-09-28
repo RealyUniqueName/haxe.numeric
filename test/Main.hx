@@ -5,6 +5,7 @@ import haxe.numeric.*;
 class Main {
 	static function main() {
 		var runner = new Runner();
+		runner.addCase(new NumericSpec());
 		runner.addCase(new Int8Spec());
 		runner.addCase(new UInt8Spec());
 		runner.addCase(new Int8UInt8Spec());
