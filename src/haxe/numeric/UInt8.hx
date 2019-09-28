@@ -4,6 +4,38 @@ import haxe.numeric.exceptions.OverflowException;
 
 using haxe.numeric.Numeric;
 
+/**
+ * 8-bit unsigned signed integer.
+ * `UInt8` represents values ranging from 0 to 255 (including).
+ *
+ * On platforms which don't have native uint8 at runtime `UInt8` is represented by `Int`.
+ *
+ * Types of arithmetic.
+ *
+ * For binary operations addition, subtraction, multiplication and modulo general rule is
+ * if both operands are `UInt8` then the result will be `UInt8` too.
+ * Otherwise the type of result will depend on the types of both arguments.
+ * For division the result will always be `Float`.
+ * For exact result types depending on operand types refer to specification tests of `UInt8`
+ *
+ * Overflow.
+ *
+ * If the value calculated for `UInt8` or provided to `UInt8.create(value)`
+ * does not fit `UInt8` bounds (from 0 to 255, including) then overflow happens.
+ * The overflow behavior depends on compilation settings.
+ * In `-debug` builds or with `-D OVERFLOW_THROW` an exception of type
+ * `haxe.numeric.exceptions.OverflowException` is thrown.
+ * In release builds or with `-D OVERFLOW_WRAP` only 8 less significant bits are used.
+ * That is `UInt8.create(514)` is equal to `UInt8.create(2)` because `514 & 0xFF == 2`
+ *
+ * Type conversions.
+ *
+ * `UInt8` can be converted to `Int`:
+ * ```haxe
+ * UInt8.MIN.toInt() == -1;
+ * ```
+ * To convert `UInt8` to other integer types refer to `haxe.numeric.Numeric.Int8Utils` methods.
+ */
 abstract UInt8(Int) {
 	static inline var MAX_AS_INT = 0xFF;
 	static inline var MIN_AS_INT = 0;
