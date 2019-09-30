@@ -10,12 +10,20 @@ using haxe.numeric.Numeric;
  *
  * On platforms which don't have native uint8 at runtime `UInt8` is represented by `Int`.
  *
+ * If the right side operand of a bitwise shift is negative, then only 7 less significant bit of it is used:
+ * ```haxe
+ * Int8.create(1) << -1
+ * //is basically the same as
+ * Int8.create(1) << (-1 & 0x7)
+ * ```
+ *
  * Types of arithmetic.
  *
  * For binary operations addition, subtraction, multiplication and modulo general rule is
  * if both operands are `UInt8` then the result will be `UInt8` too.
  * Otherwise the type of result will depend on the types of both arguments.
  * For division the result will always be `Float`.
+ * For bitwise shifts if the left side operand is `UInt8` the result type is `UInt8` too.
  * For exact result types depending on operand types refer to specification tests of `UInt8`
  *
  * Overflow.
@@ -36,6 +44,7 @@ using haxe.numeric.Numeric;
  * ```
  * To convert `UInt8` to other integer types refer to `haxe.numeric.Numeric.Int8Utils` methods.
  */
+@:allow(haxe.numeric)
 abstract UInt8(Int) {
 	static inline var MAX_AS_INT = 0xFF;
 	static inline var MIN_AS_INT = 0;
