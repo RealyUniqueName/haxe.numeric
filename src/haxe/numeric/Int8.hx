@@ -109,7 +109,7 @@ abstract Int8(Int) {
 	 */
 	static public inline function createBits(value:Int):Int8 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(value & 0xFF != 0) {
+		if(value & ~0xFF != 0) {
 			throw new OverflowException('$value has non-zeros on 9th or more significant bits');
 		}
 		#end

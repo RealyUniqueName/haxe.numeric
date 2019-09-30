@@ -11,6 +11,7 @@ class Tests {
 		runner.addCase(new Int16Spec());
 		runner.addCase(new Int8UInt8Spec());
 		runner.addCase(new Int8Int16Spec());
+		runner.addCase(new Int16UInt8Spec());
 		var report = Report.create(runner);
 		report.displayHeader = AlwaysShowHeader;
 		report.displaySuccessResults = NeverShowSuccessResults;
