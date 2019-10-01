@@ -49,6 +49,14 @@ class NumericSpec extends TestBase {
 		Int8.MIN.toInt16Bits().isTypeInt16();
 	}
 
+	function specInt8_toUInt16Bits() {
+		Int8.MAX.toUInt16Bits() == UInt16.create(127);
+		Int8.create(-1).toUInt16Bits() == UInt16.create(255);
+		Int8.MIN.toUInt16Bits() == UInt16.create(128);
+
+		Int8.MIN.toUInt16Bits().isTypeUInt16();
+	}
+
 	function specUInt8_toInt8Bits() {
 		UInt8.MAX.toInt8Bits() == Int8.create(-1);
 		UInt8.create(128).toInt8Bits() == Int8.MIN;
@@ -64,11 +72,34 @@ class NumericSpec extends TestBase {
 		UInt8.create(127).toInt16().isTypeInt16();
 	}
 
+	function specUInt8_toUInt16() {
+		UInt8.MAX.toUInt16() == UInt16.create(255);
+		UInt8.MIN.toUInt16() == UInt16.create(0);
+
+		UInt8.create(127).toUInt16().isTypeUInt16();
+	}
+
 	function specInt16_toIntBits() {
 		Int16.MAX.toIntBits() == 0x7FFF;
 		Int16.create(-1).toIntBits() == 0xFFFF;
 		Int16.MIN.toIntBits() == 0x8000;
 
 		Int16.MIN.toIntBits().isTypeInt();
+	}
+
+	function specInt16_toUInt16Bits() {
+		Int16.MAX.toUInt16Bits() == UInt16.create(0x7FFF);
+		Int16.create(-1).toUInt16Bits() == UInt16.create(0xFFFF);
+		Int16.MIN.toUInt16Bits() == UInt16.create(0x8000);
+
+		Int16.MIN.toUInt16Bits().isTypeUInt16();
+	}
+
+	function specUInt16_toInt16Bits() {
+		UInt16.MAX.toInt16Bits() == Int16.create(-1);
+		UInt16.create(32768).toInt16Bits() == Int16.MIN;
+		UInt16.create(32767).toInt16Bits() == Int16.MAX;
+
+		UInt16.create(32767).toInt16Bits().isTypeInt16();
 	}
 }

@@ -15,7 +15,8 @@ import haxe.numeric.exceptions.OverflowException;
  * // But
  * Int16.parseBits('0111 1111 1111 1111').toInt() << 1 == 65534; // also true
  * ```
- * If the right side operand of a bitwise shift is negative, then only 15 less significant bit of it is used:
+ * If the right side operand of a bitwise shift is negative or takes more than 15 bits,
+ * then only 15 less significant bits of it is used:
  * ```haxe
  * Int16.create(1) << -1
  * //is basically the same as
@@ -122,7 +123,7 @@ abstract Int16(Int) {
 	 *
 	 * @param bits - a binary string. Any spaces are ignored.
 	 *
-	 * @throws InvalidArgumentException - if amount of bits in `bits` string less or greater than 16
+	 * @throws InvalidArgumentException - if amount of bits in `bits` string is less or greater than 16
 	 * or if `bits` contains any characters other than `"0"`, `"1"` or space.
 	 */
 	@:noUsing

@@ -28,6 +28,10 @@ class MacroTools {
 		return isType(value, 'haxe.numeric.Int16');
 	}
 
+	macro static public function isTypeUInt16(value:Expr):Expr {
+		return isType(value, 'haxe.numeric.UInt16');
+	}
+
 #if macro
 	static function isType(value:Expr, type:String):Expr {
 		if(Context.typeof(value).toString() != type) {

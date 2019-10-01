@@ -10,7 +10,8 @@ using haxe.numeric.Numeric;
  *
  * On platforms which don't have native uint8 at runtime `UInt8` is represented by `Int`.
  *
- * If the right side operand of a bitwise shift is negative, then only 7 less significant bit of it is used:
+ * If the right side operand of a bitwise shift is negative or takes more than 7 bits,
+ * then only 7 less significant bits of it is used:
  * ```haxe
  * UInt8.create(1) << -1
  * //is basically the same as
@@ -40,9 +41,9 @@ using haxe.numeric.Numeric;
  *
  * `UInt8` can be converted to `Int`:
  * ```haxe
- * UInt8.MIN.toInt() == -1;
+ * UInt8.MAX.toInt() == 255;
  * ```
- * To convert `UInt8` to other integer types refer to `haxe.numeric.Numeric.Int8Utils` methods.
+ * To convert `UInt8` to other integer types refer to `haxe.numeric.Numeric.UInt8Utils` methods.
  */
 @:allow(haxe.numeric)
 abstract UInt8(Int) {
@@ -82,7 +83,7 @@ abstract UInt8(Int) {
 	 *
 	 * @param bits - a binary string. Any spaces are ignored.
 	 *
-	 * @throws InvalidArgumentException - if amount of bits in `bits` string less or greater than 8
+	 * @throws InvalidArgumentException - if amount of bits in `bits` string is less or greater than 8
 	 * or if `bits` contains any characters other than `"0"`, `"1"` or space.
 	 */
 	@:noUsing

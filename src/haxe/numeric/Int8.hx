@@ -15,7 +15,8 @@ import haxe.numeric.exceptions.OverflowException;
  * // But
  * Int8.parseBits('0111 1111').toInt() << 1 == 254; // also true
  * ```
- * If the right side operand of a bitwise shift is negative, then only 7 less significant bit of it is used:
+ * If the right side operand of a bitwise shift is negative or takes more than 7 bits,
+ * then only 7 less significant bits of it is used:
  * ```haxe
  * Int8.create(1) << -1
  * //is basically the same as
@@ -122,7 +123,7 @@ abstract Int8(Int) {
 	 *
 	 * @param bits - a binary string. Any spaces are ignored.
 	 *
-	 * @throws InvalidArgumentException - if amount of bits in `bits` string less or greater than 8
+	 * @throws InvalidArgumentException - if amount of bits in `bits` string is less or greater than 8
 	 * or if `bits` contains any characters other than `"0"`, `"1"` or space.
 	 */
 	@:noUsing
