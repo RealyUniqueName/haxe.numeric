@@ -12,9 +12,9 @@ using haxe.numeric.Numeric;
  *
  * If the right side operand of a bitwise shift is negative, then only 7 less significant bit of it is used:
  * ```haxe
- * Int8.create(1) << -1
+ * UInt8.create(1) << -1
  * //is basically the same as
- * Int8.create(1) << (-1 & 0x7)
+ * UInt8.create(1) << (-1 & 0x7)
  * ```
  *
  * Types of arithmetic.
