@@ -202,96 +202,110 @@ abstract Int16(Int) {
 	@:op(A + B) inline function addition(b:Int16):Int16 {
 		return create(this + b.toInt());
 	}
-	@:op(A + B) function int8Addition(b:Int8):Int;
-	@:op(A + B) function uint8Addition(b:UInt8):Int;
-	@:op(A + B) @:commutative static function intAddition(a:Int16, b:Int):Int;
-	@:op(A + B) @:commutative static function floatAddition(a:Int16, b:Float):Float;
+	@:op(A + B) function additionInt8(b:Int8):Int;
+	@:op(A + B) function additionUInt8(b:UInt8):Int;
+	@:op(A + B) function additionUInt16(b:UInt16):Int;
+	@:op(A + B) @:commutative static function additionInt(a:Int16, b:Int):Int;
+	@:op(A + B) @:commutative static function additionFloat(a:Int16, b:Float):Float;
 
 	@:op(A - B) inline function subtraction(b:Int16):Int16 {
 		return create(this - b.toInt());
 	}
-	@:op(A - B) function int8Subtraction(b:Int8):Int;
-	@:op(A - B) function uint8Subtraction(b:UInt8):Int;
-	@:op(A - B) static function intSubtractionFirst(a:Int16, b:Int):Int;
-	@:op(A - B) static function intSubtractionSecond(a:Int, b:Int16):Int;
-	@:op(A - B) static function floatSubtractionFirst(a:Int16, b:Float):Float;
-	@:op(A - B) static function floatSubtractionSecond(a:Float, b:Int16):Float;
+	@:op(A - B) function subtractionInt8(b:Int8):Int;
+	@:op(A - B) function subtractionUInt8(b:UInt8):Int;
+	@:op(A - B) function subtractionUInt16(b:UInt16):Int;
+	@:op(A - B) static function subtractionFirstInt(a:Int16, b:Int):Int;
+	@:op(A - B) static function subtractionSecondInt(a:Int, b:Int16):Int;
+	@:op(A - B) static function subtractionFirstFloat(a:Int16, b:Float):Float;
+	@:op(A - B) static function subtractionSecondFloat(a:Float, b:Int16):Float;
 
 	@:op(A * B) inline function multiplication(b:Int16):Int16 {
 		return create(this * b.toInt());
 	}
-	@:op(A * B) function int8Addition(b:Int8):Int;
-	@:op(A * B) function uint8Addition(b:UInt8):Int;
-	@:op(A * B) @:commutative static function intMultiplication(a:Int16, b:Int):Int;
-	@:op(A * B) @:commutative static function floatMultiplication(a:Int16, b:Float):Float;
+	@:op(A * B) function multiplicationInt8(b:Int8):Int;
+	@:op(A * B) function multiplicationUInt8(b:UInt8):Int;
+	@:op(A * B) function multiplicationUInt16(b:UInt16):Int;
+	@:op(A * B) @:commutative static function multiplicationInt(a:Int16, b:Int):Int;
+	@:op(A * B) @:commutative static function multiplicationFloat(a:Int16, b:Float):Float;
 
 	@:op(A / B) function division(b:Int16):Float;
-	@:op(A / B) function int8Division(b:Int8):Float;
-	@:op(A / B) function uint8Division(b:UInt8):Float;
-	@:op(A / B) static function intDivisionFirst(a:Int16, b:Int):Float;
-	@:op(A / B) static function intDivisionSecond(a:Int, b:Int16):Float;
-	@:op(A / B) static function floatDivisionFirst(a:Int16, b:Float):Float;
-	@:op(A / B) static function floatDivisionSecond(a:Float, b:Int16):Float;
+	@:op(A / B) function divisionInt8(b:Int8):Float;
+	@:op(A / B) function divisionUInt8(b:UInt8):Float;
+	@:op(A / B) function divisionUInt16(b:UInt16):Float;
+	@:op(A / B) static function divisionFirstInt(a:Int16, b:Int):Float;
+	@:op(A / B) static function divisionSecondInt(a:Int, b:Int16):Float;
+	@:op(A / B) static function divisionFirstFloat(a:Int16, b:Float):Float;
+	@:op(A / B) static function divisionSecondFloat(a:Float, b:Int16):Float;
 
 	@:op(A % B) function modulo(b:Int16):Int16;
-	@:op(A % B) function int8Modulo(b:Int8):Int16;
-	@:op(A % B) function uint8Modulo(b:UInt8):Int16;
-	@:op(A % B) static function intModuloFirst(a:Int16, b:Int):Int16;
-	@:op(A % B) static function intModuloSecond(a:Int, b:Int16):Int16;
-	@:op(A % B) static function floatModuloFirst(a:Int16, b:Float):Float;
-	@:op(A % B) static function floatModuloSecond(a:Float, b:Int16):Float;
+	@:op(A % B) function moduloInt8(b:Int8):Int16;
+	@:op(A % B) function moduloUInt8(b:UInt8):Int16;
+	@:op(A % B) function moduloUInt16(b:UInt16):Int16;
+	@:op(A % B) static function moduloFirstInt(a:Int16, b:Int):Int16;
+	@:op(A % B) static function moduloSecondInt(a:Int, b:Int16):Int16;
+	@:op(A % B) static function moduloFirstFloat(a:Int16, b:Float):Float;
+	@:op(A % B) static function moduloSecondFloat(a:Float, b:Int16):Float;
 
 	@:op(A == B) function equal(b:Int16):Bool;
-	@:op(A == B) function int8Equal(b:Int8):Bool;
-	@:op(A == B) function uint8Equal(b:UInt8):Bool;
-	@:op(A == B) @:commutative static function intEqual(a:Int16, b:Int):Bool;
-	@:op(A == B) @:commutative static function floatEqual(a:Int16, b:Float):Bool;
+	@:op(A == B) function equalInt8(b:Int8):Bool;
+	@:op(A == B) function equalUInt8(b:UInt8):Bool;
+	@:op(A == B) function equalUInt16(b:UInt16):Bool;
+	@:op(A == B) @:commutative static function equalInt(a:Int16, b:Int):Bool;
+	@:op(A == B) @:commutative static function equalFloat(a:Int16, b:Float):Bool;
 
 	@:op(A != B) function notEqual(b:Int16):Bool;
-	@:op(A != B) function int8NotEqual(b:Int8):Bool;
-	@:op(A != B) function uint8NotEqual(b:UInt8):Bool;
-	@:op(A != B) @:commutative static function intNotEqual(a:Int16, b:Int):Bool;
-	@:op(A != B) @:commutative static function floatNotEqual(a:Int16, b:Float):Bool;
+	@:op(A != B) function notEqualInt8(b:Int8):Bool;
+	@:op(A != B) function notEqualUInt8(b:UInt8):Bool;
+	@:op(A != B) function notEqualUInt16(b:UInt16):Bool;
+	@:op(A != B) @:commutative static function notEqualInt(a:Int16, b:Int):Bool;
+	@:op(A != B) @:commutative static function notEqualFloat(a:Int16, b:Float):Bool;
 
 	@:op(A > B) function greater(b:Int16):Bool;
-	@:op(A > B) function int8Greater(b:Int8):Bool;
-	@:op(A > B) function uint8Greater(b:UInt8):Bool;
-	@:op(A > B) static function intGreaterFirst(a:Int16, b:Int):Bool;
-	@:op(A > B) static function intGreaterSecond(a:Int, b:Int16):Bool;
-	@:op(A > B) static function floatGreaterFirst(a:Int16, b:Float):Bool;
-	@:op(A > B) static function floatGreaterSecond(a:Float, b:Int16):Bool;
+	@:op(A > B) function greaterInt8(b:Int8):Bool;
+	@:op(A > B) function greaterUInt8(b:UInt8):Bool;
+	@:op(A > B) function greaterUInt16(b:UInt16):Bool;
+	@:op(A > B) static function greaterFirstInt(a:Int16, b:Int):Bool;
+	@:op(A > B) static function greaterSecondInt(a:Int, b:Int16):Bool;
+	@:op(A > B) static function greaterFirstFloat(a:Int16, b:Float):Bool;
+	@:op(A > B) static function greaterSecondFloat(a:Float, b:Int16):Bool;
 
 	@:op(A >= B) function greaterOrEqual(b:Int16):Bool;
-	@:op(A >= B) function int8GreaterOrEqual(b:Int8):Bool;
-	@:op(A >= B) function uint8GreaterOrEqual(b:UInt8):Bool;
-	@:op(A >= B) static function intGreaterOrEqualFirst(a:Int16, b:Int):Bool;
-	@:op(A >= B) static function intGreaterOrEqualSecond(a:Int, b:Int16):Bool;
-	@:op(A >= B) static function floatGreaterOrEqualFirst(a:Int16, b:Float):Bool;
-	@:op(A >= B) static function floatGreaterOrEqualSecond(a:Float, b:Int16):Bool;
+	@:op(A >= B) function greaterOrEqualInt8(b:Int8):Bool;
+	@:op(A >= B) function greaterOrEqualUInt8(b:UInt8):Bool;
+	@:op(A >= B) function greaterOrEqualUInt16(b:UInt16):Bool;
+	@:op(A >= B) static function greaterOrEqualFirstInt(a:Int16, b:Int):Bool;
+	@:op(A >= B) static function greaterOrEqualSecondInt(a:Int, b:Int16):Bool;
+	@:op(A >= B) static function greaterOrEqualFirstFloat(a:Int16, b:Float):Bool;
+	@:op(A >= B) static function greaterOrEqualSecondFloat(a:Float, b:Int16):Bool;
 
 	@:op(A < B) function less(b:Int16):Bool;
-	@:op(A < B) function int8Less(b:Int8):Bool;
-	@:op(A < B) function uint8Less(b:UInt8):Bool;
-	@:op(A < B) static function intLessFirst(a:Int16, b:Int):Bool;
-	@:op(A < B) static function intLessSecond(a:Int, b:Int16):Bool;
-	@:op(A < B) static function floatLessFirst(a:Int16, b:Float):Bool;
-	@:op(A < B) static function floatLessSecond(a:Float, b:Int16):Bool;
+	@:op(A < B) function lessInt8(b:Int8):Bool;
+	@:op(A < B) function lessUInt8(b:UInt8):Bool;
+	@:op(A < B) function lessUInt16(b:UInt16):Bool;
+	@:op(A < B) static function lessFirstInt(a:Int16, b:Int):Bool;
+	@:op(A < B) static function lessSecondInt(a:Int, b:Int16):Bool;
+	@:op(A < B) static function lessFirstFloat(a:Int16, b:Float):Bool;
+	@:op(A < B) static function lessSecondFloat(a:Float, b:Int16):Bool;
 
 	@:op(A <= B) function lessOrEqual(b:Int16):Bool;
-	@:op(A <= B) function int8LessOrEqual(b:Int8):Bool;
-	@:op(A <= B) function uint8LessOrEqual(b:UInt8):Bool;
-	@:op(A <= B) static function intLessOrEqualFirst(a:Int16, b:Int):Bool;
-	@:op(A <= B) static function intLessOrEqualSecond(a:Int, b:Int16):Bool;
-	@:op(A <= B) static function floatLessOrEqualFirst(a:Int16, b:Float):Bool;
-	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:Int16):Bool;
+	@:op(A <= B) function lessOrEqualInt8(b:Int8):Bool;
+	@:op(A <= B) function lessOrEqualUInt8(b:UInt8):Bool;
+	@:op(A <= B) function lessOrEqualUInt16(b:UInt16):Bool;
+	@:op(A <= B) static function lessOrEqualFirstInt(a:Int16, b:Int):Bool;
+	@:op(A <= B) static function lessOrEqualSecondInt(a:Int, b:Int16):Bool;
+	@:op(A <= B) static function lessOrEqualFirstFloat(a:Int16, b:Float):Bool;
+	@:op(A <= B) static function lessOrEqualSecondFloat(a:Float, b:Int16):Bool;
 
 	@:op(~A) function negate():Int16;
 
 	@:op(A & B) function and(b:Int16):Int16;
-	@:op(A & B) inline function int8And(b:Int8):Int {
+	@:op(A & B) inline function andInt8(b:Int8):Int {
 		return valueToBits(this) & Int8.valueToBits(b.toInt());
 	}
-	@:op(A & B) inline function uint8And(b:UInt8):Int {
+	@:op(A & B) inline function andUInt8(b:UInt8):Int {
+		return valueToBits(this) & b.toInt();
+	}
+	@:op(A & B) inline function andUInt16(b:UInt16):Int {
 		return valueToBits(this) & b.toInt();
 	}
 	@:op(A & B) @:commutative static inline function andInt(a:Int16, b:Int):Int {
@@ -299,10 +313,13 @@ abstract Int16(Int) {
 	}
 
 	@:op(A | B) function or(b:Int16):Int16;
-	@:op(A | B) inline function int8Or(b:Int8):Int {
+	@:op(A | B) inline function orInt8(b:Int8):Int {
 		return valueToBits(this) | Int8.valueToBits(b.toInt());
 	}
-	@:op(A | B) inline function uint8Or(b:UInt8):Int {
+	@:op(A | B) inline function orUInt8(b:UInt8):Int {
+		return valueToBits(this) | b.toInt();
+	}
+	@:op(A | B) inline function orUInt16(b:UInt16):Int {
 		return valueToBits(this) | b.toInt();
 	}
 	@:op(A | B) @:commutative static inline function orInt(a:Int16, b:Int):Int {
@@ -310,10 +327,13 @@ abstract Int16(Int) {
 	}
 
 	@:op(A ^ B) function xor(b:Int16):Int16;
-	@:op(A ^ B) inline function int8Xor(b:Int8):Int {
+	@:op(A ^ B) inline function xorInt8(b:Int8):Int {
 		return valueToBits(this) ^ Int8.valueToBits(b.toInt());
 	}
-	@:op(A ^ B) inline function uint8Xor(b:UInt8):Int {
+	@:op(A ^ B) inline function xorUInt8(b:UInt8):Int {
+		return valueToBits(this) ^ b.toInt();
+	}
+	@:op(A ^ B) inline function xorUInt16(b:UInt16):Int {
 		return valueToBits(this) ^ b.toInt();
 	}
 	@:op(A ^ B) @:commutative static inline function xorInt(a:Int16, b:Int):Int {
@@ -322,49 +342,58 @@ abstract Int16(Int) {
 
 	// <<
 	@:op(A << B) inline function shiftLeft(b:Int16):Int16 {
-		return intShiftLeftFirst(b.toInt());
+		return shiftLeftFirstInt(b.toInt());
 	}
-	@:op(A << B) inline function int8ShiftLeft(b:Int8):Int16 {
-		return intShiftLeftFirst(Int8.valueToBits(b.toInt()));
+	@:op(A << B) inline function shiftLeftInt8(b:Int8):Int16 {
+		return shiftLeftFirstInt(Int8.valueToBits(b.toInt()));
 	}
-	@:op(A << B) inline function uint8ShiftLeft(b:UInt8):Int16 {
-		return intShiftLeftFirst(b.toInt());
+	@:op(A << B) inline function shiftLeftUInt8(b:UInt8):Int16 {
+		return shiftLeftFirstInt(b.toInt());
 	}
-	@:op(A << B) inline function intShiftLeftFirst(b:Int):Int16 {
+	@:op(A << B) inline function shiftLeftUInt16(b:UInt16):Int16 {
+		return shiftLeftFirstInt(b.toInt());
+	}
+	@:op(A << B) inline function shiftLeftFirstInt(b:Int):Int16 {
 		var bits = (this << (b & 0xF)) & 0xFFFF;
 		return new Int16(bitsToValue(bits));
 	}
-	@:op(A << B) static function intShiftLeftSecond(a:Int, b:Int16):Int;
+	@:op(A << B) static function shiftLeftSecondInt(a:Int, b:Int16):Int;
 
 	// >>
 	@:op(A >> B) inline function shiftRight(b:Int16):Int16 {
-		return intShiftRightFirst(b.toInt());
+		return shiftRightFirstInt(b.toInt());
 	}
-	@:op(A >> B) inline function int8ShiftRight(b:Int8):Int16 {
-		return intShiftRightFirst(valueToBits(b.toInt()));
+	@:op(A >> B) inline function shiftRightInt8(b:Int8):Int16 {
+		return shiftRightFirstInt(valueToBits(b.toInt()));
 	}
-	@:op(A >> B) inline function uint8ShiftRight(b:UInt8):Int16 {
-		return intShiftRightFirst(b.toInt());
+	@:op(A >> B) inline function shiftRightUInt8(b:UInt8):Int16 {
+		return shiftRightFirstInt(b.toInt());
 	}
-	@:op(A >> B) inline function intShiftRightFirst(b:Int):Int16 {
+	@:op(A >> B) inline function shiftRightUInt16(b:UInt16):Int16 {
+		return shiftRightFirstInt(b.toInt());
+	}
+	@:op(A >> B) inline function shiftRightFirstInt(b:Int):Int16 {
 		var result = this >> (b & 0xF);
 		return new Int16(result);
 	}
-	@:op(A >> B) static function intShiftRightSecond(a:Int, b:Int16):Int;
+	@:op(A >> B) static function shiftRightSecondInt(a:Int, b:Int16):Int;
 
 	// >>>
 	@:op(A >>> B) inline function unsignedShiftRight(b:Int16):Int16 {
-		return intUnsignedShiftRightFirst(b.toInt());
+		return unsignedShiftRightFirstInt(b.toInt());
 	}
-	@:op(A >>> B) inline function int8UnsignedShiftRight(b:Int8):Int16 {
-		return intUnsignedShiftRightFirst(valueToBits(b.toInt()));
+	@:op(A >>> B) inline function unsignedShiftRightInt8(b:Int8):Int16 {
+		return unsignedShiftRightFirstInt(valueToBits(b.toInt()));
 	}
-	@:op(A >>> B) inline function uint8UnsignedShiftRight(b:UInt8):Int16 {
-		return intUnsignedShiftRightFirst(b.toInt());
+	@:op(A >>> B) inline function unsignedShiftRightUInt8(b:UInt8):Int16 {
+		return unsignedShiftRightFirstInt(b.toInt());
 	}
-	@:op(A >>> B) inline function intUnsignedShiftRightFirst(b:Int):Int16 {
+	@:op(A >>> B) inline function unsignedShiftRightUInt16(b:UInt16):Int16 {
+		return unsignedShiftRightFirstInt(b.toInt());
+	}
+	@:op(A >>> B) inline function unsignedShiftRightFirstInt(b:Int):Int16 {
 		var result = valueToBits(this) >> (b & 0xF);
 		return new Int16(result);
 	}
-	@:op(A >>> B) static function intUnsignedShiftRightSecond(a:Int, b:Int16):Int;
+	@:op(A >>> B) static function unsignedShiftRightSecondInt(a:Int, b:Int16):Int;
 }

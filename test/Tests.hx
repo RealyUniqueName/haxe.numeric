@@ -14,7 +14,10 @@ class Tests {
 
 		runner.addCase(new Int8UInt8Spec());
 		runner.addCase(new Int8Int16Spec());
+		runner.addCase(new Int8UInt16Spec());
+
 		runner.addCase(new Int16UInt8Spec());
+		runner.addCase(new Int16UInt16Spec());
 
 		var report = Report.create(runner);
 		report.displayHeader = AlwaysShowHeader;
