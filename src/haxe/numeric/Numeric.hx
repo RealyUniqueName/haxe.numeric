@@ -9,13 +9,28 @@ using StringTools;
  */
 class Numeric {
 	@:inheritDoc(haxe.numeric.Int8.create)
-	static public inline function toInt8(n:Int):Int8 {
-		return Int8.create(n);
+	static public inline function toInt8(value:Int):Int8 {
+		return Int8.create(value);
+	}
+
+	@:inheritDoc(haxe.numeric.Int8.createBits)
+	static public inline function toInt8Bits(value:Int):Int8 {
+		return Int8.createBits(value);
 	}
 
 	@:inheritDoc(haxe.numeric.UInt8.create)
-	static public inline function toUInt8(n:Int):UInt8 {
-		return UInt8.create(n);
+	static public inline function toUInt8(value:Int):UInt8 {
+		return UInt8.create(value);
+	}
+
+	@:inheritDoc(haxe.numeric.Int16.create)
+	static public inline function toInt16(value:Int):Int16 {
+		return Int16.create(value);
+	}
+
+	@:inheritDoc(haxe.numeric.Int16.createBits)
+	static public inline function toInt16Bits(value:Int):Int16 {
+		return Int16.createBits(value);
 	}
 
 	/**
@@ -74,7 +89,7 @@ class Int8Utils {
 	 * because binary representation of `Int8.create(-1)` is `1111 1111`
 	 */
 	static public inline function toIntBits(i8:Int8):Int {
-		return @:privateAccess Int8.valueToBits(i8.toInt());
+		return Int8.valueToBits(i8.toInt());
 	}
 
 	/**
@@ -85,7 +100,28 @@ class Int8Utils {
 	 * because binary representation of `Int8.create(-1)` is `1111 1111`
 	 */
 	static public inline function toUInt8Bits(i8:Int8):UInt8 {
-		return @:privateAccess new UInt8(Int8.valueToBits(i8.toInt()));
+		return new UInt8(Int8.valueToBits(i8.toInt()));
+	}
+
+	/**
+	 * Convert `Int8` to `Int16` by value.
+	 * ```haxe
+	 * Int8.create(-1).toInt16() == Int16.create(-1);
+	 * ```
+	 */
+	static public inline function toInt16(i8:Int8):Int16 {
+		return new Int16(i8.toInt());
+	}
+
+	/**
+	 * Convert `Int8` to `Int16` by bits.
+	 * ```haxe
+	 * Int8.create(-1).toUInt8Bits() == Int16.create(255);
+	 * ```
+	 * because binary representation of `Int8.create(-1)` is `1111 1111`
+	 */
+	static public inline function toInt16Bits(i8:Int8):Int16 {
+		return new Int16(Int8.valueToBits(i8.toInt()));
 	}
 }
 
@@ -103,6 +139,31 @@ class UInt8Utils {
 	 * because binary representation of `UInt8.create(255)` is `1111 1111`
 	 */
 	static public inline function toInt8Bits(u8:UInt8):Int8 {
-		return @:privateAccess new Int8(Int8.bitsToValue(u8.toInt()));
+		return new Int8(Int8.bitsToValue(u8.toInt()));
+	}
+
+	/**
+	 * Convert `UInt8` to `Int16`.
+	 */
+	static public inline function toInt16(u8:UInt8):Int16 {
+		return new Int16(u8.toInt());
+	}
+}
+
+class Int16Utils {
+	@:inheritDoc(haxe.numeric.Int16.parseBits)
+	static public inline function parseBitsInt16(bits:String):Int16 {
+		return Int16.parseBits(bits);
+	}
+
+	/**
+	 * Convert `Int16` to `Int` by bits.
+	 * ```haxe
+	 * Int16.create(-1).toIntBits() == 65535
+	 * ```
+	 * because binary representation of `Int16.create(-1)` is `1111 1111 1111 1111`
+	 */
+	static public inline function toIntBits(i16:Int16):Int {
+		return Int16.valueToBits(i16.toInt());
 	}
 }

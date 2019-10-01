@@ -44,6 +44,23 @@ class Int8Spec extends TestBase {
 		);
 	}
 
+	public function specCreateBits() {
+		Int8.createBits(0xFF).isTypeInt8();
+
+		Int8.createBits(0x7F) == Int8.MAX;
+		Int8.createBits(0xFF) == Int8.create(-1);
+		Int8.createBits(0x80) == Int8.MIN;
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int8.createBits(0x100), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int8.create(-1) == Int8.createBits(0x1FF);
+			}
+		);
+	}
+
 	public function specToString() {
 		'123' == Int8.create(123).toString();
 		'127' == Int8.MAX.toString();
@@ -396,6 +413,8 @@ class Int8Spec extends TestBase {
 		Int8.parseBits('1000 0001') << 1 == Int8.parseBits('0000 0010');
 
 		Int8.parseBits('0000 0001') << Int8.create(2) == Int8.parseBits('0000 0100');
+		Int8.parseBits('1100 0001') << Int8.create(-1) == Int8.parseBits('1000 0000');
+		Int8.parseBits('1100 0001') << Int8.parseBits('1000 0001') == Int8.parseBits('1000 0010');
 
 		Int8.parseBits('1100 0001') << -1 == Int8.parseBits('1000 0000');
 		Int8.parseBits('1100 0010') << -1 == Int8.parseBits('0000 0000');

@@ -15,6 +15,12 @@ import haxe.numeric.exceptions.OverflowException;
  * // But
  * Int8.parseBits('0111 1111').toInt() << 1 == 254; // also true
  * ```
+ * If the right side operand of a bitwise shift is negative, then only 7 less significant bit of it is used:
+ * ```haxe
+ * Int8.create(1) << -1
+ * //is basically the same as
+ * Int8.create(1) << (-1 & 0x7)
+ * ```
  *
  * Types of arithmetic.
  *
@@ -22,6 +28,7 @@ import haxe.numeric.exceptions.OverflowException;
  * if both operands are `Int8` then the result will be `Int8` too.
  * Otherwise the type of result will depend on the types of both arguments.
  * For division the result will always be `Float`.
+ * For bitwise shifts if the left side operand is `Int8` the result type is `Int8` too.
  * For exact result types depending on operand types refer to specification tests of `Int8`
  *
  * Overflow.
@@ -48,6 +55,7 @@ import haxe.numeric.exceptions.OverflowException;
  * ```
  * To convert `Int8` to other integer types refer to `haxe.numeric.Numeric.Int8Utils` methods.
  */
+@:allow(haxe.numeric)
 abstract Int8(Int) {
 	static inline var MAX_AS_INT = 0x7F;
 	static inline var MIN_AS_INT = -0x80;
@@ -79,6 +87,33 @@ abstract Int8(Int) {
 		} else {
 			return new Int8(value);
 		}
+	}
+
+	/**
+	 * Creates `Int8` from 8 less significant bits of `value`.
+	 *
+	 * ```haxe
+	 * using haxe.numeric.Numeric
+	 *
+	 * 255.toInt8Bits() == Int8.create(-1);
+	 * ```
+	 *
+	 * In `-debug` builds or with `-D OVERFLOW_THROW`:
+	 * If `value` has non-zeros on 9th or more significant bits
+	 * then `haxe.numeric.exceptions.OverflowException` is thrown.
+	 *
+	 * In release builds or with `-D OVERFLOW_WRAP`:
+	 * If `value` has non-zeros on 9th or more significant bits
+	 * then only 8 less significant bits are used.
+	 * That is `Int8.create(514)` is equal to `Int8.create(2)` because `514 & 0xFF == 2`
+	 */
+	static public inline function createBits(value:Int):Int8 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(value & ~0xFF != 0) {
+			throw new OverflowException('$value has non-zeros on 9th or more significant bits');
+		}
+		#end
+		return new Int8(bitsToValue(value & 0xFF));
 	}
 
 	/**
@@ -167,6 +202,7 @@ abstract Int8(Int) {
 		return create(this + b.toInt());
 	}
 	@:op(A + B) function uint8Addition(b:UInt8):Int;
+	@:op(A + B) function int16Addition(b:Int16):Int;
 	@:op(A + B) @:commutative static function intAddition(a:Int8, b:Int):Int;
 	@:op(A + B) @:commutative static function floatAddition(a:Int8, b:Float):Float;
 
@@ -174,6 +210,7 @@ abstract Int8(Int) {
 		return create(this - b.toInt());
 	}
 	@:op(A - B) function uint8Subtraction(b:UInt8):Int;
+	@:op(A - B) function int16Subtraction(b:Int16):Int;
 	@:op(A - B) static function intSubtractionFirst(a:Int8, b:Int):Int;
 	@:op(A - B) static function intSubtractionSecond(a:Int, b:Int8):Int;
 	@:op(A - B) static function floatSubtractionFirst(a:Int8, b:Float):Float;
@@ -183,11 +220,13 @@ abstract Int8(Int) {
 		return create(this * b.toInt());
 	}
 	@:op(A * B) function uint8Addition(b:UInt8):Int;
+	@:op(A * B) function int16Addition(b:Int16):Int;
 	@:op(A * B) @:commutative static function intMultiplication(a:Int8, b:Int):Int;
 	@:op(A * B) @:commutative static function floatMultiplication(a:Int8, b:Float):Float;
 
 	@:op(A / B) function division(b:Int8):Float;
 	@:op(A / B) function uint8Division(b:UInt8):Float;
+	@:op(A / B) function int16Division(b:Int16):Float;
 	@:op(A / B) static function intDivisionFirst(a:Int8, b:Int):Float;
 	@:op(A / B) static function intDivisionSecond(a:Int, b:Int8):Float;
 	@:op(A / B) static function floatDivisionFirst(a:Int8, b:Float):Float;
@@ -195,6 +234,7 @@ abstract Int8(Int) {
 
 	@:op(A % B) function modulo(b:Int8):Int8;
 	@:op(A % B) function uint8Modulo(b:UInt8):Int8;
+	@:op(A % B) function int16Modulo(b:Int16):Int8;
 	@:op(A % B) static function intModuloFirst(a:Int8, b:Int):Int8;
 	@:op(A % B) static function intModuloSecond(a:Int, b:Int8):Int8;
 	@:op(A % B) static function floatModuloFirst(a:Int8, b:Float):Float;
@@ -202,16 +242,19 @@ abstract Int8(Int) {
 
 	@:op(A == B) function equal(b:Int8):Bool;
 	@:op(A == B) function uint8Equal(b:UInt8):Bool;
+	@:op(A == B) function int16Equal(b:Int16):Bool;
 	@:op(A == B) @:commutative static function intEqual(a:Int8, b:Int):Bool;
 	@:op(A == B) @:commutative static function floatEqual(a:Int8, b:Float):Bool;
 
 	@:op(A != B) function notEqual(b:Int8):Bool;
 	@:op(A != B) function uint8NotEqual(b:UInt8):Bool;
+	@:op(A != B) function int16NotEqual(b:Int16):Bool;
 	@:op(A != B) @:commutative static function intNotEqual(a:Int8, b:Int):Bool;
 	@:op(A != B) @:commutative static function floatNotEqual(a:Int8, b:Float):Bool;
 
 	@:op(A > B) function greater(b:Int8):Bool;
 	@:op(A > B) function uint8Greater(b:UInt8):Bool;
+	@:op(A > B) function int16Greater(b:Int16):Bool;
 	@:op(A > B) static function intGreaterFirst(a:Int8, b:Int):Bool;
 	@:op(A > B) static function intGreaterSecond(a:Int, b:Int8):Bool;
 	@:op(A > B) static function floatGreaterFirst(a:Int8, b:Float):Bool;
@@ -219,6 +262,7 @@ abstract Int8(Int) {
 
 	@:op(A >= B) function greaterOrEqual(b:Int8):Bool;
 	@:op(A >= B) function uint8GreaterOrEqual(b:UInt8):Bool;
+	@:op(A >= B) function int16GreaterOrEqual(b:Int16):Bool;
 	@:op(A >= B) static function intGreaterOrEqualFirst(a:Int8, b:Int):Bool;
 	@:op(A >= B) static function intGreaterOrEqualSecond(a:Int, b:Int8):Bool;
 	@:op(A >= B) static function floatGreaterOrEqualFirst(a:Int8, b:Float):Bool;
@@ -226,6 +270,7 @@ abstract Int8(Int) {
 
 	@:op(A < B) function less(b:Int8):Bool;
 	@:op(A < B) function uint8Less(b:UInt8):Bool;
+	@:op(A < B) function int16Less(b:Int16):Bool;
 	@:op(A < B) static function intLessFirst(a:Int8, b:Int):Bool;
 	@:op(A < B) static function intLessSecond(a:Int, b:Int8):Bool;
 	@:op(A < B) static function floatLessFirst(a:Int8, b:Float):Bool;
@@ -233,6 +278,7 @@ abstract Int8(Int) {
 
 	@:op(A <= B) function lessOrEqual(b:Int8):Bool;
 	@:op(A <= B) function uint8LessOrEqual(b:UInt8):Bool;
+	@:op(A <= B) function int16LessOrEqual(b:Int16):Bool;
 	@:op(A <= B) static function intLessOrEqualFirst(a:Int8, b:Int):Bool;
 	@:op(A <= B) static function intLessOrEqualSecond(a:Int, b:Int8):Bool;
 	@:op(A <= B) static function floatLessOrEqualFirst(a:Int8, b:Float):Bool;
@@ -244,6 +290,9 @@ abstract Int8(Int) {
 	@:op(A & B) inline function uint8And(b:UInt8):Int {
 		return valueToBits(this) & b.toInt();
 	}
+	@:op(A & B) inline function int16And(b:Int16):Int {
+		return valueToBits(this) & Int16.valueToBits(b.toInt());
+	}
 	@:op(A & B) @:commutative static inline function andInt(a:Int8, b:Int):Int {
 		return valueToBits(a.toInt()) & b;
 	}
@@ -251,6 +300,9 @@ abstract Int8(Int) {
 	@:op(A | B) function or(b:Int8):Int8;
 	@:op(A | B) inline function uint8Or(b:UInt8):Int {
 		return valueToBits(this) | b.toInt();
+	}
+	@:op(A | B) inline function int16Or(b:Int16):Int {
+		return valueToBits(this) | valueToBits(b.toInt());
 	}
 	@:op(A | B) @:commutative static inline function orInt(a:Int8, b:Int):Int {
 		return valueToBits(a.toInt()) | b;
@@ -260,15 +312,21 @@ abstract Int8(Int) {
 	@:op(A ^ B) inline function uint8Xor(b:UInt8):Int {
 		return valueToBits(this) ^ b.toInt();
 	}
+	@:op(A ^ B) inline function int16Xor(b:Int16):Int {
+		return valueToBits(this) ^ Int16.valueToBits(b.toInt());
+	}
 	@:op(A ^ B) @:commutative static inline function xorInt(a:Int8, b:Int):Int {
 		return valueToBits(a.toInt()) ^ b;
 	}
 
 	// <<
 	@:op(A << B) inline function shiftLeft(b:Int8):Int8 {
-		return intShiftLeftFirst(b.toInt());
+		return intShiftLeftFirst(valueToBits(b.toInt()));
 	}
 	@:op(A << B) inline function uint8ShiftLeft(b:UInt8):Int8 {
+		return intShiftLeftFirst(b.toInt());
+	}
+	@:op(A << B) inline function int16ShiftLeft(b:Int16):Int8 {
 		return intShiftLeftFirst(b.toInt());
 	}
 	@:op(A << B) inline function intShiftLeftFirst(b:Int):Int8 {
@@ -284,6 +342,9 @@ abstract Int8(Int) {
 	@:op(A >> B) inline function uint8ShiftRight(b:UInt8):Int8 {
 		return intShiftRightFirst(b.toInt());
 	}
+	@:op(A >> B) inline function int16ShiftRight(b:Int16):Int8 {
+		return intShiftRightFirst(b.toInt());
+	}
 	@:op(A >> B) inline function intShiftRightFirst(b:Int):Int8 {
 		var result = this >> (b & 0x7);
 		return new Int8(result);
@@ -295,6 +356,9 @@ abstract Int8(Int) {
 		return intUnsignedShiftRightFirst(b.toInt());
 	}
 	@:op(A >>> B) inline function uint8UnsignedShiftRight(b:UInt8):Int8 {
+		return intUnsignedShiftRightFirst(b.toInt());
+	}
+	@:op(A >>> B) inline function int16UnsignedShiftRight(b:Int16):Int8 {
 		return intUnsignedShiftRightFirst(b.toInt());
 	}
 	@:op(A >>> B) inline function intUnsignedShiftRightFirst(b:Int):Int8 {
