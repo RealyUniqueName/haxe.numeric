@@ -7,7 +7,7 @@
 	"classPath": "src",
 	"version": "0.1.0",
 	"releasenote": "initial",
-	"contributors": ["realyuniquename"],
+	"contributors": ["HaxeFoundation"],
 	"dependencies": {
 		"exception":""
 	}
