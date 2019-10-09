@@ -15,8 +15,8 @@ import haxe.numeric.exceptions.OverflowException;
  * // But
  * Int16.parseBits('0111 1111 1111 1111').toInt() << 1 == 65534; // also true
  * ```
- * If the right side operand of a bitwise shift is negative or takes more than 15 bits,
- * then only 15 less significant bits of it is used:
+ * If the right side operand of a bitwise shift is negative or takes more than 4 bits,
+ * then only 4 less significant bits of it is used:
  * ```haxe
  * Int16.create(1) << -1
  * //is basically the same as
@@ -111,7 +111,7 @@ abstract Int16(Int) {
 	static public inline function createBits(value:Int):Int16 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 		if(value & ~0xFFFF != 0) {
-			throw new OverflowException('$value has non-zeros on 9th or more significant bits');
+			throw new OverflowException('$value has non-zeros on 17th or more significant bits');
 		}
 		#end
 		return new Int16(bitsToValue(value & 0xFFFF));

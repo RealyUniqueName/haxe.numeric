@@ -1,3 +1,4 @@
+
 package haxe.numeric;
 
 import haxe.numeric.exceptions.OverflowException;
@@ -15,8 +16,8 @@ import haxe.numeric.exceptions.OverflowException;
  * // But
  * Int8.parseBits('0111 1111').toInt() << 1 == 254; // also true
  * ```
- * If the right side operand of a bitwise shift is negative or takes more than 7 bits,
- * then only 7 less significant bits of it is used:
+ * If the right side operand of a bitwise shift is negative or takes more than 3 bits,
+ * then only 3 less significant bits of it is used:
  * ```haxe
  * Int8.create(1) << -1
  * //is basically the same as
@@ -205,7 +206,7 @@ abstract Int8(Int) {
 	@:op(A + B) function additionUInt8(b:UInt8):Int;
 	@:op(A + B) function additionInt16(b:Int16):Int;
 	@:op(A + B) function additionUInt16(b:UInt16):Int;
-	@:op(A + B) @:commutative static function additionIint(a:Int8, b:Int):Int;
+	@:op(A + B) @:commutative static function additionInt(a:Int8, b:Int):Int;
 	@:op(A + B) @:commutative static function additionFloat(a:Int8, b:Float):Float;
 
 	@:op(A - B) inline function subtraction(b:Int8):Int8 {
@@ -242,7 +243,7 @@ abstract Int8(Int) {
 	@:op(A % B) function moduloInt16(b:Int16):Int8;
 	@:op(A % B) function moduloUInt16(b:UInt16):Int8;
 	@:op(A % B) static function moduloFirstInt(a:Int8, b:Int):Int8;
-	@:op(A % B) static function moduloSecondIint(a:Int, b:Int8):Int8;
+	@:op(A % B) static function moduloSecondInt(a:Int, b:Int8):Int8;
 	@:op(A % B) static function moduloFirstFloat(a:Int8, b:Float):Float;
 	@:op(A % B) static function moduloSecondFloat(a:Float, b:Int8):Float;
 
