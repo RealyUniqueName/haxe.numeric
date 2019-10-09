@@ -6,9 +6,9 @@ import haxe.numeric.exceptions.OverflowException;
  * 16-bit signed integer.
  * `Int16` represents values ranging from -32768 to 32767 (including).
  *
- * On platforms which don't have native int8 at runtime `Int16` is represented by `Int` of the same value.
+ * On platforms which don't have native int16 at runtime `Int16` is represented by `Int` of the same value.
  * That is, `Int16.create(-1)` is `-1` at runtime.
- * However for bitwise operations actual 8-bit representation is used:
+ * However for bitwise operations actual 16-bit representation is used:
  * ```haxe
  * Int16.parseBits('0111 1111 1111 1111') == 32767;   // true
  * Int16.parseBits('0111 1111 1111 1111') << 1 == -2; // true
