@@ -56,7 +56,7 @@ class Int16Spec extends TestBase {
 				Assert.raises(() -> Int16.createBits(0x10000), OverflowException);
 			},
 			function OVERFLOW_WRAP() {
-				Int8.create(-1) == Int8.createBits(0x1FFFF);
+				Int16.create(-1) == Int16.createBits(0x1FFFF);
 			}
 		);
 	}
