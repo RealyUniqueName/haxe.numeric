@@ -104,7 +104,7 @@ abstract Int32(Int) {
 	 */
 	static public inline function createBits(value:Int):Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(value & ~Numeric.native32bits != 0) {
+		if(value & ~Numeric.native32Bits != 0) {
 			throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
 		}
 		#end

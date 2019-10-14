@@ -19,6 +19,8 @@ class Numeric {
 			return python.Syntax.code('0xFFFFFFFF');
 		#elseif js
 			return js.Syntax.code('0xFFFFFFFF');
+		#elseif lua
+			return untyped __lua__('4294967295');
 		#elseif (eval || flash)
 			return 0xFFFFFFFF;
 		#else
