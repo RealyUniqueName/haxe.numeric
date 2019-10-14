@@ -100,11 +100,11 @@ abstract Int16(Int) {
 	 * ```
 	 *
 	 * In `-debug` builds or with `-D OVERFLOW_THROW`:
-	 * If `value` has non-zeros on 9th or more significant bits
+	 * If `value` has non-zeros on 17th or more significant bits
 	 * then `haxe.numeric.exceptions.OverflowException` is thrown.
 	 *
 	 * In release builds or with `-D OVERFLOW_WRAP`:
-	 * If `value` has non-zeros on 9th or more significant bits
+	 * If `value` has non-zeros on 17th or more significant bits
 	 * then only 16 less significant bits are used.
 	 * That is `Int16.create(851970)` is equal to `Int16.create(2)` because `851970 & 0xFFFF == 2`
 	 */
