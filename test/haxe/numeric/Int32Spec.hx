@@ -60,7 +60,6 @@ class Int32Spec extends TestBase {
 			#end;
 		overflow(
 			function OVERFLOW_THROW() {
-				trace(excessive);
 				Assert.raises(() -> Int32.createBits(excessive), OverflowException);
 			},
 			function OVERFLOW_WRAP() {

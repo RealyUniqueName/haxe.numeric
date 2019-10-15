@@ -107,6 +107,8 @@ abstract Int32(Int) {
 			var condition =
 				#if lua
 				value >= (untyped __lua__('4294967296')) || value <= -(untyped __lua__('4294967296'))
+				#elseif js
+				value >= js.Syntax.code('4294967296') || value <= js.Syntax.code('-4294967296')
 				#else
 				value & ~Numeric.native32Bits != 0
 				#end;
