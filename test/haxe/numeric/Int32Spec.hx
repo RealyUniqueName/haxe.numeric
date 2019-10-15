@@ -35,6 +35,7 @@ class Int32Spec extends TestBase {
 		Int32.create(-2147483648) == Int32.MIN;
 		Int32.create(2147483647) == Int32.MAX;
 
+		#if (python || php || js || lua)
 		overflow(
 			function OVERFLOW_THROW() {
 				Assert.raises(() -> Int32.create(maxInt + 1), OverflowException);
@@ -45,6 +46,7 @@ class Int32Spec extends TestBase {
 				Int32.MAX == Int32.create(minInt - 1);
 			}
 		);
+		#end
 	}
 
 	//this test makes no sense for targets with 32bit native integers.

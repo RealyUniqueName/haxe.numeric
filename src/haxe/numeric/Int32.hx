@@ -168,44 +168,92 @@ abstract Int32(Int) {
 	}
 
 	@:op(-A) inline function negative():Int32 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(this == MIN_AS_INT) {
+			throw new OverflowException('2147483648 overflows Int32');
+		}
+		#end
 		return create(-this);
 	}
 
 	@:op(++A) inline function prefixIncrement():Int32 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(this == MAX_AS_INT) {
+			throw new OverflowException('2147483648 overflows Int32');
+		}
+		#end
 		this = create(this + 1).toInt();
 		return new Int32(this);
 	}
 
 	@:op(A++) inline function postfixIncrement():Int32 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(this == MAX_AS_INT) {
+			throw new OverflowException('2147483648 overflows Int32');
+		}
+		#end
 		var result = new Int32(this);
 		this = create(this + 1).toInt();
 		return result;
 	}
 
 	@:op(--A) inline function prefixDecrement():Int32 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(this == MIN_AS_INT) {
+			throw new OverflowException('-2147483649 overflows Int32');
+		}
+		#end
 		this = create(this - 1).toInt();
 		return new Int32(this);
 	}
 
 	@:op(A--) inline function postfixDecrement():Int32 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(this == MIN_AS_INT) {
+			throw new OverflowException('-2147483649 overflows Int32');
+		}
+		#end
 		var result = new Int32(this);
 		this = create(this - 1).toInt();
 		return result;
 	}
 
 	@:op(A + B) inline function addition(b:Int32):Int32 {
-		return create(this + b.toInt());
+		var result = this + b.toInt();
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if((this < 0 && b.toInt() < 0 && result >= 0) || (this > 0 && b.toInt() > 0 && result <= 0)) {
+			throw new OverflowException('($this + ${b.toInt()}) overflows Int32');
+		}
+		#end
+		return create(result);
 	}
 	@:op(A + B) @:commutative static function additionFloat(a:Int32, b:Float):Float;
 
 	@:op(A - B) inline function subtraction(b:Int32):Int32 {
-		return create(this - b.toInt());
+		var result = this - b.toInt();
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if((this < 0 && b.toInt() > 0 && result >= 0) || (this > 0 && b.toInt() < 0 && result <= 0)) {
+			throw new OverflowException('($this + ${b.toInt()}) overflows Int32');
+		}
+		#end
+		return create(result);
 	}
 	@:op(A - B) static function subtractionFirstFloat(a:Int32, b:Float):Float;
 	@:op(A - B) static function subtractionSecondFloat(a:Float, b:Int32):Float;
 
 	@:op(A * B) inline function multiplication(b:Int32):Int32 {
-		return create(this * b.toInt());
+		var result = this * b.toInt();
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(
+			(this < 0 && b.toInt() < 0 && result <= 0)
+			|| (this > 0 && b.toInt() > 0 && result <= 0)
+			|| (this < 0 && b.toInt() > 0 && result >= 0)
+			|| (this > 0 && b.toInt() < 0 && result >= 0)
+		) {
+			throw new OverflowException('($this * ${b.toInt()}) overflows Int32');
+		}
+		#end
+		return create(result);
 	}
 	@:op(A * B) @:commutative static function multiplicationFloat(a:Int32, b:Float):Float;
 
