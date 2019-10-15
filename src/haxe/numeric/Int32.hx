@@ -104,15 +104,15 @@ abstract Int32(Int) {
 	 */
 	static public inline function createBits(value:Int):Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		var excessive:Int =
-			#if php php.Syntax.code('4294967296')
-			#elseif python python.Syntax.code('4294967296')
-			#elseif js js.Syntax.code('4294967296')
-			#elseif lua untyped __lua__('4294967296')
-			#end;
-		if(value >= excessive || value <= -excessive) {
-			throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
-		}
+			var condition =
+				#if lua
+				value >= (untyped __lua__('4294967296')) || value <= -(untyped __lua__('4294967296'))
+				#else
+				value & ~Numeric.native32Bits != 0
+				#end;
+			if(condition) {
+				throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
+			}
 		#end
 		return new Int32(bitsToValue(value & Numeric.native32Bits));
 	}
