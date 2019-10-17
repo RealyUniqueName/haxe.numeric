@@ -265,11 +265,11 @@ class Int32Utils {
 	/**
 	 * Convert `Int32` to `Int` by bits.
 	 * ```haxe
-	 * Int32.create(-1).toIntBits() == 65535
+	 * Int32.create(-1).toIntBits() == -1; // on 32bit platforms
+	 * Int32.create(-1).toIntBits() == 4294967295; // on 64bit platforms
 	 * ```
-	 * because binary representation of `Int32.create(-1)` is `1111 1111 1111 1111`
 	 */
-	static public inline function toIntBits(i16:Int32):Int {
-		return Int32.valueToBits(i16.toInt());
+	static public inline function toIntBits(i32:Int32):Int {
+		return Int32.valueToBits(i32.toInt());
 	}
 }
