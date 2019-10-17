@@ -226,7 +226,9 @@ abstract Int32(Int) {
 		return result;
 	}
 
-	@:op(A + B) inline function addition(b:Int32):Int32 {
+
+	@:op(A + B) #if !cpp inline #end function addition(b:Int32):Int32 {
+		// regarding inline for cpp: https://github.com/HaxeFoundation/haxe/issues/8879
 		var result = this + b.toInt();
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 		if((this < 0 && b.toInt() < 0 && result >= 0) || (this > 0 && b.toInt() > 0 && result <= 0)) {
