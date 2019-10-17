@@ -8,6 +8,32 @@ using StringTools;
  * This whole module (not only `Numeric` class) is intended for usage in `using` directives.
  */
 class Numeric {
+	/** An integer with exactly 32 bits set to `1` at runtime */
+	static public var native32Bits(get,never):Int;
+	static var __native32Bits:Int = 0;
+	static inline function get_native32Bits():Int {
+		//Haxe transforms `0xFFFFFFFF` literal to -1 on compilation, which is not 32bits in some runtimes.
+		#if php
+			return php.Syntax.code('0xFFFFFFFF');
+		#elseif python
+			return python.Syntax.code('0xFFFFFFFF');
+		#elseif js
+			return js.Syntax.code('0xFFFFFFFF');
+		#elseif lua
+			return untyped __lua__('4294967295');
+		#elseif (eval || flash)
+			return 0xFFFFFFFF;
+		#else
+			if(__native32Bits == 0) {
+				__native32Bits = 0;
+				for(i in 0...32) {
+					__native32Bits = __native32Bits | 1 << i;
+				}
+			}
+			return __native32Bits;
+		#end
+	}
+
 	@:inheritDoc(haxe.numeric.Int8.create)
 	static public inline function toInt8(value:Int):Int8 {
 		return Int8.create(value);
@@ -38,11 +64,21 @@ class Numeric {
 		return UInt16.create(value);
 	}
 
+	@:inheritDoc(haxe.numeric.Int32.create)
+	static public inline function toInt32(value:Int):Int32 {
+		return Int32.create(value);
+	}
+
+	@:inheritDoc(haxe.numeric.Int32.createBits)
+	static public inline function toInt32Bits(value:Int):Int32 {
+		return Int32.createBits(value);
+	}
+
 	/**
 	 * Parse string binary representation of a number into `Int` value.
 	 * E.g. `parseBitsInt("1000 0010", 8)` will produce `130`.
 	 *
-	 * It is not recommended to use this function for negative values or values higher than `2^31 - 1`.
+	 * It is _not_ recommended to use this function for negative values or values higher than `2^31 - 1`.
 	 * Otherwise The result is platform dependent.
 	 * That is, result may vary depending on runtime integer representation (32 bits or 64 bits)
 	 * and target platform behavior on bitwise operations (e.g. javascript runtime always converts
@@ -217,5 +253,23 @@ class UInt16Utils {
 	 */
 	static public inline function toInt16Bits(u16:UInt16):Int16 {
 		return new Int16(Int16.bitsToValue(u16.toInt()));
+	}
+}
+
+class Int32Utils {
+	@:inheritDoc(haxe.numeric.Int32.parseBits)
+	static public inline function parseBitsInt32(bits:String):Int32 {
+		return Int32.parseBits(bits);
+	}
+
+	/**
+	 * Convert `Int32` to `Int` by bits.
+	 * ```haxe
+	 * Int32.create(-1).toIntBits() == -1; // on 32bit platforms
+	 * Int32.create(-1).toIntBits() == 4294967295; // on 64bit platforms
+	 * ```
+	 */
+	static public inline function toIntBits(i32:Int32):Int {
+		return Int32.valueToBits(i32.toInt());
 	}
 }

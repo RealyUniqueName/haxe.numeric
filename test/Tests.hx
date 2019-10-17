@@ -11,6 +11,7 @@ class Tests {
 		runner.addCase(new UInt8Spec());
 		runner.addCase(new Int16Spec());
 		runner.addCase(new UInt16Spec());
+		runner.addCase(new Int32Spec());
 
 		runner.addCase(new Int8UInt8Spec());
 		runner.addCase(new Int8Int16Spec());
