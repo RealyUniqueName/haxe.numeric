@@ -8,10 +8,13 @@ using StringTools;
  * This whole module (not only `Numeric` class) is intended for usage in `using` directives.
  */
 class Numeric {
-	/** An integer with exactly 32 bits set to `1` at runtime */
-	static public var native32Bits(get,never):Int;
-	static var __native32Bits:Int = 0;
-	static inline function get_native32Bits():Int {
+	/**
+	 * An integer with exactly 32 bits set to `1` at runtime.
+	 * The value is either `-1` or `4294967295` depending on a target platform (32bit or 64bit)
+	 */
+	static public var native32BitsInt(get,never):Int;
+	static var __native32BitsInt:Int = 0;
+	static inline function get_native32BitsInt():Int {
 		//Haxe transforms `0xFFFFFFFF` literal to -1 on compilation, which is not 32bits in some runtimes.
 		#if php
 			return php.Syntax.code('0xFFFFFFFF');
@@ -24,13 +27,13 @@ class Numeric {
 		#elseif (eval || flash)
 			return 0xFFFFFFFF;
 		#else
-			if(__native32Bits == 0) {
-				__native32Bits = 0;
+			if(__native32BitsInt == 0) {
+				__native32BitsInt = 0;
 				for(i in 0...32) {
-					__native32Bits = __native32Bits | 1 << i;
+					__native32BitsInt = __native32BitsInt | 1 << i;
 				}
 			}
-			return __native32Bits;
+			return __native32BitsInt;
 		#end
 	}
 

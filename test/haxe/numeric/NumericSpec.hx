@@ -105,7 +105,7 @@ class NumericSpec extends TestBase {
 
 	function specInt32_toIntBits() {
 		Int32.MAX.toIntBits() == 2147483647;
-		Int32.create(-1).toIntBits() == Numeric.native32Bits;
+		Int32.create(-1).toIntBits() == Numeric.native32BitsInt;
 		Int32.MIN.toIntBits() == #if (php || python || js || lua) 2147483648 #else -2147483648 #end;
 
 		Int32.MIN.toIntBits().isTypeInt();
