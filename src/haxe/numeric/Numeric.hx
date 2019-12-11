@@ -26,15 +26,37 @@ class Numeric {
 			return untyped __lua__('4294967295');
 		#elseif (eval || flash)
 			return 0xFFFFFFFF;
+		// #elseif cpp
+		// 	???
+		// #elseif hl
+		// 	???
+		// #elseif cs
+		// 	???
+		// #elseif java
+		// 	???
 		#else
-			if(__native32BitsInt == 0) {
-				__native32BitsInt = 0;
-				for(i in 0...32) {
-					__native32BitsInt = __native32BitsInt | 1 << i;
-				}
-			}
-			return __native32BitsInt;
+			return __native32BitsInt == 0 ? calc32BitsInt() : __native32BitsInt;
 		#end
+	}
+	static function calc32BitsInt():Int {
+		__native32BitsInt = 0;
+		for(i in 0...32) {
+			__native32BitsInt = __native32BitsInt | 1 << i;
+		}
+		return __native32BitsInt;
+	}
+
+	/**
+	 * Detects if `Int` is represented by 32 bit integers in current runtime.
+	 *
+	 * NOTICE for javascript target:
+	 * Be aware that Javascript runtimes convert numbers to 32 bit integer for bitwise operations.
+	 * But `is32BitsIntegers` is `false` for JS, because JS can correctly store up to `2^53 - 1` integer values.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+	 */
+	static public var is32BitsIntegers(get,never):Bool;
+	static inline function get_is32BitsIntegers():Bool {
+		return Numeric.native32BitsInt < 0;
 	}
 
 	@:inheritDoc(haxe.numeric.Int8.create)

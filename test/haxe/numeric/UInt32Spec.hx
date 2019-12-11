@@ -80,10 +80,10 @@ class UInt32Spec extends TestBase {
 		'null' == '' + (null:Null<UInt32>);
 	}
 
-	public function specToInt() {
-		-1 == UInt32.MAX.toInt();
-		0 == UInt32.MIN.toInt();
-	}
+	// public function specToInt() {
+	// 	-1 == UInt32.MAX.toInt();
+	// 	0 == UInt32.MIN.toInt();
+	// }
 
 	// public function specNegative() {
 	// 	(-UInt32.create(10)).isTypeInt();
@@ -192,15 +192,16 @@ class UInt32Spec extends TestBase {
 	}
 
 	// public function specAddition() {
-	// 	65536 == UInt32.MAX + 1;
-	// 	-1 == -1 + UInt32.MIN;
+	// 	// TODO: decide on type of UInt32 + Int
+	// 	// 65536 == UInt32.MAX + 1;
+	// 	// -1 == -1 + UInt32.MIN;
 	// 	65536.0 == UInt32.MAX + 1.0;
 	// 	-1.0 == -1.0 + UInt32.MIN;
 	// 	UInt32.create(251) == UInt32.create(250) + UInt32.create(1);
 
 	// 	(UInt32.create(0) + UInt32.create(0)).isTypeUInt32();
-	// 	(UInt32.create(0) + 1).isTypeInt();
-	// 	(1 + UInt32.create(0)).isTypeInt();
+	// 	// (UInt32.create(0) + 1).isTypeInt();
+	// 	// (1 + UInt32.create(0)).isTypeInt();
 	// 	(UInt32.create(0) + 1.0).isTypeFloat();
 	// 	(1.0 + UInt32.create(0)).isTypeFloat();
 

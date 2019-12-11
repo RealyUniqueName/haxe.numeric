@@ -5,11 +5,15 @@ import haxe.numeric.exceptions.OverflowException;
 using haxe.numeric.Numeric;
 
 /**
- * 32-bit unsigned signed integer.
+ * 32-bit unsigned integer.
  * `UInt32` represents values ranging from 0 to 4294967295 (including).
  *
  * On platforms which don't have native uint32 at runtime `UInt32` is represented by `Int`
  * in range from `-2147483648` to `2147483647`.
+ *
+ * The distribution of `UInt32` values on that range can be represented as follows:
+ * | 0 --------------------------------------- 4294967295 |
+ * | 0 --------- 2147483647, -2147483648 ------------- -1 |
  *
  * If the right side operand of a bitwise shift is negative or takes more than 5 bits,
  * then only 5 less significant bits of it is used:
@@ -50,11 +54,12 @@ using haxe.numeric.Numeric;
 abstract UInt32(Int) {
 	static inline var MAX_AS_FLOAT = 4294967295.0;
 	static inline var MIN_AS_INT = 0;
-	static inline var MAX_INT = 2147483647;
-	static inline var MIN_INT = -2147483648;
+	static inline var MAX_INT32 = 2147483647;
+	static inline var MIN_INT32 = -2147483648;
 
-	static public inline var MAX:UInt32 = new UInt32(-1);
+	static public var MAX(get,never):UInt32;
 	static public inline var MIN:UInt32 = new UInt32(MIN_AS_INT);
+	static inline function get_MAX() return new UInt32(Numeric.native32BitsInt);
 
 	static inline var BITS_COUNT = 32;
 
@@ -62,7 +67,7 @@ abstract UInt32(Int) {
 	 * Creates UInt32 with `value`.
 	 *
 	 * In `-debug` builds or with `-D OVERFLOW_THROW`:
-	 * If `value` is outside of `UInt32` bounds then `haxe.numeric.exceptions.OverflowException` is thrown.
+	 * If `value` is outside of `UInt32` bounds [0; 4294967295] then `haxe.numeric.exceptions.OverflowException` is thrown.
 	 *
 	 * In release builds or with `-D OVERFLOW_WRAP`:
 	 * If `value` is outside of `UInt32` bounds then only 32 less significant bits are used.
@@ -80,7 +85,7 @@ abstract UInt32(Int) {
 	}
 
 	/**
-	 * Creates `Int32` using 32 less significant bits of `value`.
+	 * Creates `UInt32` using 32 less significant bits of `value`.
 	 *
 	 * In `-debug` builds or with `-D OVERFLOW_THROW`:
 	 * If `value` has non-zeros on 33rd or more significant bits
@@ -90,24 +95,18 @@ abstract UInt32(Int) {
 	 * If `value` has non-zeros on 33rd or more significant bits
 	 * then only 32 less significant bits are used.
 	 */
-	static public inline function createBits(value:Int):UInt32 {
+	static public function createBits(value:Int):UInt32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			var condition =
-				#if lua
-				value >= (untyped __lua__('4294967296')) || value <= -(untyped __lua__('4294967296'))
-				#elseif js
-				value >= js.Syntax.code('4294967296') || value <= js.Syntax.code('-4294967296')
-				#else
-				value & ~Numeric.native32BitsInt != 0
-				#end;
-			if(condition) {
+			if(!Numeric.is32BitsIntegers && (value < 0 || value > MAX_AS_FLOAT)) {
 				throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
 			}
+		#elseif js
+			if(value < 0 || value > MAX_AS_FLOAT) {
+				value = Numeric.native32BitsInt + (value & Numeric.native32BitsInt) + 1;
+			}
+		#else
+			value = value & Numeric.native32BitsInt;
 		#end
-		value = value & Numeric.native32BitsInt;
-		if(value > MAX_INT) {
-			value = MIN_INT + MAX_INT - value + 1;
-		}
 		return new UInt32(value);
 	}
 
@@ -130,19 +129,23 @@ abstract UInt32(Int) {
 	}
 
 	public inline function toString():String {
-		return this < 0 ? '${4294967296.0 + this}' : '$this';
+		return this < 0 ? '${MAX_AS_FLOAT + this + 1}' : '$this';
 	}
 
 	/**
 	 * Convert `UInt32` to `Int` by value.
 	 *
-	 * That is, `UInt32.MAX.toInt() == -1` because at runtime `UInt32` (ranges from 0 to 4294967295)
+	 * That is, on 32bit platforms `UInt32.MAX.toInt() == -1` because at runtime `UInt32` (ranges from 0 to 4294967295)
 	 * is represented by `Int` (ranges from -2147483648 to 2147483647).
-	 * So `UInt32` values from 0 to 2147483647 are represented by exactly same values of `Int`,
+	 * So on 32bit platforms `UInt32` values from 0 to 2147483647 are represented by exactly same values of `Int`,
 	 * while `UInt32` values from 2147483648 to 4294967295 are represented by `Int` values from -2147483648 to -1.
 	 */
-	public inline function toInt():Int {
+	inline function toInt():Int {
 		return this;
+	}
+
+	inline function toFloat():Float {
+		return this < 0 ? MAX_AS_FLOAT + this + 1 : this;
 	}
 
 	//should this produce an Int or Float or throw an exception or not allowed at all?
@@ -151,75 +154,205 @@ abstract UInt32(Int) {
 	// }
 
 	@:op(++A) inline function prefixIncrement():UInt32 {
-		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == -1) {
-			throw new OverflowException('4294967296 overflows UInt32');
+		if(this == Numeric.native32BitsInt) {
+			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+				throw new OverflowException('4294967296 overflows UInt32');
+			#else
+				this = 0;
+			#end
+		} else {
+			this = this + 1;
 		}
-		#end
-		this = (this == MAX_INT ? MIN_INT : createBits(this + 1).toInt());
 		return new UInt32(this);
 	}
 
 	@:op(A++) inline function postfixIncrement():UInt32 {
-		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == -1) {
-			throw new OverflowException('4294967296 overflows UInt32');
-		}
-		#end
 		var result = new UInt32(this);
-		this = (this == MAX_INT ? MIN_INT : createBits(this + 1).toInt());
+		if(this == Numeric.native32BitsInt) {
+			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+				throw new OverflowException('4294967296 overflows UInt32');
+			#else
+				this = 0;
+			#end
+		} else {
+			this = this + 1;
+		}
 		return result;
 	}
 
 	@:op(--A) inline function prefixDecrement():UInt32 {
-		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 		if(this == 0) {
-			throw new OverflowException('-1 overflows UInt32');
+			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+				throw new OverflowException('-1 overflows UInt32');
+			#else
+				this = Numeric.native32BitsInt;
+			#end
+		} else {
+			this = this - 1;
 		}
-		#end
-		this = (this == MIN_INT ? MAX_INT : createBits(this - 1).toInt());
 		return new UInt32(this);
 	}
 
 	@:op(A--) inline function postfixDecrement():UInt32 {
-		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == 0) {
-			throw new OverflowException('-1 overflows UInt32');
-		}
-		#end
 		var result = new UInt32(this);
-		this = (this == MIN_INT ? MAX_INT : createBits(this - 1).toInt());
+		if(this == 0) {
+			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+				throw new OverflowException('-1 overflows UInt32');
+			#else
+				this = Numeric.native32BitsInt;
+			#end
+		} else {
+			this = this - 1;
+		}
 		return result;
 	}
 
-	@:op(A + B) inline function addition(b:UInt32):UInt32 {
-		return create(this + b.toInt());
+	@:op(A + B) function add(b:UInt32):UInt32 {
+		var bInt = b.toInt();
+		var result = this + bInt;
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(Numeric.is32BitsIntegers) {
+				if((this < 0 && bInt < 0) || ((this < 0 || bInt < 0) && result >= 0)) {
+					throw new OverflowException('(${toString()} + ${b.toString()}) overflows UInt32');
+				}
+			} else {
+				if(result < 0 || result > MAX_AS_FLOAT) {
+					throw new OverflowException('(${toString()} + ${b.toString()}) overflows UInt32');
+				}
+			}
+		#elseif js
+			if(result < 0 || result > MAX_AS_FLOAT) {
+				value = Numeric.native32BitsInt + (value & Numeric.native32BitsInt) + 1;
+			}
+		#else
+			result = result & Numeric.native32BitsInt;
+		#end
+		return new UInt32(result);
 	}
-	@:op(A + B) function int8Addition(b:Int8):Int;
-	@:op(A + B) function uint8Addition(b:UInt8):Int;
-	@:op(A + B) function int16Addition(b:Int16):Int;
-	@:op(A + B) @:commutative static function intAddition(a:UInt32, b:Int):Int;
-	@:op(A + B) @:commutative static function floatAddition(a:UInt32, b:Float):Float;
 
-	@:op(A - B) inline function subtraction(b:UInt32):UInt32 {
-		return create(this - b.toInt());
-	}
-	@:op(A - B) function int8Subtraction(b:Int8):Int;
-	@:op(A - B) function uint8Subtraction(b:UInt8):Int;
-	@:op(A - B) function int16Subtraction(b:Int16):Int;
-	@:op(A - B) static function intSubtractionFirst(a:UInt32, b:Int):Int;
-	@:op(A - B) static function intSubtractionSecond(a:Int, b:UInt32):Int;
-	@:op(A - B) static function floatSubtractionFirst(a:UInt32, b:Float):Float;
-	@:op(A - B) static function floatSubtractionSecond(a:Float, b:UInt32):Float;
+	// @:op(A + B) function addition(b:UInt32):UInt32 {
+	// 	var bInt = b.toInt();
+	// 	var overflow = false;
+	// 	var result = if(this >= 0) {
+	// 		// this >= 0 && bInt >= 0
+	// 		if(bInt >= 0) {
+	// 			if(MAX_INT - this >= bInt) {
+	// 				this + bInt;
+	// 			} else {
+	// 				MIN_INT + (bInt - (MAX_INT - this));
+	// 			}
+	// 		// this >= 0 && bInt < 0
+	// 		} else {
+	// 			var r = this + bInt;
+	// 			overflow = r >= 0;
+	// 			r;
+	// 		}
+	// 	} else {
+	// 		// this < 0 && bInt >= 0
+	// 		if(bInt >= 0) {
+	// 			var r = this + bInt;
+	// 			overflow = r >= 0;
+	// 			r;
+	// 		// this < 0 && bInt < 0
+	// 		} else {
+	// 			// UInt range structure:
+	// 			// | 0 --------- 2147483647, -2147483648 ------------- -1 |
+	// 			// var remains = -(MIN_INT - negativeValue) + 1;
+	// 			// this == MAX_INT + thisRemains;
+	// 			// b == MAX_INT + bRemains;
+	// 			// var result = (MAX_INT + MAX_INT) + thisRemains + bRemains;
+	// 			// var result = (    4294967294   ) + thisRemains + bRemains;
+	// 			// 1 <= thisRemains <= MAX_INT //always
+	// 			// 1 <= bRemains <= MAX_INT //always
+	// 			// var result = (    4294967294   ) + 1 + (thisRemains - 1) + 1 + (bRemains - 1);
+	// 			// var result = (    4294967295   )     + thisRemains1      + 1 + bRemains1;
+	// 			// 0 <= thisRemains1 < MAX_INT // always
+	// 			// 0 <= bRemains1 < MAX_INT // always
+	// 			// (    4294967295   ) + 1 = overflow = 0
+	// 			// var result = thisRemains1 + bRemains1;
+	// 			overflow = true;
+	// 			var thisRemains1 = this == MIN_INT ? 0 : -(MIN_INT - this);
+	// 			var bRemains1 = bInt == MIN_INT ? 0 : -(MIN_INT - bInt);
+	// 			if(MAX_INT - thisRemains1 >= bRemains1) {
+	// 				thisRemains1 + bRemains1;
+	// 			} else {
+	// 				MIN_INT + (bRemains1 - (MAX_INT - thisRemains1));
+	// 			}
+	// 		}
+	// 	}
+	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+	// 	if(overflow) {
+	// 		throw new OverflowException('(${toString()} + ${b.toString()}) overflows UInt32');
+	// 	}
+	// 	#end
+	// 	return new UInt32(result);
+	// }
 
-	@:op(A * B) inline function multiplication(b:UInt32):UInt32 {
-		return create(this * b.toInt());
+	@:op(A - B) function sub(b:UInt32):UInt32 {
+		var bInt = b.toInt();
+		var result = this - bInt;
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(Numeric.is32BitsIntegers) {
+				if((this < 0 && bInt > 0) || ((this < 0 || bInt > 0) && result >= 0)) {
+					throw new OverflowException('(${toString()} - ${b.toString()}) overflows UInt32');
+				}
+			} else {
+				if(result < 0 || result > MAX_AS_FLOAT) {
+					throw new OverflowException('(${toString()} - ${b.toString()}) overflows UInt32');
+				}
+			}
+		#elseif js
+			if(result < 0 || result > MAX_AS_FLOAT) {
+				result = Numeric.native32BitsInt + (result & Numeric.native32BitsInt) + 1;
+			}
+		#else
+			result = result & Numeric.native32BitsInt;
+		#end
+		return new UInt32(result);
 	}
-	@:op(A * B) function int8Multiplication(b:Int8):Int;
-	@:op(A * B) function uint8Multiplication(b:UInt8):Int;
-	@:op(A * B) function int16Multiplication(b:Int16):Int;
-	@:op(A * B) @:commutative static function intMultiplication(a:UInt32, b:Int):Int;
-	@:op(A * B) @:commutative static function floatMultiplication(a:UInt32, b:Float):Float;
+
+	@:op(A * B) function mul(b:UInt32):UInt32 {
+
+		var resultFloat = toFloat() * b.toFloat();
+		var overflow = resultFloat < 0 || resultFloat > MAX_AS_FLOAT;
+		if(!overflow) {
+			return new UInt32(this * b.toInt());
+		}
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			throw new OverflowException('(${toString()} * ${b.toString()}) overflows UInt32');
+		#elseif js
+			#error "UInt32.mul() overflow is not implemented for JS"
+		#else
+			if(Numeric.is32BitsIntegers) {
+				return new UInt32(this * b.toInt());
+			} else {
+				var aInt = this;
+				var bInt = b.toInt();
+				if(bInt > aInt) {
+					var tmp = bInt;
+					bInt = aInt;
+					aInt = tmp;
+				}
+
+				var top = Numeric.native32BitsInt;
+				var bFit = 0;
+				var result = 0;
+				while(bInt > 0) {
+					bFit = Std.int(top / aInt);
+					result += aInt * bFit;
+					bInt -= bFit;
+					if(bInt == 0) {
+						break;
+					}
+					var remains = top - result;
+					result = aInt - remains;
+					bInt--;
+					top = Numeric.native32BitsInt - result;
+				}
+				return new UInt32(result);
+			}
+		#end
+	}
 
 	@:op(A / B) function division(b:UInt32):Float;
 	@:op(A / B) function int8DivisionFirst(b:Int8):Float;
@@ -307,7 +440,7 @@ abstract UInt32(Int) {
 
 	@:op(~A) inline function negate():UInt32 {
 		var value = ~this;
-		return new UInt32(value < 0 ? value + 1 + MAX_INT : value);
+		return new UInt32(value < 0 ? value + 1 + MAX_INT32 : value);
 	}
 
 	// &
