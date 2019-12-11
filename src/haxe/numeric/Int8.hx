@@ -120,7 +120,7 @@ abstract Int8(Int) {
 
 	/**
 	 * Parse string binary representation of a number into `Int8` value.
-	 * E.g. `parseBits("1000 0010")` will produce `130`.
+	 * E.g. `parseBits("1000 0010")` will produce `-126`.
 	 *
 	 * @param bits - a binary string. Any spaces are ignored.
 	 *
