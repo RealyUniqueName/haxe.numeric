@@ -4,13 +4,12 @@ import haxe.numeric.exceptions.InvalidArgumentException;
 import haxe.numeric.exceptions.OverflowException;
 
 class UInt32Spec extends TestBase {
-	static var maxFloat:Float = 4294967295.0;
-	static var maxIntPlusOne:Float = 2147483648.0;
-	static var maxInt:Int = 2147483647;
-	static var minInt:Int = -2147483648;
+	static var maxAsFloat:Float = 4294967295.0;
+	static var maxInt32:Int = 2147483647;
+	static var minInt32:Int = -2147483648;
 
 	public function specMinMax() {
-		maxFloat == UInt32.MAX;
+		maxAsFloat == UInt32.MAX;
 		0 == UInt32.MIN;
 
 		UInt32.MAX.isTypeUInt32();
@@ -30,15 +29,16 @@ class UInt32Spec extends TestBase {
 	}
 
 	public function specCreate() {
-		UInt32.create(maxInt).isTypeUInt32();
+		UInt32.create(maxInt32).isTypeUInt32();
 
 		UInt32.create(0) == UInt32.MIN;
-		UInt32.create(maxInt) == maxInt;
+		UInt32.create(maxInt32) == maxInt32;
 
-		#if (python || php || js || lua)
 		overflow(
 			function OVERFLOW_THROW() {
-				Assert.raises(() -> UInt32.create(Numeric.native32BitsInt + 1), OverflowException);
+				if(!Numeric.is32BitsIntegers) {
+					Assert.raises(() -> UInt32.create(Numeric.native32BitsInt + 1), OverflowException);
+				}
 				Assert.raises(() -> UInt32.create(-1), OverflowException);
 			},
 			function OVERFLOW_WRAP() {
@@ -46,31 +46,24 @@ class UInt32Spec extends TestBase {
 				UInt32.MAX == UInt32.create(-1);
 			}
 		);
-		#end
 	}
 
 	public function specCreateBits() {
 		UInt32.createBits(Numeric.native32BitsInt).isTypeUInt32();
 
 		UInt32.createBits(Numeric.native32BitsInt) == UInt32.MAX;
-		UInt32.createBits(minInt) == maxIntPlusOne;
+		UInt32.createBits(maxInt32) == maxInt32;
 
-		#if (python || php || js || lua)
-			var excessive =
-				#if php php.Syntax.code('0x1FFFFFFFF')
-				#elseif python python.Syntax.code('0x1FFFFFFFF')
-				#elseif js js.Syntax.code('0x1FFFFFFFF')
-				#elseif lua untyped __lua__('0x1FFFFFFFF')
-				#end;
-		overflow(
-			function OVERFLOW_THROW() {
-				Assert.raises(() -> UInt32.createBits(excessive), OverflowException);
-			},
-			function OVERFLOW_WRAP() {
-				UInt32.MAX == UInt32.createBits(excessive);
-			}
-		);
-		#end
+		if(!Numeric.is32BitsIntegers) {
+			overflow(
+				function OVERFLOW_THROW() {
+					Assert.raises(() -> UInt32.createBits(-1), OverflowException);
+				},
+				function OVERFLOW_WRAP() {
+					UInt32.MAX == UInt32.createBits(Numeric.native32BitsInt + 1);
+				}
+			);
+		}
 	}
 
 	public function specToString() {
@@ -79,17 +72,6 @@ class UInt32Spec extends TestBase {
 		'0' == UInt32.MIN.toString();
 		'null' == '' + (null:Null<UInt32>);
 	}
-
-	// public function specToInt() {
-	// 	-1 == UInt32.MAX.toInt();
-	// 	0 == UInt32.MIN.toInt();
-	// }
-
-	// public function specNegative() {
-	// 	(-UInt32.create(10)).isTypeInt();
-
-	// 	-UInt32.create(10) == -10;
-	// }
 
 	public function specPrefixIncrement() {
 		var u32 = UInt32.create(0);
@@ -191,92 +173,77 @@ class UInt32Spec extends TestBase {
 		);
 	}
 
-	// public function specAddition() {
-	// 	// TODO: decide on type of UInt32 + Int
-	// 	// 65536 == UInt32.MAX + 1;
-	// 	// -1 == -1 + UInt32.MIN;
-	// 	65536.0 == UInt32.MAX + 1.0;
-	// 	-1.0 == -1.0 + UInt32.MIN;
-	// 	UInt32.create(251) == UInt32.create(250) + UInt32.create(1);
+	public function specAddition() {
+		UInt32.create(251) == UInt32.create(250) + UInt32.create(1);
+		maxAsFloat * 2 == UInt32.MAX + maxAsFloat;
+		maxAsFloat * 2 == maxAsFloat + UInt32.MAX;
 
-	// 	(UInt32.create(0) + UInt32.create(0)).isTypeUInt32();
-	// 	// (UInt32.create(0) + 1).isTypeInt();
-	// 	// (1 + UInt32.create(0)).isTypeInt();
-	// 	(UInt32.create(0) + 1.0).isTypeFloat();
-	// 	(1.0 + UInt32.create(0)).isTypeFloat();
+		(UInt32.create(0) + UInt32.create(0)).isTypeUInt32();
+		(UInt32.create(0) + 1.0).isTypeFloat();
+		(1.0 + UInt32.create(0)).isTypeFloat();
 
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			Assert.raises(() -> UInt32.MAX + UInt32.create(1), OverflowException);
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			UInt32.MAX + UInt32.create(1) == UInt32.MIN;
-	// 		}
-	// 	);
-	// }
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> UInt32.MAX + UInt32.create(1), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				UInt32.MAX + UInt32.create(1) == UInt32.MIN;
+			}
+		);
+	}
 
-	// public function specSubtraction() {
-	// 	UInt32.create(0) == UInt32.MAX - UInt32.MAX;
-	// 	UInt32.create(0) == UInt32.MIN - UInt32.MIN;
+	public function specSubtraction() {
+		UInt32.create(0) == UInt32.MAX - UInt32.MAX;
+		UInt32.create(0) == UInt32.MIN - UInt32.MIN;
+		maxAsFloat + 1 == UInt32.MAX - (-1.0);
+		-1.0 == -1.0 - UInt32.MIN;
 
-	// 	65536 == UInt32.MAX - (-1);
-	// 	-1 == -1 - UInt32.MIN;
-	// 	65536.0 == UInt32.MAX - (-1.0);
-	// 	-1.0 == -1.0 - UInt32.MIN;
+		(UInt32.create(0) - UInt32.create(0)).isTypeUInt32();
+		(UInt32.create(0) - 1.0).isTypeFloat();
+		(1.0 - UInt32.create(0)).isTypeFloat();
 
-	// 	(UInt32.create(0) - UInt32.create(0)).isTypeUInt32();
-	// 	(UInt32.create(0) - 1).isTypeInt();
-	// 	(1 - UInt32.create(0)).isTypeInt();
-	// 	(UInt32.create(0) - 1.0).isTypeFloat();
-	// 	(1.0 - UInt32.create(0)).isTypeFloat();
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> UInt32.create(2) - UInt32.create(3), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				UInt32.MIN - UInt32.create(1) == UInt32.MAX;
+			}
+		);
+	}
 
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			Assert.raises(() -> UInt32.MAX - UInt32.create(-1), OverflowException);
-	// 			Assert.raises(() -> UInt32.MIN - UInt32.create(1), OverflowException);
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			UInt32.MAX - UInt32.create(-1) == UInt32.MIN;
-	// 			UInt32.MIN - UInt32.create(1) == UInt32.MAX;
-	// 		}
-	// 	);
-	// }
+	public function specMultiplication() {
+		UInt32.create(50) == UInt32.create(5) * UInt32.create(10);
 
-	// public function specMultiplication() {
-	// 	UInt32.create(50) == UInt32.create(5) * UInt32.create(10);
+		maxAsFloat * 2 == UInt32.MAX * 2.0;
 
-	// 	131070 == UInt32.MAX * 2;
-	// 	131070.0 == UInt32.MAX * 2.0;
+		(UInt32.create(0) * UInt32.create(0)).isTypeUInt32();
+		(UInt32.create(0) * 1.0).isTypeFloat();
+		(1.0 * UInt32.create(0)).isTypeFloat();
 
-	// 	(UInt32.create(0) * UInt32.create(0)).isTypeUInt32();
-	// 	(UInt32.create(0) * 1).isTypeInt();
-	// 	(1 * UInt32.create(0)).isTypeInt();
-	// 	(UInt32.create(0) * 1.0).isTypeFloat();
-	// 	(1.0 * UInt32.create(0)).isTypeFloat();
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> UInt32.MAX * UInt32.create(2), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				UInt32.MAX * UInt32.MAX == UInt32.create(1);
+				UInt32.MAX * UInt32.create(2) == 4294967294.0;
+			}
+		);
+	}
 
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			Assert.raises(() -> UInt32.MAX * UInt32.create(2), OverflowException);
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			UInt32.parseBits('0111 1111 1111 1111') * UInt32.create(2) == UInt32.parseBits('1111 1111 1111 1110');
-	// 			UInt32.parseBits('1000 0000 0000 0000') * UInt32.create(2) == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
-	// 		}
-	// 	);
-	// }
+	public function specDivision() {
+		7 == UInt32.create(14) / 2;
+		7 == 14 / UInt32.create(2);
+		7 == UInt32.create(14) / 2.0;
+		7 == 14.0 / UInt32.create(2);
 
-	// public function specDivision() {
-	// 	7 == UInt32.create(14) / 2;
-	// 	7 == 14 / UInt32.create(2);
-	// 	7 == UInt32.create(14) / 2.0;
-	// 	7 == 14.0 / UInt32.create(2);
-
-	// 	(UInt32.create(0) / UInt32.create(1)).isTypeFloat();
-	// 	(UInt32.create(0) / 1).isTypeFloat();
-	// 	(1 / UInt32.create(1)).isTypeFloat();
-	// 	(UInt32.create(0) / 1.0).isTypeFloat();
-	// 	(1.0 / UInt32.create(1)).isTypeFloat();
-	// }
+		(UInt32.create(0) / UInt32.create(1)).isTypeFloat();
+		(UInt32.create(0) / 1).isTypeFloat();
+		(1 / UInt32.create(1)).isTypeFloat();
+		(UInt32.create(0) / 1.0).isTypeFloat();
+		(1.0 / UInt32.create(1)).isTypeFloat();
+	}
 
 	// public function specModulo() {
 	// 	UInt32.create(2) == UInt32.create(43210) % UInt32.create(8);
