@@ -263,53 +263,53 @@ class UInt32Spec extends TestBase {
 		(1.0 % UInt32.create(0)).isTypeFloat();
 	}
 
-	// public function specEqual() {
-	// 	UInt32.create(10) == UInt32.create(10);
-	// 	10 == UInt32.create(10);
-	// 	UInt32.create(10) == 10;
-	// 	10.0 == UInt32.create(10);
-	// 	UInt32.create(10) == 10.0;
-	// }
+	public function specEqual() {
+		UInt32.create(10) == UInt32.create(10);
+		10 == UInt32.create(10);
+		UInt32.create(10) == 10;
+		10.0 == UInt32.create(10);
+		UInt32.create(10) == 10.0;
+	}
 
-	// public function specNotEqual() {
-	// 	UInt32.create(10) != UInt32.create(9);
-	// 	11 != UInt32.create(10);
-	// 	UInt32.create(10) != 11;
-	// 	10.5 != UInt32.create(10);
-	// 	UInt32.create(10) != 10.5;
-	// }
+	public function specNotEqual() {
+		UInt32.create(10) != UInt32.create(9);
+		11 != UInt32.create(10);
+		UInt32.create(10) != 11;
+		10.5 != UInt32.create(10);
+		UInt32.create(10) != 10.5;
+	}
 
-	// public function specGreater() {
-	// 	UInt32.create(10) > UInt32.create(9);
-	// 	11 > UInt32.create(10);
-	// 	UInt32.create(11) > 10;
-	// 	10.5 > UInt32.create(10);
-	// 	UInt32.create(10) > 9.5;
-	// }
+	public function specGreater() {
+		UInt32.create(10) > UInt32.create(9);
+		11 > UInt32.create(10);
+		UInt32.create(11) > 10;
+		10.5 > UInt32.create(10);
+		UInt32.create(10) > 9.5;
+	}
 
-	// public function specGreaterOrEqual() {
-	// 	UInt32.create(10) >= UInt32.create(9);
-	// 	11 >= UInt32.create(10);
-	// 	UInt32.create(11) >= 10;
-	// 	10.5 >= UInt32.create(10);
-	// 	UInt32.create(10) >= 9.5;
-	// }
+	public function specGreaterOrEqual() {
+		UInt32.create(10) >= UInt32.create(9);
+		11 >= UInt32.create(10);
+		UInt32.create(11) >= 10;
+		10.5 >= UInt32.create(10);
+		UInt32.create(10) >= 9.5;
+	}
 
-	// public function specLess() {
-	// 	UInt32.create(9) < UInt32.create(10);
-	// 	10 < UInt32.create(11);
-	// 	UInt32.create(10) < 11;
-	// 	9.5 < UInt32.create(10);
-	// 	UInt32.create(10) < 10.5;
-	// }
+	public function specLess() {
+		UInt32.create(9) < UInt32.create(10);
+		10 < UInt32.create(11);
+		UInt32.create(10) < 11;
+		9.5 < UInt32.create(10);
+		UInt32.create(10) < 10.5;
+	}
 
-	// public function specLessOrEqual() {
-	// 	UInt32.create(9) <= UInt32.create(10);
-	// 	10 <= UInt32.create(11);
-	// 	UInt32.create(10) <= 11;
-	// 	9.5 <= UInt32.create(10);
-	// 	UInt32.create(10) <= 10.5;
-	// }
+	public function specLessOrEqual() {
+		UInt32.create(9) <= UInt32.create(10);
+		10 <= UInt32.create(11);
+		UInt32.create(10) <= 11;
+		9.5 <= UInt32.create(10);
+		UInt32.create(10) <= 10.5;
+	}
 
 	// public function specNegate() {
 	// 	~UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000') == UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111');

@@ -319,56 +319,84 @@ abstract UInt32(Int) {
 	}
 
 	@:op(A == B) function equal(b:UInt32):Bool;
-	@:op(A == B) @:commutative static inline function intEqual(a:UInt32, b:Int):Bool {
-		return a.toInt() >= 0 && a.toInt() == b;
+	@:op(A == B) @:commutative static inline function equalInt(a:UInt32, b:Int):Bool {
+		return a.toFloat() == b;
 	}
-	@:op(A == B) @:commutative static inline function floatEqual(a:UInt32, b:Float):Bool {
+	@:op(A == B) @:commutative static inline function equalFloat(a:UInt32, b:Float):Bool {
 		return a.toFloat() == b;
 	}
 
 	@:op(A != B) function notEqual(b:UInt32):Bool;
-	@:op(A != B) @:commutative static function intNotEqual(a:UInt32, b:Int):Bool {
-		return !intEqual(a, b);
+	@:op(A != B) @:commutative static inline function notEqualInt(a:UInt32, b:Int):Bool {
+		return a.toFloat() != b;
 	}
-	@:op(A != B) @:commutative static function floatNotEqual(a:UInt32, b:Float):Bool {
-		return !floatEqual(a, b);
+	@:op(A != B) @:commutative static inline function notEqualFloat(a:UInt32, b:Float):Bool {
+		return a.toFloat() != b;
 	}
 
-	@:op(A > B) function greater(b:UInt32):Bool;
-	@:op(A > B) function int8Greater(b:Int8):Bool;
-	@:op(A > B) function uint8Greater(b:UInt8):Bool;
-	@:op(A > B) function int16Greater(b:Int16):Bool;
-	@:op(A > B) static function intGreaterFirst(a:UInt32, b:Int):Bool;
-	@:op(A > B) static function intGreaterSecond(a:Int, b:UInt32):Bool;
-	@:op(A > B) static function floatGreaterFirst(a:UInt32, b:Float):Bool;
-	@:op(A > B) static function floatGreaterSecond(a:Float, b:UInt32):Bool;
+	@:op(A > B) inline function greater(b:UInt32):Bool {
+		return toFloat() > b.toFloat();
+	}
+	@:op(A > B) static inline function greaterInt(a:UInt32, b:Int):Bool {
+		return a.toFloat() > b;
+	}
+	@:op(A > B) static inline function intGreater(a:Int, b:UInt32):Bool {
+		return a > b.toFloat();
+	}
+	@:op(A > B) static inline function greaterFloat(a:UInt32, b:Float):Bool {
+		return a.toFloat() > b;
+	}
+	@:op(A > B) static inline function floatGreater(a:Float, b:UInt32):Bool {
+		return a > b.toFloat();
+	}
 
-	@:op(A >= B) function greaterOrEqual(b:UInt32):Bool;
-	@:op(A >= B) function int8GreaterOrEqual(b:Int8):Bool;
-	@:op(A >= B) function uint8GreaterOrEqual(b:UInt8):Bool;
-	@:op(A >= B) function int16GreaterOrEqual(b:Int16):Bool;
-	@:op(A >= B) static function intGreaterOrEqualFirst(a:UInt32, b:Int):Bool;
-	@:op(A >= B) static function intGreaterOrEqualSecond(a:Int, b:UInt32):Bool;
-	@:op(A >= B) static function floatGreaterOrEqualFirst(a:UInt32, b:Float):Bool;
-	@:op(A >= B) static function floatGreaterOrEqualSecond(a:Float, b:UInt32):Bool;
+	@:op(A >= B) inline function greaterOrEqual(b:UInt32):Bool {
+		return toFloat() >= b.toFloat();
+	}
+	@:op(A >= B) static inline function greaterOrEqualInt(a:UInt32, b:Int):Bool {
+		return a.toFloat() >= b;
+	}
+	@:op(A >= B) static inline function intGreaterOrEqual(a:Int, b:UInt32):Bool {
+		return a >= b.toFloat();
+	}
+	@:op(A >= B) static inline function greaterOrEqualFloat(a:UInt32, b:Float):Bool {
+		return a.toFloat() >= b;
+	}
+	@:op(A >= B) static inline function floatGreaterOrEqual(a:Float, b:UInt32):Bool {
+		return a >= b.toFloat();
+	}
 
-	@:op(A < B) function less(b:UInt32):Bool;
-	@:op(A < B) function int8Less(b:Int8):Bool;
-	@:op(A < B) function uint8Less(b:UInt8):Bool;
-	@:op(A < B) function int16Less(b:Int16):Bool;
-	@:op(A < B) static function intLessFirst(a:UInt32, b:Int):Bool;
-	@:op(A < B) static function intLessSecond(a:Int, b:UInt32):Bool;
-	@:op(A < B) static function floatLessFirst(a:UInt32, b:Float):Bool;
-	@:op(A < B) static function floatLessSecond(a:Float, b:UInt32):Bool;
+	@:op(A < B) inline function less(b:UInt32):Bool {
+		return toFloat() < b.toFloat();
+	}
+	@:op(A < B) static inline function lessInt(a:UInt32, b:Int):Bool {
+		return a.toFloat() < b;
+	}
+	@:op(A < B) static inline function intLess(a:Int, b:UInt32):Bool {
+		return a < b.toFloat();
+	}
+	@:op(A < B) static inline function lessFloat(a:UInt32, b:Float):Bool {
+		return a.toFloat() < b;
+	}
+	@:op(A < B) static inline function floatLess(a:Float, b:UInt32):Bool {
+		return a < b.toFloat();
+	}
 
-	@:op(A <= B) function lessOrEqual(b:UInt32):Bool;
-	@:op(A <= B) function int8LessOrEqual(b:Int8):Bool;
-	@:op(A <= B) function uint8LessOrEqual(b:UInt8):Bool;
-	@:op(A <= B) function int16LessOrEqual(b:Int16):Bool;
-	@:op(A <= B) static function intLessOrEqualFirst(a:UInt32, b:Int):Bool;
-	@:op(A <= B) static function intLessOrEqualSecond(a:Int, b:UInt32):Bool;
-	@:op(A <= B) static function floatLessOrEqualFirst(a:UInt32, b:Float):Bool;
-	@:op(A <= B) static function floatLessOrEqualSecond(a:Float, b:UInt32):Bool;
+	@:op(A <= B) inline function lessOrEqual(b:UInt32):Bool {
+		return toFloat() <= b.toFloat();
+	}
+	@:op(A <= B) static inline function lessOrEqualInt(a:UInt32, b:Int):Bool {
+		return a.toFloat() <= b;
+	}
+	@:op(A <= B) static inline function intLessOrEqual(a:Int, b:UInt32):Bool {
+		return a <= b.toFloat();
+	}
+	@:op(A <= B) static inline function lessOrEqualFloat(a:UInt32, b:Float):Bool {
+		return a.toFloat() <= b;
+	}
+	@:op(A <= B) static inline function floatLessOrEqual(a:Float, b:UInt32):Bool {
+		return a <= b.toFloat();
+	}
 
 	@:op(~A) inline function negate():UInt32 {
 		var value = ~this;
