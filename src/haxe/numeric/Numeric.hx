@@ -20,8 +20,8 @@ class Numeric {
 			return php.Syntax.code('0xFFFFFFFF');
 		#elseif python
 			return python.Syntax.code('0xFFFFFFFF');
-		#elseif js
-			return js.Syntax.code('0xFFFFFFFF');
+		#elseif js //while JS can store integers up to (2^51-1) all JS runtimes clamp integers to 32bits on bit ops
+			return -1;
 		#elseif lua
 			return untyped __lua__('4294967295');
 		#elseif (eval || flash)

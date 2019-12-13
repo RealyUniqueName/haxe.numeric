@@ -245,23 +245,23 @@ class UInt32Spec extends TestBase {
 		(1.0 / UInt32.create(1)).isTypeFloat();
 	}
 
-	// public function specModulo() {
-	// 	UInt32.create(2) == UInt32.create(43210) % UInt32.create(8);
+	public function specModulo() {
+		UInt32.create(2) == UInt32.create(43210) % UInt32.create(8);
 
-	// 	UInt32.create(2) == UInt32.create(43210) % 8;
-	// 	UInt32.create(2) == UInt32.create(43210) % -8;
-	// 	1 == 100 % UInt32.create(9);
+		UInt32.create(2) == UInt32.create(43210) % 8;
+		UInt32.create(2) == UInt32.create(43210) % -8;
+		1 == 100 % UInt32.create(9);
 
-	// 	87.5 == UInt32.create(43210) % 117.5;
-	// 	0.5 == 6.5 % UInt32.create(3);
-	// 	-0.5 == -6.5 % UInt32.create(3);
+		87.5 == UInt32.create(43210) % 117.5;
+		0.5 == 6.5 % UInt32.create(3);
+		-0.5 == -6.5 % UInt32.create(3);
 
-	// 	(UInt32.create(0) % UInt32.create(0)).isTypeUInt32();
-	// 	(UInt32.create(0) % 1).isTypeUInt32();
-	// 	(1 % UInt32.create(0)).isTypeUInt32();
-	// 	(UInt32.create(0) % 1.0).isTypeFloat();
-	// 	(1.0 % UInt32.create(0)).isTypeFloat();
-	// }
+		(UInt32.create(0) % UInt32.create(0)).isTypeUInt32();
+		(UInt32.create(0) % 1).isTypeUInt32();
+		(1 % UInt32.create(0)).isTypeInt();
+		(UInt32.create(0) % 1.0).isTypeFloat();
+		(1.0 % UInt32.create(0)).isTypeFloat();
+	}
 
 	// public function specEqual() {
 	// 	UInt32.create(10) == UInt32.create(10);
