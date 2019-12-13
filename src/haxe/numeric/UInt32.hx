@@ -399,97 +399,51 @@ abstract UInt32(Int) {
 	}
 
 	@:op(~A) inline function negate():UInt32 {
-		var value = ~this;
-		return new UInt32(value < 0 ? value + 1 + MAX_INT32 : value);
+		return new UInt32(~this);
 	}
 
 	// &
 	@:op(A & B) function and(b:UInt32):UInt32;
-	@:op(A & B) inline function andInt8(b:Int8):Int {
-		return this & b.toIntBits();
-	}
-	@:op(A & B) function andUInt8(b:UInt8):Int;
-	@:op(A & B) inline function andInt16(b:Int16):Int {
-		return this & b.toIntBits();
-	}
 	@:op(A & B) @:commutative static function andInt(a:UInt32, b:Int):Int;
 
 	// |
 	@:op(A | B) function or(b:UInt32):UInt32;
-	@:op(A | B) inline function orInt8(b:Int8):Int {
-		return this | b.toIntBits();
-	}
-	@:op(A | B) function orUInt8(b:UInt8):Int;
-	@:op(A | B) inline function orInt16(b:Int16):Int {
-		return this | b.toIntBits();
-	}
 	@:op(A | B) @:commutative static function orInt(a:UInt32, b:Int):Int;
 
 	// ^
 	@:op(A ^ B) function xor(b:UInt32):UInt32;
-	@:op(A ^ B) inline function xorInt8(b:Int8):Int {
-		return this ^ b.toIntBits();
-	}
-	@:op(A ^ B) function xorUInt8(b:UInt8):Int;
-	@:op(A ^ B) inline function xorInt16(b:Int16):Int {
-		return this ^ b.toIntBits();
-	}
 	@:op(A ^ B) @:commutative static function xorInt(a:UInt32, b:Int):Int;
 
 	// <<
 	@:op(A << B) inline function shiftLeft(b:UInt32):UInt32 {
-		return intShiftLeftFirst(b.toInt());
+		var bits = this << (b.toInt() & 0x1F);
+		return new UInt32(bits & Numeric.native32BitsInt);
 	}
-	@:op(A << B) inline function int8ShiftLeft(b:Int8):UInt32 {
-		return intShiftLeftFirst(b.toInt());
+	@:op(A << B) inline function shiftLeftInt(b:Int):UInt32 {
+		var bits = this << (b & 0x1F);
+		return new UInt32(bits & Numeric.native32BitsInt);
 	}
-	@:op(A << B) inline function uint8ShiftLeft(b:UInt8):UInt32 {
-		return intShiftLeftFirst(b.toInt());
-	}
-	@:op(A << B) inline function int16ShiftLeft(b:Int16):UInt32 {
-		return intShiftLeftFirst(b.toInt());
-	}
-	@:op(A << B) inline function intShiftLeftFirst(b:Int):UInt32 {
-		var bits = (this << (b & 0xF)) & 0xFFFF;
-		return new UInt32(bits);
-	}
-	@:op(A << B) static function intShiftLeftSecond(a:Int, b:UInt32):Int;
+	@:op(A << B) static function intShiftLeft(a:Int, b:UInt32):Int;
 
 	// >>
 	@:op(A >> B) inline function shiftRight(b:UInt32):UInt32 {
-		return intShiftRightFirst(b.toInt());
+		var bits = this >>> (b.toInt() & 0x1F);
+		return new UInt32(bits & Numeric.native32BitsInt);
 	}
-	@:op(A >> B) inline function int8ShiftRight(b:Int8):UInt32 {
-		return intShiftRightFirst(b.toInt());
+	@:op(A >> B) inline function shiftRightInt(b:Int):UInt32 {
+		var bits = this >>> (b & 0x1F);
+		return new UInt32(bits & Numeric.native32BitsInt);
 	}
-	@:op(A >> B) inline function uint8ShiftRight(b:UInt8):UInt32 {
-		return intShiftRightFirst(b.toInt());
-	}
-	@:op(A >> B) inline function int16ShiftRight(b:Int16):UInt32 {
-		return intShiftRightFirst(b.toInt());
-	}
-	@:op(A >> B) inline function intShiftRightFirst(b:Int):UInt32 {
-		var result = this >> (b & 0xF);
-		return new UInt32(result);
-	}
-	@:op(A >> B) static function intShiftRightSecond(a:Int, b:UInt32):Int;
+	@:op(A >> B) static function intShiftRight(a:Int, b:UInt32):Int;
 
 	// >>>
 	@:op(A >>> B) inline function unsignedShiftRight(b:UInt32):UInt32 {
-		return intUnsignedShiftRightFirst(b.toInt());
+		var bits = this >>> (b.toInt() & 0x1F);
+		return new UInt32(bits & Numeric.native32BitsInt);
 	}
-	@:op(A >>> B) inline function int8UnsignedShiftRight(b:Int8):UInt32 {
-		return intUnsignedShiftRightFirst(b.toInt());
+	@:op(A >>> B) inline function unsignedShiftRightInt(b:Int):UInt32 {
+		var bits = this >>> (b & 0x1F);
+		return new UInt32(bits & Numeric.native32BitsInt);
 	}
-	@:op(A >>> B) inline function uint8UnsignedShiftRight(b:UInt8):UInt32 {
-		return intUnsignedShiftRightFirst(b.toInt());
-	}
-	@:op(A >>> B) inline function int16UnsignedShiftRight(b:Int16):UInt32 {
-		return intUnsignedShiftRightFirst(b.toInt());
-	}
-	@:op(A >>> B) inline function intUnsignedShiftRightFirst(b:Int):UInt32 {
-		var result = this >> (b & 0xF);
-		return new UInt32(result);
-	}
-	@:op(A >>> B) static function intUnsignedShiftRightSecond(a:Int, b:UInt32):Int;
+	@:op(A >>> B) static function intUnsignedShiftRight(a:Int, b:UInt32):Int;
 }

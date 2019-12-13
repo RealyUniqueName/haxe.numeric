@@ -311,113 +311,131 @@ class UInt32Spec extends TestBase {
 		UInt32.create(10) <= 10.5;
 	}
 
-	// public function specNegate() {
-	// 	~UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000') == UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111');
-	// 	~UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
-	// 	~UInt32.parseBits('0000 0011 1100 0010') == UInt32.parseBits('1111 1100 0011 1101');
-	// 	~UInt32.parseBits('1100 0011 1100 0100') == UInt32.parseBits('0011 1100 0011 1011');
+	public function specNegate() {
+		~UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000') == UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111');
+		~UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
+		~UInt32.parseBits('0000 0011 1100 0010 0000 0011 1100 0010') == UInt32.parseBits('1111 1100 0011 1101 1111 1100 0011 1101');
+		~UInt32.parseBits('1100 0011 1100 0100 1100 0011 1100 0100') == UInt32.parseBits('0011 1100 0011 1011 0011 1100 0011 1011');
 
-	// 	(~UInt32.MAX).isTypeUInt32();
-	// }
+		(~UInt32.MAX).isTypeUInt32();
+	}
 
-	// public function specAnd() {
-	// 	UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000') & UInt32.parseBits('1111 0000 0000 1111') == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
-	// 	UInt32.parseBits('1110 0000 0000 0111') & UInt32.parseBits('0101 0000 0000 1010') == UInt32.parseBits('0100 0000 0000 0010');
-	// 	UInt32.parseBits('1110 0000 0000 0111') & UInt32.parseBits('1101 0000 0000 1010') == UInt32.parseBits('1100 0000 0000 0010');
+	public function specAnd() {
+		   UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000')
+		 & UInt32.parseBits('1111 0000 0000 1111 1111 0000 0000 1111')
+		== UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
 
-	// 	-1 & UInt32.MAX == 65535;
-	// 	UInt32.MAX & 0 == 0;
-	// 	UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') & -1 == Numeric.parseBitsInt('1111 1111 1111 1111 1111 1111 1111 1111', 16);
+		   UInt32.parseBits('1110 0000 0000 0111 1110 0000 0000 0111')
+		 & UInt32.parseBits('0101 0000 0000 1010 0101 0000 0000 1010')
+		== UInt32.parseBits('0100 0000 0000 0010 0100 0000 0000 0010');
 
-	// 	(UInt32.MAX & UInt32.MAX).isTypeUInt32();
-	// 	(UInt32.MAX & 1).isTypeInt();
-	// 	(1 & UInt32.MAX).isTypeInt();
-	// }
+		   UInt32.parseBits('1110 0000 0000 0111 1110 0000 0000 0111')
+		 & UInt32.parseBits('1101 0000 0000 1010 1101 0000 0000 1010')
+		== UInt32.parseBits('1100 0000 0000 0010 1100 0000 0000 0010');
 
-	// public function specOr() {
-	// 	UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000') | UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') == UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111');
-	// 	UInt32.parseBits('1010 0011 1100 0101') | UInt32.parseBits('0100 0011 0011 0010') == UInt32.parseBits('1110 0011 1111 0111');
+		-1 & UInt32.MAX == Numeric.native32BitsInt;
+		UInt32.MAX & 0 == 0;
+		UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') & -1 == Numeric.parseBitsInt('1111 1111 1111 1111 1111 1111 1111 1111', 32);
 
-	// 	-1 | UInt32.create(0) == -1;
-	// 	UInt32.create(0) | -1 == -1;
-	// 	0 | UInt32.parseBits('1000 0000 0000 0000') == 1 << 15;
-	// 	UInt32.parseBits('1000 0000 0000 0000') | 0 == 1 << 15;
+		(UInt32.MAX & UInt32.MAX).isTypeUInt32();
+		(UInt32.MAX & 1).isTypeInt();
+		(1 & UInt32.MAX).isTypeInt();
+	}
 
-	// 	(UInt32.MAX | UInt32.MAX).isTypeUInt32();
-	// 	(UInt32.MAX | 1).isTypeInt();
-	// 	(1 | UInt32.MAX).isTypeInt();
-	// }
+	public function specOr() {
+		   UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000')
+		 | UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111')
+		== UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111');
 
-	// public function specXor() {
-	// 	UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000') ^ UInt32.parseBits('1111 0011 1100 1111') == UInt32.parseBits('1111 0011 1100 1111');
-	// 	UInt32.parseBits('1010 0000 0000 0101') ^ UInt32.parseBits('1100 0011 1100 0011') == UInt32.parseBits('0110 0011 1100 0110');
+		   UInt32.parseBits('1010 0011 1100 0101 1010 0011 1100 0101')
+		 | UInt32.parseBits('0100 0011 0011 0010 0100 0011 0011 0010')
+		== UInt32.parseBits('1110 0011 1111 0111 1110 0011 1111 0111');
 
-	// 	-1 ^ UInt32.MIN == -1;
-	// 	UInt32.MAX ^ 65535 == 0;
-	// 	0 ^ UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') == Numeric.parseBitsInt('1111 1111 1111 1111 1111 1111 1111 1111', 16);
-	// 	UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') ^ 0 == Numeric.parseBitsInt('1111 1111 1111 1111 1111 1111 1111 1111', 16);
+		-1 | UInt32.create(0) == -1;
+		UInt32.create(0) | -1 == -1;
+		0 | UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') == 1 << 31;
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') | 0 == 1 << 31;
 
-	// 	(UInt32.MAX ^ UInt32.MAX).isTypeUInt32();
-	// 	(UInt32.MAX ^ 1).isTypeInt();
-	// 	(1 ^ UInt32.MAX).isTypeInt();
-	// }
+		(UInt32.MAX | UInt32.MAX).isTypeUInt32();
+		(UInt32.MAX | 1).isTypeInt();
+		(1 | UInt32.MAX).isTypeInt();
+	}
 
-	// public function specShiftLeft() {
-	// 	UInt32.parseBits('0000 0000 0000 0001') << 2 == UInt32.parseBits('0000 0000 0000 0100');
-	// 	UInt32.parseBits('0100 0000 0000 0001') << 1 == UInt32.parseBits('1000 0000 0000 0010');
-	// 	UInt32.parseBits('1000 0000 0000 0001') << 1 == UInt32.parseBits('0000 0000 0000 0010');
+	public function specXor() {
+		   UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000')
+		 ^ UInt32.parseBits('1111 0011 0000 0000 0000 0000 1100 1111')
+		== UInt32.parseBits('1111 0011 0000 0000 0000 0000 1100 1111');
 
-	// 	UInt32.parseBits('0000 0000 0000 0001') << UInt32.create(2) == UInt32.parseBits('0000 0000 0000 0100');
+		   UInt32.parseBits('1010 0000 0000 0000 0000 0000 0000 0101')
+		 ^ UInt32.parseBits('1100 0011 0000 0000 0000 0000 1100 0011')
+		== UInt32.parseBits('0110 0011 0000 0000 0000 0000 1100 0110');
 
-	// 	UInt32.parseBits('1100 0000 0000 0001') << -1 == UInt32.parseBits('1000 0000 0000 0000');
-	// 	UInt32.parseBits('1100 0000 0000 0010') << -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
+		-1 ^ UInt32.MIN == -1;
+		UInt32.MAX ^ Numeric.native32BitsInt == 0;
+		0 ^ UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') == Numeric.parseBitsInt('1111 1111 1111 1111 1111 1111 1111 1111', 32);
+		UInt32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111') ^ 0 == Numeric.parseBitsInt('1111 1111 1111 1111 1111 1111 1111 1111', 32);
 
-	// 	1 << UInt32.create(2) == 1 << 2;
-	// 	4 << UInt32.create(1) == 4 << 1;
+		(UInt32.MAX ^ UInt32.MAX).isTypeUInt32();
+		(UInt32.MAX ^ 1).isTypeInt();
+		(1 ^ UInt32.MAX).isTypeInt();
+	}
 
-	// 	(UInt32.MAX << UInt32.MAX).isTypeUInt32();
-	// 	(UInt32.MAX << 1).isTypeUInt32();
-	// 	(1 << UInt32.MAX).isTypeInt();
-	// }
+	public function specShiftLeft() {
+		UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0001') << 2 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0100');
+		UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0001') << 1 == UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010');
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0001') << 1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0010');
 
-	// public function specShiftRight() {
-	// 	UInt32.parseBits('1000 0000 0000 0010') >> 1 == UInt32.parseBits('0100 0000 0000 0001');
-	// 	UInt32.parseBits('1000 0000 0000 0010') >> 2 == UInt32.parseBits('0010 0000 0000 0000');
-	// 	UInt32.parseBits('0100 0000 0000 0010') >> 2 == UInt32.parseBits('0001 0000 0000 0000');
+		UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0001') << UInt32.create(2) == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0100');
 
-	// 	UInt32.parseBits('1000 0000 0000 0010') >> UInt32.create(1) == UInt32.parseBits('0100 0000 0000 0001');
-	// 	UInt32.parseBits('1000 0000 0000 0010') >> UInt32.create(2) == UInt32.parseBits('0010 0000 0000 0000');
-	// 	UInt32.parseBits('0100 0000 0000 0010') >> UInt32.create(2) == UInt32.parseBits('0001 0000 0000 0000');
+		UInt32.parseBits('1100 0000 0000 0000 0000 0000 0000 0001') << -1 == UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000');
+		UInt32.parseBits('1100 0000 0000 0000 0000 0000 0000 0010') << -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
 
-	// 	UInt32.parseBits('1101 0000 0000 0101') >> -1 == UInt32.parseBits('0000 0000 0000 0001');
-	// 	UInt32.parseBits('0101 0000 0000 0101') >> -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
+		1 << UInt32.create(2) == 1 << 2;
+		4 << UInt32.create(1) == 4 << 1;
 
-	// 	-2 >> UInt32.create(10) == -2 >> 10;
-	// 	32001 >> UInt32.create(10) == 32001 >> 10;
+		(UInt32.MAX << UInt32.MAX).isTypeUInt32();
+		(UInt32.MAX << 1).isTypeUInt32();
+		(1 << UInt32.MAX).isTypeInt();
+	}
 
-	// 	(UInt32.MAX >> UInt32.MAX).isTypeUInt32();
-	// 	(UInt32.MAX >> 1).isTypeUInt32();
-	// 	(1 >> UInt32.MAX).isTypeInt();
-	// }
+	public function specShiftRight() {
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >> 1 == UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0001');
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >> 2 == UInt32.parseBits('0010 0000 0000 0000 0000 0000 0000 0000');
+		UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0010') >> 2 == UInt32.parseBits('0001 0000 0000 0000 0000 0000 0000 0000');
 
-	// public function specUnsignedShiftRight() {
-	// 	UInt32.parseBits('1000 0000 0000 0010') >>> 1 == UInt32.parseBits('0100 0000 0000 0001');
-	// 	UInt32.parseBits('1000 0000 0000 0010') >>> 2 == UInt32.parseBits('0010 0000 0000 0000');
-	// 	UInt32.parseBits('0100 0000 0000 0010') >>> 2 == UInt32.parseBits('0001 0000 0000 0000');
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >> UInt32.create(1) == UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0001');
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >> UInt32.create(2) == UInt32.parseBits('0010 0000 0000 0000 0000 0000 0000 0000');
+		UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0010') >> UInt32.create(2) == UInt32.parseBits('0001 0000 0000 0000 0000 0000 0000 0000');
 
-	// 	UInt32.parseBits('1000 0000 0000 0010') >>> UInt32.create(1) == UInt32.parseBits('0100 0000 0000 0001');
-	// 	UInt32.parseBits('1000 0000 0000 0010') >>> UInt32.create(2) == UInt32.parseBits('0010 0000 0000 0000');
-	// 	UInt32.parseBits('0100 0000 0000 0010') >>> UInt32.create(2) == UInt32.parseBits('0001 0000 0000 0000');
+		UInt32.parseBits('1101 0000 0000 0000 0000 0000 0000 0101') >> -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0001');
+		UInt32.parseBits('0101 0000 0000 0000 0000 0000 0000 0101') >> -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
 
-	// 	UInt32.parseBits('1101 0000 0000 0101') >>> -1 == UInt32.parseBits('0000 0000 0000 0001');
-	// 	UInt32.parseBits('0101 0000 0000 0101') >>> -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
+		-2 >> UInt32.create(10) == -2 >> 10;
+		32001 >> UInt32.create(10) == 32001 >> 10;
 
-	// 	-2 >>> UInt32.create(10) == -2 >>> 10;
-	// 	32001 >>> UInt32.create(10) == 32001 >>> 10;
+		(UInt32.MAX >> UInt32.MAX).isTypeUInt32();
+		(UInt32.MAX >> 1).isTypeUInt32();
+		(1 >> UInt32.MAX).isTypeInt();
+	}
 
-	// 	(UInt32.MAX >>> UInt32.MAX).isTypeUInt32();
-	// 	(UInt32.MAX >>> 1).isTypeUInt32();
-	// 	(1 >>> UInt32.MAX).isTypeInt();
-	// }
+	public function specUnsignedShiftRight() {
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >>> 1 == UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0001');
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >>> 2 == UInt32.parseBits('0010 0000 0000 0000 0000 0000 0000 0000');
+		UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0010') >>> 2 == UInt32.parseBits('0001 0000 0000 0000 0000 0000 0000 0000');
+
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >>> UInt32.create(1) == UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0001');
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0010') >>> UInt32.create(2) == UInt32.parseBits('0010 0000 0000 0000 0000 0000 0000 0000');
+		UInt32.parseBits('0100 0000 0000 0000 0000 0000 0000 0010') >>> UInt32.create(2) == UInt32.parseBits('0001 0000 0000 0000 0000 0000 0000 0000');
+
+		UInt32.parseBits('1101 0000 0000 0000 0000 0000 0000 0101') >>> -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0001');
+		UInt32.parseBits('0101 0000 0000 0000 0000 0000 0000 0101') >>> -1 == UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
+
+		-2 >>> UInt32.create(10) == -2 >>> 10;
+		32001 >>> UInt32.create(10) == 32001 >>> 10;
+
+		(UInt32.MAX >>> UInt32.MAX).isTypeUInt32();
+		(UInt32.MAX >>> 1).isTypeUInt32();
+		(1 >>> UInt32.MAX).isTypeInt();
+	}
 
 }
