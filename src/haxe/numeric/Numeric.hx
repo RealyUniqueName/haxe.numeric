@@ -99,6 +99,16 @@ class Numeric {
 		return Int32.createBits(value);
 	}
 
+	@:inheritDoc(haxe.numeric.UInt32.create)
+	static public inline function toUInt32(value:Int):UInt32 {
+		return UInt32.create(value);
+	}
+
+	@:inheritDoc(haxe.numeric.UInt32.createBits)
+	static public inline function toUInt32Bits(value:Int):UInt32 {
+		return UInt32.createBits(value);
+	}
+
 	/**
 	 * Parse string binary representation of a number into `Int` value.
 	 * E.g. `parseBitsInt("1000 0010", 8)` will produce `130`.
@@ -296,5 +306,23 @@ class Int32Utils {
 	 */
 	static public inline function toIntBits(i32:Int32):Int {
 		return Int32.valueToBits(i32.toInt());
+	}
+}
+
+class UInt32Utils {
+	@:inheritDoc(haxe.numeric.UInt32.parseBits)
+	static public inline function parseBitsUInt32(bits:String):UInt32 {
+		return UInt32.parseBits(bits);
+	}
+
+	/**
+	 * Convert `UInt32` to `Int` by bits.
+	 * ```haxe
+	 * UInt32.MAX.toIntBits() == -1; // on 32bit platforms
+	 * UInt32.MAX.toIntBits() == 4294967295; // on 64bit platforms
+	 * ```
+	 */
+	static public inline function toIntBits(u32:UInt32):Int {
+		return u32.toInt();
 	}
 }

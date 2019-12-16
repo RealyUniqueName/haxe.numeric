@@ -8,6 +8,7 @@ class NumericSpec extends TestBase {
 		'0'.parseBitsInt(1) == 0;
 		'100'.parseBitsInt(3) == 4;
 		'1111 1111 1111 1111'.parseBitsInt(16) == 0xFFFF;
+		//check any spaces are ignored
 		' 1 	  1 	0 '.parseBitsInt(3) == 6;
 
 		'0000'.parseBitsInt(4).isTypeInt();
@@ -106,8 +107,13 @@ class NumericSpec extends TestBase {
 	function specInt32_toIntBits() {
 		Int32.MAX.toIntBits() == 2147483647;
 		Int32.create(-1).toIntBits() == Numeric.native32BitsInt;
-		Int32.MIN.toIntBits() == #if (php || python || js || lua) 2147483648 #else -2147483648 #end;
+		Int32.MIN.toIntBits() == (Numeric.is32BitsIntegers ? -2147483648 : 2147483648);
 
 		Int32.MIN.toIntBits().isTypeInt();
+	}
+
+	function specUInt32_toIntBits() {
+		UInt32.MAX.toIntBits() == Numeric.native32BitsInt;
+		UInt32.MIN.toIntBits().isTypeInt();
 	}
 }
