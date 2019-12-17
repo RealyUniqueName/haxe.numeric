@@ -84,7 +84,7 @@ abstract Int32(Int) {
 			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			throw new OverflowException('$value overflows Int32');
 			#else
-			return new Int32(bitsToValue(value & Numeric.native32Bits));
+			return new Int32(bitsToValue(value & Numeric.native32BitsInt));
 			#end
 		} else {
 			return new Int32(value);
@@ -104,19 +104,17 @@ abstract Int32(Int) {
 	 */
 	static public inline function createBits(value:Int):Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			var condition =
-				#if lua
-				value >= (untyped __lua__('4294967296')) || value <= -(untyped __lua__('4294967296'))
-				#elseif js
-				value >= js.Syntax.code('4294967296') || value <= js.Syntax.code('-4294967296')
+			if(
+				#if (js || lua)
+					value < MIN_AS_INT || value > MAX_AS_INT * 2 + 1
 				#else
-				value & ~Numeric.native32Bits != 0
-				#end;
-			if(condition) {
+					value & ~Numeric.native32BitsInt != 0
+				#end
+			) {
 				throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
 			}
 		#end
-		return new Int32(bitsToValue(value & Numeric.native32Bits));
+		return new Int32(bitsToValue(value & Numeric.native32BitsInt));
 	}
 
 	/**
@@ -148,7 +146,7 @@ abstract Int32(Int) {
 	 * `value` must be in bounds of Int32 range
 	 */
 	static inline function valueToBits(value:Int):Int {
-		return if(value < 0) {
+		return if(#if (js || lua) false #else value < 0 #end) {
 			value - MIN_AS_INT + 1 + MAX_AS_INT;
 		} else {
 			value;
@@ -393,7 +391,7 @@ abstract Int32(Int) {
 		return shiftLeftFirstInt(b.toInt());
 	}
 	@:op(A << B) inline function shiftLeftFirstInt(b:Int):Int32 {
-		var bits = (this << (b & 0x1F)) & Numeric.native32Bits;
+		var bits = (this << (b & 0x1F)) & Numeric.native32BitsInt;
 		return new Int32(bitsToValue(bits));
 	}
 	@:op(A << B) static function shiftLeftSecondInt(a:Int, b:Int32):Int;

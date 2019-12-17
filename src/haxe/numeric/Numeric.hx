@@ -8,30 +8,69 @@ using StringTools;
  * This whole module (not only `Numeric` class) is intended for usage in `using` directives.
  */
 class Numeric {
-	/** An integer with exactly 32 bits set to `1` at runtime */
-	static public var native32Bits(get,never):Int;
-	static var __native32Bits:Int = 0;
-	static inline function get_native32Bits():Int {
+	/**
+	 * An integer with exactly 32 bits set to `1` at runtime.
+	 * The value is either `-1` or `4294967295` depending on a target platform (32bit or 64bit)
+	 *
+	 * NOTICE for javascript target:
+	 * Be aware that Javascript runtimes can correctly store up to `2^53 - 1` integer values,
+	 * but they convert numbers to 32 bit integers for bitwise operations.
+	 * That's why `Numeric.native32BitsInt` is `-1` for JS.
+	 *
+	 * NOTICE for lua target:
+	 * Lua target can correctly store integers bigger than `2^32 - 1`, but Haxe->Lua implementation clamps
+	 * some bitwise operations (e.g. `&` and `|`) to 32 bits making it behave like operands are 32 bit integers.
+	 * That's why `Numeric.native32BitsInt` is `-1` for Lua.
+	 */
+	static public var native32BitsInt(get,never):Int;
+	static var __native32BitsInt:Int = 0;
+	static inline function get_native32BitsInt():Int {
 		//Haxe transforms `0xFFFFFFFF` literal to -1 on compilation, which is not 32bits in some runtimes.
 		#if php
 			return php.Syntax.code('0xFFFFFFFF');
 		#elseif python
 			return python.Syntax.code('0xFFFFFFFF');
-		#elseif js
-			return js.Syntax.code('0xFFFFFFFF');
-		#elseif lua
-			return untyped __lua__('4294967295');
+		#elseif (js || lua)
+			return -1;
 		#elseif (eval || flash)
 			return 0xFFFFFFFF;
+		// #elseif cpp
+		// 	???
+		// #elseif hl
+		// 	???
+		// #elseif cs
+		// 	???
+		// #elseif java
+		// 	???
 		#else
-			if(__native32Bits == 0) {
-				__native32Bits = 0;
-				for(i in 0...32) {
-					__native32Bits = __native32Bits | 1 << i;
-				}
-			}
-			return __native32Bits;
+			return __native32BitsInt == 0 ? calc32BitsInt() : __native32BitsInt;
 		#end
+	}
+	static function calc32BitsInt():Int {
+		__native32BitsInt = 0;
+		for(i in 0...32) {
+			__native32BitsInt = __native32BitsInt | 1 << i;
+		}
+		return __native32BitsInt;
+	}
+
+	/**
+	 * Detects if `Int` is represented by 32 bit integers in current runtime.
+	 *
+	 * NOTICE for javascript target:
+	 * Be aware that Javascript runtimes can correctly store up to `2^53 - 1` integer values,
+	 * but they convert numbers to 32 bit integers for bitwise operations.
+	 * That's why `is32BitsIntegers` is `false` for JS.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+	 *
+	 * NOTICE for lua target:
+	 * Lua target can correctly store integers bigger than `2^32 - 1`, but Haxe->Lua implementation clamps
+	 * some bitwise operations (e.g. `&` and `|`) to 32 bits making it behave like operands are 32 bit integers.
+	 * That's why `Numeric.is32BitsIntegers` is `true` for Lua.
+	 */
+	static public var is32BitsIntegers(get,never):Bool;
+	static inline function get_is32BitsIntegers():Bool {
+		return Numeric.native32BitsInt < 0;
 	}
 
 	@:inheritDoc(haxe.numeric.Int8.create)
@@ -72,6 +111,16 @@ class Numeric {
 	@:inheritDoc(haxe.numeric.Int32.createBits)
 	static public inline function toInt32Bits(value:Int):Int32 {
 		return Int32.createBits(value);
+	}
+
+	@:inheritDoc(haxe.numeric.UInt32.create)
+	static public inline function toUInt32(value:Int):UInt32 {
+		return UInt32.create(value);
+	}
+
+	@:inheritDoc(haxe.numeric.UInt32.createBits)
+	static public inline function toUInt32Bits(value:Int):UInt32 {
+		return UInt32.createBits(value);
 	}
 
 	/**
@@ -271,5 +320,23 @@ class Int32Utils {
 	 */
 	static public inline function toIntBits(i32:Int32):Int {
 		return Int32.valueToBits(i32.toInt());
+	}
+}
+
+class UInt32Utils {
+	@:inheritDoc(haxe.numeric.UInt32.parseBits)
+	static public inline function parseBitsUInt32(bits:String):UInt32 {
+		return UInt32.parseBits(bits);
+	}
+
+	/**
+	 * Convert `UInt32` to `Int` by bits.
+	 * ```haxe
+	 * UInt32.MAX.toIntBits() == -1; // on 32bit platforms
+	 * UInt32.MAX.toIntBits() == 4294967295; // on 64bit platforms
+	 * ```
+	 */
+	static public inline function toIntBits(u32:UInt32):Int {
+		return u32.toInt();
 	}
 }

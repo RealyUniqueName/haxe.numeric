@@ -10,8 +10,8 @@ using haxe.numeric.Numeric;
  *
  * On platforms which don't have native uint16 at runtime `UInt16` is represented by `Int`.
  *
- * If the right side operand of a bitwise shift is negative or takes more than 15 bits,
- * then only 15 less significant bits of it is used:
+ * If the right side operand of a bitwise shift is negative or takes more than 4 bits,
+ * then only 4 less significant bits of it is used:
  * ```haxe
  * UInt16.create(1) << -1
  * //is basically the same as

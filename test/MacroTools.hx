@@ -36,6 +36,10 @@ class MacroTools {
 		return isType(value, 'haxe.numeric.Int32');
 	}
 
+	macro static public function isTypeUInt32(value:Expr):Expr {
+		return isType(value, 'haxe.numeric.UInt32');
+	}
+
 	macro static public function isCompilationError(value:Expr):Expr {
 		try {
 			Context.typeof(value);

@@ -49,25 +49,24 @@ class Int32Spec extends TestBase {
 		#end
 	}
 
-	//this test makes no sense for targets with 32bit native integers.
-	#if (python || php || js || lua)
 	public function specCreateBits() {
-		var excessive:Int =
-			#if php php.Syntax.code('0x1FFFFFFFF')
-			#elseif python python.Syntax.code('0x1FFFFFFFF')
-			#elseif js js.Syntax.code('0x1FFFFFFFF')
-			#elseif lua untyped __lua__('0x1FFFFFFFF')
-			#end;
 		overflow(
 			function OVERFLOW_THROW() {
-				Assert.raises(() -> Int32.createBits(excessive), OverflowException);
+				if(!Numeric.is32BitsIntegers) {
+					Assert.raises(() -> Int32.createBits(Numeric.native32BitsInt + 1), OverflowException);
+				} else {
+					#if js
+						Assert.raises(() -> Int32.createBits(js.Syntax.code('0xFFFFFFFF') + 1), OverflowException);
+					#else
+						Assert.pass();
+					#end
+				}
 			},
 			function OVERFLOW_WRAP() {
-				Int32.create(-1) == Int32.createBits(excessive);
+				Int32.create(0) == Int32.createBits(Numeric.native32BitsInt + 1);
 			}
 		);
 	}
-	#end
 
 	public function specToString() {
 		'12345' == Int32.create(12345).toString();
