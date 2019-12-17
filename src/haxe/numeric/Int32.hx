@@ -104,13 +104,13 @@ abstract Int32(Int) {
 	 */
 	static public inline function createBits(value:Int):Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			var condition =
-				#if lua
-				value >= (untyped __lua__('4294967296')) || value <= -(untyped __lua__('4294967296'))
+			if(
+				#if js
+					value < MIN_AS_INT || value > MAX_AS_INT * 2 + 1
 				#else
-				value & ~Numeric.native32BitsInt != 0
-				#end;
-			if(condition) {
+					value & ~Numeric.native32BitsInt != 0
+				#end
+			) {
 				throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
 			}
 		#end
