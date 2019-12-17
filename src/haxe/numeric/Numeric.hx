@@ -11,6 +11,11 @@ class Numeric {
 	/**
 	 * An integer with exactly 32 bits set to `1` at runtime.
 	 * The value is either `-1` or `4294967295` depending on a target platform (32bit or 64bit)
+	 *
+	 * NOTICE for javascript target:
+	 * Be aware that Javascript runtimes can correctly store up to `2^53 - 1` integer values,
+	 * but they convert numbers to 32 bit integers for bitwise operations.
+	 * That's why `Numeric.native32BitsInt` is `-1` for JS.
 	 */
 	static public var native32BitsInt(get,never):Int;
 	static var __native32BitsInt:Int = 0;
@@ -50,8 +55,9 @@ class Numeric {
 	 * Detects if `Int` is represented by 32 bit integers in current runtime.
 	 *
 	 * NOTICE for javascript target:
-	 * Be aware that Javascript runtimes convert numbers to 32 bit integer for bitwise operations.
-	 * But `is32BitsIntegers` is `false` for JS, because JS can correctly store up to `2^53 - 1` integer values.
+	 * Be aware that Javascript runtimes can correctly store up to `2^53 - 1` integer values,
+	 * but they convert numbers to 32 bit integers for bitwise operations.
+	 * That's why `is32BitsIntegers` is `false` for JS.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
 	 */
 	static public var is32BitsIntegers(get,never):Bool;

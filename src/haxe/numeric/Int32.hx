@@ -107,8 +107,6 @@ abstract Int32(Int) {
 			var condition =
 				#if lua
 				value >= (untyped __lua__('4294967296')) || value <= -(untyped __lua__('4294967296'))
-				#elseif js
-				value >= js.Syntax.code('4294967296') || value <= js.Syntax.code('-4294967296')
 				#else
 				value & ~Numeric.native32BitsInt != 0
 				#end;
@@ -148,7 +146,7 @@ abstract Int32(Int) {
 	 * `value` must be in bounds of Int32 range
 	 */
 	static inline function valueToBits(value:Int):Int {
-		return if(value < 0) {
+		return if(#if js false #else value < 0 #end) {
 			value - MIN_AS_INT + 1 + MAX_AS_INT;
 		} else {
 			value;
