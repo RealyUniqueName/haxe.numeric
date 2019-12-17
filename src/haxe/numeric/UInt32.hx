@@ -127,7 +127,14 @@ abstract UInt32(Int) {
 	}
 
 	public inline function toString():String {
-		return this < 0 ? '${MAX_AS_FLOAT + this + 1}' : '$this';
+		inline function normalized() {
+			#if java
+				return (cast (MAX_AS_FLOAT + this + 1):java.lang.Number).longValue();
+			#else
+				return MAX_AS_FLOAT + this + 1;
+			#end
+		}
+		return this < 0 ? '${normalized()}' : '$this';
 	}
 
 	/**
