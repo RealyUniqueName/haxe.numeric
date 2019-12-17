@@ -8,6 +8,7 @@ os:
   - osx
 
 haxe:
+  - 4.0.5
   - development
 
 install:

@@ -60,7 +60,7 @@ class UInt32Spec extends TestBase {
 					Assert.raises(() -> UInt32.createBits(-1), OverflowException);
 				},
 				function OVERFLOW_WRAP() {
-					UInt32.MAX == UInt32.createBits(Numeric.native32BitsInt + 1);
+					UInt32.MIN == UInt32.createBits(Numeric.native32BitsInt + 1);
 				}
 			);
 		}
@@ -353,13 +353,15 @@ class UInt32Spec extends TestBase {
 
 		-1 | UInt32.create(0) == -1;
 		UInt32.create(0) | -1 == -1;
-		0 | UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') == 1 << 31;
-		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') | 0 == 1 << 31;
+		0 | UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') == one << 31;
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') | 0 == one << 31;
 
 		(UInt32.MAX | UInt32.MAX).isTypeUInt32();
 		(UInt32.MAX | 1).isTypeInt();
 		(1 | UInt32.MAX).isTypeInt();
 	}
+	//to disable analyzer optimization of `1 << 31`
+	static var one = 1;
 
 	public function specXor() {
 		   UInt32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000')

@@ -399,7 +399,7 @@ abstract UInt32(Int) {
 	}
 
 	@:op(~A) inline function negate():UInt32 {
-		return new UInt32(~this);
+		return new UInt32((~this) & Numeric.native32BitsInt);
 	}
 
 	// &
