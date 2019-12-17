@@ -96,7 +96,7 @@ abstract UInt32(Int) {
 	static public inline function createBits(value:Int):UInt32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			if(
-				#if js
+				#if (js || lua)
 					value < MIN_INT32 || value > MAX_AS_FLOAT
 				#else
 					!Numeric.is32BitsIntegers && (value < 0 || value > MAX_AS_FLOAT)
@@ -126,10 +126,12 @@ abstract UInt32(Int) {
 		this = value;
 	}
 
-	public inline function toString():String {
+	public function toString():String {
 		inline function normalized() {
 			#if java
 				return (cast (MAX_AS_FLOAT + this + 1):java.lang.Number).longValue();
+			#elseif lua
+				return untyped __lua__('4294967295') + this + 1;
 			#else
 				return MAX_AS_FLOAT + this + 1;
 			#end
@@ -172,7 +174,7 @@ abstract UInt32(Int) {
 				this = 0;
 			#end
 		} else {
-			#if js
+			#if (js || lua)
 				this = (this + 1) | 0;
 			#else
 				this = this + 1;
@@ -190,7 +192,7 @@ abstract UInt32(Int) {
 				this = 0;
 			#end
 		} else {
-			#if js
+			#if (js || lua)
 				this = (this + 1) | 0;
 			#else
 				this = this + 1;
@@ -207,7 +209,7 @@ abstract UInt32(Int) {
 				this = Numeric.native32BitsInt;
 			#end
 		} else {
-			#if js
+			#if (js || lua)
 				this = (this - 1) | 0;
 			#else
 				this = this - 1;
@@ -225,7 +227,7 @@ abstract UInt32(Int) {
 				this = Numeric.native32BitsInt;
 			#end
 		} else {
-			#if js
+			#if (js || lua)
 				this = (this - 1) | 0;
 			#else
 				this = this - 1;

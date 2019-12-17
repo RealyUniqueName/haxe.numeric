@@ -105,7 +105,7 @@ abstract Int32(Int) {
 	static public inline function createBits(value:Int):Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			if(
-				#if js
+				#if (js || lua)
 					value < MIN_AS_INT || value > MAX_AS_INT * 2 + 1
 				#else
 					value & ~Numeric.native32BitsInt != 0
@@ -146,7 +146,7 @@ abstract Int32(Int) {
 	 * `value` must be in bounds of Int32 range
 	 */
 	static inline function valueToBits(value:Int):Int {
-		return if(#if js false #else value < 0 #end) {
+		return if(#if (js || lua) false #else value < 0 #end) {
 			value - MIN_AS_INT + 1 + MAX_AS_INT;
 		} else {
 			value;

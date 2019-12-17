@@ -16,6 +16,11 @@ class Numeric {
 	 * Be aware that Javascript runtimes can correctly store up to `2^53 - 1` integer values,
 	 * but they convert numbers to 32 bit integers for bitwise operations.
 	 * That's why `Numeric.native32BitsInt` is `-1` for JS.
+	 *
+	 * NOTICE for lua target:
+	 * Lua target can correctly store integers bigger than `2^32 - 1`, but Haxe->Lua implementation clamps
+	 * some bitwise operations (e.g. `&` and `|`) to 32 bits making it behave like operands are 32 bit integers.
+	 * That's why `Numeric.native32BitsInt` is `-1` for Lua.
 	 */
 	static public var native32BitsInt(get,never):Int;
 	static var __native32BitsInt:Int = 0;
@@ -25,10 +30,8 @@ class Numeric {
 			return php.Syntax.code('0xFFFFFFFF');
 		#elseif python
 			return python.Syntax.code('0xFFFFFFFF');
-		#elseif js //while JS can store integers up to (2^53-1) all JS runtimes clamp integers to 32bits on bit ops
+		#elseif (js || lua)
 			return -1;
-		#elseif lua
-			return untyped __lua__('4294967295');
 		#elseif (eval || flash)
 			return 0xFFFFFFFF;
 		// #elseif cpp
@@ -59,6 +62,11 @@ class Numeric {
 	 * but they convert numbers to 32 bit integers for bitwise operations.
 	 * That's why `is32BitsIntegers` is `false` for JS.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+	 *
+	 * NOTICE for lua target:
+	 * Lua target can correctly store integers bigger than `2^32 - 1`, but Haxe->Lua implementation clamps
+	 * some bitwise operations (e.g. `&` and `|`) to 32 bits making it behave like operands are 32 bit integers.
+	 * That's why `Numeric.is32BitsIntegers` is `true` for Lua.
 	 */
 	static public var is32BitsIntegers(get,never):Bool;
 	static inline function get_is32BitsIntegers():Bool {

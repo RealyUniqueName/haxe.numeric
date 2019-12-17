@@ -353,8 +353,8 @@ class UInt32Spec extends TestBase {
 
 		-1 | UInt32.create(0) == -1;
 		UInt32.create(0) | -1 == -1;
-		0 | UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') == one << 31;
-		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') | 0 == one << 31;
+		0 | UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') == 0 | (one << 31);
+		UInt32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') | 0 == 0 | (one << 31);
 
 		(UInt32.MAX | UInt32.MAX).isTypeUInt32();
 		(UInt32.MAX | 1).isTypeInt();
