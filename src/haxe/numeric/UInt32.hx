@@ -127,6 +127,9 @@ abstract UInt32(Int) {
 	}
 
 	public function toString():String {
+		#if !static
+			if(this == null) return 'null';
+		#end
 		inline function normalized() {
 			#if java
 				return (cast (MAX_AS_FLOAT + this + 1):java.lang.Number).longValue();

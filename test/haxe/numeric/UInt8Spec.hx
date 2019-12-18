@@ -47,7 +47,6 @@ class UInt8Spec extends TestBase {
 		'210' == UInt8.create(210).toString();
 		'255' == UInt8.MAX.toString();
 		'0' == UInt8.MIN.toString();
-		'null' == '' + (null:Null<UInt8>);
 	}
 
 	public function specToInt() {

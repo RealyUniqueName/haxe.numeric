@@ -73,7 +73,6 @@ class Int32Spec extends TestBase {
 		'2147483647' == Int32.MAX.toString();
 		'-2147483648' == Int32.MIN.toString();
 		'-1' == Int32.create(-1).toString();
-		'null' == '' + (null:Null<Int32>);
 	}
 
 	public function specToInt() {

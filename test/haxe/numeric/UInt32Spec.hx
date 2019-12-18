@@ -70,7 +70,6 @@ class UInt32Spec extends TestBase {
 		'43210' == UInt32.create(43210).toString();
 		'4294967295' == UInt32.MAX.toString();
 		'0' == UInt32.MIN.toString();
-		'null' == '' + (null:Null<UInt32>);
 	}
 
 	public function specPrefixIncrement() {

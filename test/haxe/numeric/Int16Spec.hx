@@ -66,7 +66,6 @@ class Int16Spec extends TestBase {
 		'32767' == Int16.MAX.toString();
 		'-32768' == Int16.MIN.toString();
 		'-1' == Int16.create(-1).toString();
-		'null' == '' + (null:Null<Int16>);
 	}
 
 	public function specToInt() {

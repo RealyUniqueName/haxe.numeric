@@ -66,7 +66,6 @@ class Int8Spec extends TestBase {
 		'127' == Int8.MAX.toString();
 		'-128' == Int8.MIN.toString();
 		'-1' == Int8.create(-1).toString();
-		'null' == '' + (null:Null<Int8>);
 	}
 
 	public function specToInt() {

@@ -47,7 +47,6 @@ class UInt16Spec extends TestBase {
 		'43210' == UInt16.create(43210).toString();
 		'65535' == UInt16.MAX.toString();
 		'0' == UInt16.MIN.toString();
-		'null' == '' + (null:Null<UInt16>);
 	}
 
 	public function specToInt() {
