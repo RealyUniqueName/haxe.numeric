@@ -42,7 +42,7 @@ script:
   - haxelib run travix java -D OVERFLOW_THROW -D analyzer-optimize
   - haxelib run travix java -D OVERFLOW_WRAP
   - haxelib run travix java -D OVERFLOW_WRAP -D analyzer-optimize
-  - haxelib run travix cpp -D OVERFLOW_THROW
+  - haxelib run travix cpp -D OVERFLOW_THROW || haxelib run travix cpp -D OVERFLOW_THROW
   - haxelib run travix cpp -D OVERFLOW_THROW -D analyzer-optimize
   - haxelib run travix cpp -D OVERFLOW_WRAP
   - haxelib run travix cpp -D OVERFLOW_WRAP -D analyzer-optimize
