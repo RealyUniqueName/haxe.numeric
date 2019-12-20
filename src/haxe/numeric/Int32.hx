@@ -58,16 +58,13 @@ import haxe.numeric.exceptions.OverflowException;
  * To convert `Int32` to other integer types refer to `haxe.numeric.Numeric.Int8Utils` methods.
  */
 @:allow(haxe.numeric)
-@:using(haxe.numeric.Numeric)
 abstract Int32(Int) {
-	static inline var MAX_AS_INT = 2147483647;
-	static inline var MIN_AS_INT = -2147483648;
 	static inline var BITS_COUNT = 32;
 
 	/** Maximum `Int32` value: `2147483647` */
-	static public inline var MAX:Int32 = new Int32(MAX_AS_INT);
+	static public inline var MAX:Int32 = new Int32(Numeric.MAX_INT32);
 	/** Minimum `Int32` value: `-2147483648` */
-	static public inline var MIN:Int32 = new Int32(MIN_AS_INT);
+	static public inline var MIN:Int32 = new Int32(Numeric.MIN_INT32);
 
 
 	/**
@@ -80,7 +77,7 @@ abstract Int32(Int) {
 	 * If `value` is outside of `Int32` bounds then only 32 less significant bits are used.
 	 */
 	static public inline function create(value:Int):Int32 {
-		if(value > MAX_AS_INT || value < MIN_AS_INT) {
+		if(value > Numeric.MAX_INT32 || value < Numeric.MIN_INT32) {
 			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			throw new OverflowException('$value overflows Int32');
 			#else
@@ -106,7 +103,7 @@ abstract Int32(Int) {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			if(
 				#if (js || lua)
-					value < MIN_AS_INT || value > MAX_AS_INT * 2 + 1
+					value < Numeric.MIN_INT32 || value > Numeric.MAX_UINT32_AS_FLOAT
 				#else
 					value & ~Numeric.native32BitsInt != 0
 				#end
@@ -132,11 +129,11 @@ abstract Int32(Int) {
 	}
 
 	/**
-	 * `bits` must be greater or equal to `MIN_AS_INT` and lesser or equal to `0xFFFFFFFF`
+	 * `bits` must be greater or equal to `Numeric.MIN_INT32` and lesser or equal to `0xFFFFFFFF`
 	 */
 	static inline function bitsToValue(bits:Int):Int {
-		return if(bits > MAX_AS_INT) {
-			(bits - MAX_AS_INT - 1) + MIN_AS_INT;
+		return if(bits > Numeric.MAX_INT32) {
+			(bits - Numeric.MAX_INT32 - 1) + Numeric.MIN_INT32;
 		} else {
 			bits;
 		}
@@ -147,7 +144,7 @@ abstract Int32(Int) {
 	 */
 	static inline function valueToBits(value:Int):Int {
 		return if(#if (js || lua) false #else value < 0 #end) {
-			value - MIN_AS_INT + 1 + MAX_AS_INT;
+			value - Numeric.MIN_INT32 + 1 + Numeric.MAX_INT32;
 		} else {
 			value;
 		}
@@ -175,7 +172,7 @@ abstract Int32(Int) {
 
 	@:op(-A) inline function negative():Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == MIN_AS_INT) {
+		if(this == Numeric.MIN_INT32) {
 			throw new OverflowException('2147483648 overflows Int32');
 		}
 		#end
@@ -184,7 +181,7 @@ abstract Int32(Int) {
 
 	@:op(++A) inline function prefixIncrement():Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == MAX_AS_INT) {
+		if(this == Numeric.MAX_INT32) {
 			throw new OverflowException('2147483648 overflows Int32');
 		}
 		#end
@@ -194,7 +191,7 @@ abstract Int32(Int) {
 
 	@:op(A++) inline function postfixIncrement():Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == MAX_AS_INT) {
+		if(this == Numeric.MAX_INT32) {
 			throw new OverflowException('2147483648 overflows Int32');
 		}
 		#end
@@ -205,7 +202,7 @@ abstract Int32(Int) {
 
 	@:op(--A) inline function prefixDecrement():Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == MIN_AS_INT) {
+		if(this == Numeric.MIN_INT32) {
 			throw new OverflowException('-2147483649 overflows Int32');
 		}
 		#end
@@ -215,7 +212,7 @@ abstract Int32(Int) {
 
 	@:op(A--) inline function postfixDecrement():Int32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(this == MIN_AS_INT) {
+		if(this == Numeric.MIN_INT32) {
 			throw new OverflowException('-2147483649 overflows Int32');
 		}
 		#end

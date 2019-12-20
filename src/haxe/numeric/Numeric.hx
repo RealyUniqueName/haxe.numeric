@@ -7,7 +7,12 @@ using StringTools;
 /**
  * This whole module (not only `Numeric` class) is intended for usage in `using` directives.
  */
+@:allow(haxe.numeric)
 class Numeric {
+	static inline var MAX_UINT32_AS_FLOAT = 4294967295.0;
+	static inline var MAX_INT32 = 2147483647;
+	static inline var MIN_INT32 = -2147483648;
+
 	/**
 	 * An integer with exactly 32 bits set to `1` at runtime.
 	 * The value is either `-1` or `4294967295` depending on a target platform (32bit or 64bit)
@@ -162,6 +167,13 @@ class Numeric {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Function to avoid compiler's optimization of constant binops.
+	 */
+	@:pure(false) static function shiftLeft(i:Int, n:Int):Int {
+		return i << n;
 	}
 }
 

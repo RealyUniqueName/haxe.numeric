@@ -53,10 +53,7 @@ using haxe.numeric.Numeric;
  */
 @:allow(haxe.numeric)
 abstract UInt32(Int) {
-	static inline var MAX_AS_FLOAT = 4294967295.0;
 	static inline var MIN_AS_INT = 0;
-	static inline var MAX_INT32 = 2147483647;
-	static inline var MIN_INT32 = -2147483648;
 
 	static public var MAX(get,never):UInt32;
 	static public inline var MIN:UInt32 = new UInt32(MIN_AS_INT);
@@ -75,7 +72,7 @@ abstract UInt32(Int) {
 	 */
 	static public inline function create(value:Int):UInt32 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(value > MAX_AS_FLOAT || value < MIN_AS_INT) {
+			if(value > Numeric.MAX_UINT32_AS_FLOAT || value < MIN_AS_INT) {
 				throw new OverflowException('$value overflows UInt32');
 			}
 		#end
@@ -97,9 +94,9 @@ abstract UInt32(Int) {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			if(
 				#if (js || lua)
-					value < MIN_INT32 || value > MAX_AS_FLOAT
+					value < Numeric.MIN_INT32 || value > Numeric.MAX_UINT32_AS_FLOAT
 				#else
-					!Numeric.is32BitsIntegers && (value < 0 || value > MAX_AS_FLOAT)
+					!Numeric.is32BitsIntegers && (value < 0 || value > Numeric.MAX_UINT32_AS_FLOAT)
 				#end
 			) {
 				throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
@@ -132,11 +129,11 @@ abstract UInt32(Int) {
 		#end
 		inline function normalized() {
 			#if java
-				return (cast (MAX_AS_FLOAT + this + 1):java.lang.Number).longValue();
+				return (cast (Numeric.MAX_UINT32_AS_FLOAT + this + 1):java.lang.Number).longValue();
 			#elseif lua
 				return untyped __lua__('4294967295') + this + 1;
 			#else
-				return MAX_AS_FLOAT + this + 1;
+				return Numeric.MAX_UINT32_AS_FLOAT + this + 1;
 			#end
 		}
 		return this < 0 ? '${normalized()}' : '$this';
@@ -161,7 +158,7 @@ abstract UInt32(Int) {
 	 * That is, `UInt32.MAX.toFloat()` returns `4294967295` on all platforms.
 	 */
 	public inline function toFloat():Float {
-		return this < 0 ? MAX_AS_FLOAT + 1 + this : this;
+		return this < 0 ? Numeric.MAX_UINT32_AS_FLOAT + 1 + this : this;
 	}
 
 	//should this produce an Int or Float or throw an exception or not allowed at all?
@@ -245,7 +242,7 @@ abstract UInt32(Int) {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			if(
 				//overflow on 64bit platforms
-				result > MAX_AS_FLOAT
+				result > Numeric.MAX_UINT32_AS_FLOAT
 				//overflows on 32bit platforms
 				|| (this < 0 && bInt < 0)
 				|| ((this < 0 || bInt < 0) && result >= 0)
@@ -268,7 +265,7 @@ abstract UInt32(Int) {
 					throw new OverflowException('(${toString()} - ${b.toString()}) overflows UInt32');
 				}
 			} else {
-				if(result < 0 || result > MAX_AS_FLOAT) {
+				if(result < 0 || result > Numeric.MAX_UINT32_AS_FLOAT) {
 					throw new OverflowException('(${toString()} - ${b.toString()}) overflows UInt32');
 				}
 			}
@@ -283,7 +280,7 @@ abstract UInt32(Int) {
 	}
 
 	@:op(A * B) function mul(b:UInt32):UInt32 {
-		if(toFloat() * b.toFloat() <= MAX_AS_FLOAT) {
+		if(toFloat() * b.toFloat() <= Numeric.MAX_UINT32_AS_FLOAT) {
 			return new UInt32(this * b.toInt());
 		} else {
 			#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
