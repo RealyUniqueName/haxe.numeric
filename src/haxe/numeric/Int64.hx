@@ -215,6 +215,7 @@ abstract Int64(Impl) {
 	static public function parseBits(bits:String):Int64 {
 		var result = new Impl();
 		var bitPos = BITS_COUNT;
+		var part = Int32.BITS_COUNT;
 		var value = 0;
 		for(pos => code in bits) {
 			switch(code) {
@@ -224,14 +225,15 @@ abstract Int64(Impl) {
 				case '1'.code:
 					bitPos--;
 					if(bitPos >= 0) {
-						value = value | 1 << bitPos;
+						value = value | 1 << (bitPos - part);
 					}
 				case _:
 					throw new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
 			}
-			if(bitPos == 32) {
+			if(bitPos == 32 && part != 0) {
 				result.high = value;
 				value = 0;
+				part = 0;
 			}
 		}
 		result.low = value;
@@ -268,17 +270,9 @@ abstract Int64(Impl) {
 		this = value;
 	}
 
-	// /**
-	//  * Convert `Int32` to `Int` by value.
-	//  * ```haxe
-	//  * Int32.create(-1).toInt() == -1
-	//  * ```
-	//  *
-	//  * For binary conversion see `Int16Utils.toIntBits` method in `haxe.numeric.Numeric` module
-	//  */
-	// public inline function toInt():Int {
-	// 	return this;
-	// }
+	inline function toImpl():Impl {
+		return this;
+	}
 
 	public function toString():String {
 		if(this.high == 0) {
@@ -485,7 +479,9 @@ abstract Int64(Impl) {
 	// @:op(A % B) static function moduloFirstFloat(a:Int32, b:Float):Float;
 	// @:op(A % B) static function moduloSecondFloat(a:Float, b:Int32):Float;
 
-	// @:op(A == B) function equal(b:Int32):Bool;
+	@:op(A == B) inline function equal(b:Int64):Bool {
+		return this.high == b.toImpl().high && this.low == b.toImpl().low;
+	}
 	// @:op(A == B) function equalInt8(b:Int8):Bool;
 	// @:op(A == B) function equalUInt8(b:UInt8):Bool;
 	// @:op(A == B) function equalUInt16(b:UInt16):Bool;
