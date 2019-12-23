@@ -77,45 +77,22 @@ class Int64Spec extends TestBase {
 		);
 	}
 
-	// public function specCreateBits() {
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			if(!Numeric.is32BitsIntegers) {
-	// 				Assert.raises(() -> Int32.createBits(Numeric.native32BitsInt + 1), OverflowException);
-	// 			} else {
-	// 				#if js
-	// 					Assert.raises(() -> Int32.createBits(js.Syntax.code('0xFFFFFFFF') + 1), OverflowException);
-	// 				#else
-	// 					Assert.pass();
-	// 				#end
-	// 			}
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			Int32.create(0) == Int32.createBits(Numeric.native32BitsInt + 1);
-	// 		}
-	// 	);
-	// }
+	public function specNegative() {
+		(-Int64.create(10)).isTypeInt64();
 
-	// public function specToInt() {
-	// 	2147483647 == Int32.MAX.toInt();
-	// 	-2147483648 == Int32.MIN.toInt();
-	// 	-1 == Int32.parseBits('1111 1111 1111 1111 1111 1111 1111 1111').toInt();
-	// }
+		'-9223372036854775807' == (-Int64.MAX).toString();
+		Int64.create(-1) == -Int64.create(1);
+		Int64.create(1) == -Int64.create(-1);
 
-	// public function specNegative() {
-	// 	(-Int32.create(10)).isTypeInt32();
-
-	// 	-Int32.create(10) == Int32.create(-10);
-
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			Assert.raises(() -> -Int32.MIN, OverflowException);
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			-Int32.MIN == Int32.MIN;
-	// 		}
-	// 	);
-	// }
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> -Int64.MIN, OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				-Int64.MIN == Int64.MIN;
+			}
+		);
+	}
 
 	// public function specPrefixIncrement() {
 	// 	var i32 = Int32.create(0);

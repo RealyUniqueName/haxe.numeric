@@ -113,14 +113,14 @@ abstract Int64(Impl) {
 	 * Creates Int64 from `value`.
 	 */
 	static public function create(value:Int):Int64 {
-		var result = new Impl();
-		result.low = value & Numeric.native32BitsInt;
+		var low = value & Numeric.native32BitsInt;
+		var high = 0;
 		if(Numeric.MIN_INT32 <= value && value < 0) {
-			result.high = Numeric.native32BitsInt;
-		} else if(value != result.low) {
-			result.high = ((value >> 31) >> 1) & Numeric.native32BitsInt;
+			high = Numeric.native32BitsInt;
+		} else if(value != low) {
+			high = ((value >> 31) >> 1) & Numeric.native32BitsInt;
 		}
-		return new Int64(result);
+		return make(high, low);
 	}
 
 	/**
@@ -152,15 +152,12 @@ abstract Int64(Impl) {
 	 * `haxe.numeric.exceptions.OverflowException` is thrown if:
 	 * - if `highBits` or `lowBits` is positive and has ones on 33rd or more significant bits
 	 * - or if `highBits` or `lowBits` is negative and has zeros on 33rd or more significant bits.
+	 * This is only possible if target native integer can store more than 32 bits.
 	 *
 	 * In release builds or with `-D OVERFLOW_WRAP` the values of
 	 * `highBits` and `lowBits` are truncated to 32 less significant bits.
 	 */
 	static public function composeBits(highBits:Int, lowBits:Int) {
-		var result = new Impl();
-		result.low = lowBits & Numeric.native32BitsInt;
-		result.high = highBits & Numeric.native32BitsInt;
-
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 			inline function check(value:Int, argument:String) {
 				if(value < -Numeric.MAX_UINT32_AS_FLOAT || value > Numeric.MAX_UINT32_AS_FLOAT) {
@@ -171,34 +168,15 @@ abstract Int64(Impl) {
 			check(lowBits, 'lowBits');
 		#end
 
-		return new Int64(result);
+		return make(highBits & Numeric.native32BitsInt, lowBits & Numeric.native32BitsInt);
 	}
 
-	// /**
-	//  * Creates `Int32` using 32 less significant bits of `value`.
-	//  *
-	//  * In `-debug` builds or with `-D OVERFLOW_THROW`:
-	//  * If `value` has non-zeros on 33rd or more significant bits
-	//  * then `haxe.numeric.exceptions.OverflowException` is thrown.
-	//  *
-	//  * In release builds or with `-D OVERFLOW_WRAP`:
-	//  * If `value` has non-zeros on 33rd or more significant bits
-	//  * then only 32 less significant bits are used.
-	//  */
-	// static public inline function createBits(value:Int):Int32 {
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 		if(
-	// 			#if (js || lua)
-	// 				value < MIN_AS_INT || value > MAX_AS_INT * 2 + 1
-	// 			#else
-	// 				value & ~Numeric.native32BitsInt != 0
-	// 			#end
-	// 		) {
-	// 			throw new OverflowException('$value has non-zeros on 33rd or more significant bits');
-	// 		}
-	// 	#end
-	// 	return new Int32(bitsToValue(value & Numeric.native32BitsInt));
-	// }
+	static inline function make(high:Int, low:Int):Int64 {
+		var result = new Impl();
+		result.low = low;
+		result.high = high;
+		return new Int64(result);
+	}
 
 	/**
 	 * Parse string binary representation of a number into `Int64` value.
@@ -213,7 +191,8 @@ abstract Int64(Impl) {
 	 */
 	@:noUsing
 	static public function parseBits(bits:String):Int64 {
-		var result = new Impl();
+		var high = 0;
+		var low = 0;
 		var bitPos = BITS_COUNT;
 		var part = Int32.BITS_COUNT;
 		var value = 0;
@@ -231,40 +210,18 @@ abstract Int64(Impl) {
 					throw new InvalidArgumentException('Invalid character "${String.fromCharCode(code)}" at index $pos in string "$bits"');
 			}
 			if(bitPos == 32 && part != 0) {
-				result.high = value;
+				high = value;
 				value = 0;
 				part = 0;
 			}
 		}
-		result.low = value;
+		low = value;
 		if(bitPos != 0) {
 			throw new InvalidArgumentException('Bits string should contain exactly $BITS_COUNT bits. Invalid bits string "$bits"');
 		}
 
-		return new Int64(result);
+		return make(high, low);
 	}
-
-	// /**
-	//  * `bits` must be greater or equal to `MIN_AS_INT` and lesser or equal to `0xFFFFFFFF`
-	//  */
-	// static inline function bitsToValue(bits:Int):Int {
-	// 	return if(bits > MAX_AS_INT) {
-	// 		(bits - MAX_AS_INT - 1) + MIN_AS_INT;
-	// 	} else {
-	// 		bits;
-	// 	}
-	// }
-
-	// /**
-	//  * `value` must be in bounds of Int32 range
-	//  */
-	// static inline function valueToBits(value:Int):Int {
-	// 	return if(#if (js || lua) false #else value < 0 #end) {
-	// 		value - MIN_AS_INT + 1 + MAX_AS_INT;
-	// 	} else {
-	// 		value;
-	// 	}
-	// }
 
 	inline function new(value:Impl) {
 		this = value;
@@ -342,12 +299,9 @@ abstract Int64(Impl) {
 		var low = this.low;
 		if(negative) {
 			high = ~high;
-			low = (~low) & Numeric.native32BitsInt;
-			if(low == Numeric.native32BitsInt) {
-				low = 0;
+			low = (-low) & Numeric.native32BitsInt;
+			if(low == 0) {
 				high += 1;
-			} else {
-				low += 1;
 			}
 		}
 
@@ -369,14 +323,20 @@ abstract Int64(Impl) {
 		return (negative ? '-' : '') + stringifyDecimal();
 	}
 
-	// @:op(-A) inline function negative():Int32 {
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if(this == MIN_AS_INT) {
-	// 		throw new OverflowException('2147483648 overflows Int32');
-	// 	}
-	// 	#end
-	// 	return create(-this);
-	// }
+	@:op(-A) function negative():Int64 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		if(new Int64(this) == MIN) {
+			throw new OverflowException('9223372036854775808 overflows Int64');
+		}
+		#end
+		var low = (-this.low) & Numeric.native32BitsInt;
+		var high = ~this.high;
+		if(low == 0) {
+			high++;
+		}
+		high = high & Numeric.native32BitsInt;
+		return make(high, low);
+	}
 
 	// @:op(++A) inline function prefixIncrement():Int32 {
 	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
