@@ -151,55 +151,62 @@ class Int64Spec extends TestBase {
 		);
 	}
 
-	// public function specPrefixDecrement() {
-	// 	var i32 = Int32.create(0);
-	// 	--i32 == Int32.create(-1);
-	// 	i32 == Int32.create(-1);
+	public function specPrefixDecrement() {
+		var i64 = Int64.create(0);
+		--i64 == Int64.create(-1);
+		i64 == Int64.create(-1);
 
-	// 	(--i32).isTypeInt32();
+		var i64 = Int64.composeBits(1, 0);
+		--i64 == Int64.composeBits(0, native32BitsInt);
 
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			var i32 = Int32.MIN;
-	// 			try {
-	// 				--i32;
-	// 				Assert.fail();
-	// 			} catch(e:OverflowException) {
-	// 				Assert.equals(Int32.MIN, i32);
-	// 			}
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			var i32 = Int32.MIN;
-	// 			--i32;
-	// 			i32 == Int32.MAX;
-	// 		}
-	// 	);
-	// }
+		(--i64).isTypeInt64();
 
-	// public function specPostfixDecrement() {
-	// 	var i32 = Int32.create(0);
-	// 	i32-- == Int32.create(0);
-	// 	i32 == Int32.create(-1);
+		overflow(
+			function OVERFLOW_THROW() {
+				var i64 = Int64.MIN;
+				try {
+					--i64;
+					Assert.fail();
+				} catch(e:OverflowException) {
+					Assert.equals(Int64.MIN, i64);
+				}
+			},
+			function OVERFLOW_WRAP() {
+				var i64 = Int64.MIN;
+				--i64;
+				i64 == Int64.MAX;
+			}
+		);
+	}
 
-	// 	(i32--).isTypeInt32();
+	public function specPostfixDecrement() {
+		var i64 = Int64.create(0);
+		i64-- == Int64.create(0);
+		i64 == Int64.create(-1);
 
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			var i32 = Int32.MIN;
-	// 			try {
-	// 				i32--;
-	// 				Assert.fail();
-	// 			} catch(e:OverflowException) {
-	// 				Assert.equals(Int32.MIN, i32);
-	// 			}
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			var i32 = Int32.MIN;
-	// 			i32--;
-	// 			i32 == Int32.MAX;
-	// 		}
-	// 	);
-	// }
+		var i64 = Int64.composeBits(1, 0);
+		i64-- == Int64.composeBits(1, 0);
+		i64 == Int64.composeBits(0, native32BitsInt);
+
+		(i64--).isTypeInt64();
+
+		overflow(
+			function OVERFLOW_THROW() {
+				var i64 = Int64.MIN;
+				try {
+					i64--;
+					Assert.fail();
+				} catch(e:OverflowException) {
+					Assert.equals(Int64.MIN, i64);
+				}
+			},
+			function OVERFLOW_WRAP() {
+				var i64 = Int64.MIN;
+				i64--;
+				i64 == Int64.MAX;
+			}
+		);
+	}
 
 	// public function specAddition() {
 	// 	Int32.create(-1) == Int32.MAX + Int32.MIN;

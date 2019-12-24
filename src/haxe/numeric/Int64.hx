@@ -9,7 +9,7 @@ private class TargetImpl {
 	public var high:Int = 0;
 	public var low:Int = 0;
 
-	public function new() {}
+	public inline function new() {}
 }
 
 private typedef Impl = TargetImpl;
@@ -349,40 +349,41 @@ abstract Int64(Impl) {
 
 	@:op(A++) inline function postfixIncrement():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(new Int64(this) == MIN) {
+			if(new Int64(this) == MAX) {
+				throw new OverflowException('9223372036854775808 overflows Int64');
+			}
+		#end
+		var result = new Int64(this);
+		prefixIncrement();
+		return result;
+	}
+
+	@:op(--A) inline function prefixDecrement():Int64 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(this == MIN) {
+				throw new OverflowException('-9223372036854775809 overflows Int64');
+			}
+		#end
+		var low = (this.low - 1) & Numeric.native32BitsInt;
+		var high = this.high;
+		if(low == Numeric.native32BitsInt) {
+			high--;
+		}
+		var result = make(high & Numeric.native32BitsInt, low);
+		this = result.toImpl();
+		return result;
+	}
+
+	@:op(A--) inline function postfixDecrement():Int64 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(this == MIN) {
 				throw new OverflowException('-9223372036854775809 overflows Int64');
 			}
 		#end
 		var result = new Int64(this);
-		var low = (this.low + 1) & Numeric.native32BitsInt;
-		var high = this.high;
-		if(low == 0) {
-			high++;
-		}
-		this = make(high & Numeric.native32BitsInt, low).toImpl();
+		prefixDecrement();
 		return result;
 	}
-
-	// @:op(--A) inline function prefixDecrement():Int32 {
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if(this == MIN_AS_INT) {
-	// 		throw new OverflowException('-2147483649 overflows Int32');
-	// 	}
-	// 	#end
-	// 	this = create(this - 1).toInt();
-	// 	return new Int32(this);
-	// }
-
-	// @:op(A--) inline function postfixDecrement():Int32 {
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if(this == MIN_AS_INT) {
-	// 		throw new OverflowException('-2147483649 overflows Int32');
-	// 	}
-	// 	#end
-	// 	var result = new Int32(this);
-	// 	this = create(this - 1).toInt();
-	// 	return result;
-	// }
 
 
 	// @:op(A + B) #if !cpp inline #end function addition(b:Int32):Int32 {
