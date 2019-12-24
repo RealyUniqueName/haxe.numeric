@@ -5,18 +5,11 @@ import haxe.numeric.exceptions.OverflowException;
 
 using StringTools;
 
-abstract TargetImpl(Array<Int>) {
-	public var high(get,set):Int;
-	inline function get_high() return this[0];
-	inline function set_high(v) return this[0] = v;
+private class TargetImpl {
+	public var high:Int = 0;
+	public var low:Int = 0;
 
-	public var low(get,set):Int;
-	inline function get_low() return this[1];
-	inline function set_low(v) return this[1] = v;
-
-	public inline function new() {
-		this = [0, 0];
-	}
+	public function new() {}
 }
 
 private typedef Impl = TargetImpl;
@@ -325,9 +318,9 @@ abstract Int64(Impl) {
 
 	@:op(-A) function negative():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if(new Int64(this) == MIN) {
-			throw new OverflowException('9223372036854775808 overflows Int64');
-		}
+			if(new Int64(this) == MIN) {
+				throw new OverflowException('9223372036854775808 overflows Int64');
+			}
 		#end
 		var low = (-this.low) & Numeric.native32BitsInt;
 		var high = ~this.high;
@@ -338,26 +331,37 @@ abstract Int64(Impl) {
 		return make(high, low);
 	}
 
-	// @:op(++A) inline function prefixIncrement():Int32 {
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if(this == MAX_AS_INT) {
-	// 		throw new OverflowException('2147483648 overflows Int32');
-	// 	}
-	// 	#end
-	// 	this = create(this + 1).toInt();
-	// 	return new Int32(this);
-	// }
+	@:op(++A) inline function prefixIncrement():Int64 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(new Int64(this) == MAX) {
+				throw new OverflowException('9223372036854775808 overflows Int64');
+			}
+		#end
+		var low = (this.low + 1) & Numeric.native32BitsInt;
+		var high = this.high;
+		if(low == 0) {
+			high++;
+		}
+		var result = make(high & Numeric.native32BitsInt, low);
+		this = result.toImpl();
+		return result;
+	}
 
-	// @:op(A++) inline function postfixIncrement():Int32 {
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if(this == MAX_AS_INT) {
-	// 		throw new OverflowException('2147483648 overflows Int32');
-	// 	}
-	// 	#end
-	// 	var result = new Int32(this);
-	// 	this = create(this + 1).toInt();
-	// 	return result;
-	// }
+	@:op(A++) inline function postfixIncrement():Int64 {
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(new Int64(this) == MIN) {
+				throw new OverflowException('-9223372036854775809 overflows Int64');
+			}
+		#end
+		var result = new Int64(this);
+		var low = (this.low + 1) & Numeric.native32BitsInt;
+		var high = this.high;
+		if(low == 0) {
+			high++;
+		}
+		this = make(high & Numeric.native32BitsInt, low).toImpl();
+		return result;
+	}
 
 	// @:op(--A) inline function prefixDecrement():Int32 {
 	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
