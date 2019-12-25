@@ -240,13 +240,7 @@ abstract UInt32(Int) {
 		var bInt = b.toInt();
 		var result = this + bInt;
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(
-				//overflow on 64bit platforms
-				result > Numeric.MAX_UINT32_AS_FLOAT
-				//overflows on 32bit platforms
-				|| (this < 0 && bInt < 0)
-				|| ((this < 0 || bInt < 0) && result >= 0)
-			) {
+			if(Numeric.addUnsignedOverflows32(this, bInt, result)) {
 				throw new OverflowException('(${toString()} + ${b.toString()}) overflows UInt32');
 			}
 		#end

@@ -175,6 +175,27 @@ class Numeric {
 	@:pure(false) static function shiftLeft(i:Int, n:Int):Int {
 		return i << n;
 	}
+
+	static inline function sign32(value:Int):Int {
+		return (value >> 31) & 1;
+	}
+
+	/**
+	 * Checks if the `result` of a signed addition of `value1` and `value2` overflows 32 bits.
+	 */
+	static inline function addSignedOverflows32(value1:Int, value2:Int, result:Int):Bool {
+		var sign1 = sign32(value1);
+		return sign1 == sign32(value2) && sign1 != sign32(result);
+	}
+
+	/**
+	 * Checks if the `result` of an unsigned addition of `value1` and `value2` overflows 32 bits.
+	 */
+	static inline function addUnsignedOverflows32(value1:Int, value2:Int, result:Int):Bool {
+		var sign1 = sign32(value1);
+		var sign2 = sign32(value2);
+		return sign1 & sign2 == 1 || (sign1 | sign2 == 1 && sign32(result) == 0);
+	}
 }
 
 class Int8Utils {

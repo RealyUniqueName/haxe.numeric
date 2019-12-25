@@ -82,7 +82,7 @@ abstract Int64(Impl) {
 			case null:
 				var max = new Impl();
 				max.low = Numeric.native32BitsInt;
-				max.high = Numeric.native32BitsInt >>> 1;
+				max.high = 0x7FFFFFFF;
 				_MAX = new Int64(max);
 			case max:
 				max;
@@ -318,7 +318,8 @@ abstract Int64(Impl) {
 
 	@:op(-A) function negative():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(new Int64(this) == MIN) {
+			//`get_MIN()` instead of `MIN` because of this: https://github.com/HaxeFoundation/haxe/issues/9060
+			if(new Int64(this) == get_MIN()) {
 				throw new OverflowException('9223372036854775808 overflows Int64');
 			}
 		#end
@@ -333,7 +334,7 @@ abstract Int64(Impl) {
 
 	@:op(++A) inline function prefixIncrement():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(new Int64(this) == MAX) {
+			if(new Int64(this) == get_MAX()) {
 				throw new OverflowException('9223372036854775808 overflows Int64');
 			}
 		#end
@@ -349,7 +350,7 @@ abstract Int64(Impl) {
 
 	@:op(A++) inline function postfixIncrement():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(new Int64(this) == MAX) {
+			if(new Int64(this) == get_MAX()) {
 				throw new OverflowException('9223372036854775808 overflows Int64');
 			}
 		#end
@@ -360,7 +361,7 @@ abstract Int64(Impl) {
 
 	@:op(--A) inline function prefixDecrement():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(this == MIN) {
+			if(new Int64(this) == get_MIN()) {
 				throw new OverflowException('-9223372036854775809 overflows Int64');
 			}
 		#end
@@ -376,7 +377,7 @@ abstract Int64(Impl) {
 
 	@:op(A--) inline function postfixDecrement():Int64 {
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(this == MIN) {
+			if(new Int64(this) == get_MIN()) {
 				throw new OverflowException('-9223372036854775809 overflows Int64');
 			}
 		#end
@@ -386,16 +387,20 @@ abstract Int64(Impl) {
 	}
 
 
-	// @:op(A + B) #if !cpp inline #end function addition(b:Int32):Int32 {
-	// 	// regarding inline for cpp: https://github.com/HaxeFoundation/haxe/issues/8879
-	// 	var result = this + b.toInt();
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if((this < 0 && b.toInt() < 0 && result >= 0) || (this > 0 && b.toInt() > 0 && result <= 0)) {
-	// 		throw new OverflowException('($this + ${b.toInt()}) overflows Int32');
-	// 	}
-	// 	#end
-	// 	return create(result);
-	// }
+	@:op(A + B) function addition(b:Int64):Int64 {
+		var bImpl = b.toImpl();
+		var high = this.high + bImpl.high;
+		var low = this.low + bImpl.low;
+		if(Numeric.addUnsignedOverflows32(this.low, bImpl.low, low)) {
+			high++;
+		}
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(Numeric.addSignedOverflows32(this.high, bImpl.high, high)) {
+				throw new OverflowException('(${toString()} + $b) overflows Int64');
+			}
+		#end
+		return make(high & Numeric.native32BitsInt, low & Numeric.native32BitsInt);
+	}
 	// @:op(A + B) @:commutative static function additionFloat(a:Int32, b:Float):Float;
 
 	// @:op(A - B) inline function subtraction(b:Int32):Int32 {

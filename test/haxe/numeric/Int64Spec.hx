@@ -208,26 +208,24 @@ class Int64Spec extends TestBase {
 		);
 	}
 
-	// public function specAddition() {
-	// 	Int32.create(-1) == Int32.MAX + Int32.MIN;
+	public function specAddition() {
+		Int64.create(-1) == Int64.MAX + Int64.MIN;
+		Int64.create(-2) == Int64.create(-1) + Int64.create(-1);
+		Int64.create(-1) == Int64.create(-2) + Int64.create(1);
 
-	// 	1235.0 == Int32.create(1234) + 1.0;
+		(Int64.create(0) + Int64.create(0)).isTypeInt64();
 
-	// 	(Int32.create(0) + Int32.create(0)).isTypeInt32();
-	// 	(Int32.create(0) + 1.0).isTypeFloat();
-	// 	(1.0 + Int32.create(0)).isTypeFloat();
-
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			Assert.raises(() -> Int32.MAX + Int32.create(1), OverflowException);
-	// 			Assert.raises(() -> Int32.MIN + Int32.create(-1), OverflowException);
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			Int32.MAX + Int32.create(1) == Int32.MIN;
-	// 			Int32.MIN + Int32.create(-1) == Int32.MAX;
-	// 		}
-	// 	);
-	// }
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int64.MAX + Int64.create(1), OverflowException);
+				Assert.raises(() -> Int64.MIN + Int64.create(-1), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int64.MAX + Int64.create(1) == Int64.MIN;
+				Int64.MIN + Int64.create(-1) == Int64.MAX;
+			}
+		);
+	}
 
 	// public function specSubtraction() {
 	// 	Int32.create(0) == Int32.MAX - Int32.MAX;
