@@ -35,6 +35,7 @@ class Int64Spec extends TestBase {
 		Int64.create(123).isTypeInt64();
 
 		'$native32BitsInt' == Int64.create(native32BitsInt).toString();
+		'${native32BitsInt * 32}' == Int64.create(native32BitsInt * 32).toString();
 		'-1' == Int64.create(-1).toString();
 		'1234567890' == Int64.create(1234567890).toString();
 		'-1234567890' == Int64.create(-1234567890).toString();
@@ -213,7 +214,12 @@ class Int64Spec extends TestBase {
 		Int64.create(-2) == Int64.create(-1) + Int64.create(-1);
 		Int64.create(-1) == Int64.create(-2) + Int64.create(1);
 
+		Int64.create(-2) == Int64.create(-1) + -1;
+		Int64.create(-1) == -2 + Int64.create(1);
+
 		(Int64.create(0) + Int64.create(0)).isTypeInt64();
+		(Int64.create(0) + 0).isTypeInt64();
+		(0 + Int64.create(0)).isTypeInt64();
 
 		overflow(
 			function OVERFLOW_THROW() {
