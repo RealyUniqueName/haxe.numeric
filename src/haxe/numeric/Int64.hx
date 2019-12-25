@@ -386,8 +386,7 @@ abstract Int64(Impl) {
 		return result;
 	}
 
-
-	@:op(A + B) function addition(b:Int64):Int64 {
+	@:op(A + B) function add(b:Int64):Int64 {
 		var bImpl = b.toImpl();
 		var high = this.high + bImpl.high;
 		var low = this.low + bImpl.low;
@@ -401,7 +400,19 @@ abstract Int64(Impl) {
 		#end
 		return make(high & Numeric.native32BitsInt, low & Numeric.native32BitsInt);
 	}
-	// @:op(A + B) @:commutative static function additionFloat(a:Int32, b:Float):Float;
+	// @:op(A + B) @:commutative static function addInt(a:Int64, b:Int):Int64 {
+	// 	var high = this.high + bImpl.high;
+	// 	var low = this.low + b;
+	// 	if(Numeric.addUnsignedOverflows32(this.low, bImpl.low, low)) {
+	// 		high++;
+	// 	}
+	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+	// 		if(Numeric.addSignedOverflows32(this.high, bImpl.high, high)) {
+	// 			throw new OverflowException('(${toString()} + $b) overflows Int64');
+	// 		}
+	// 	#end
+	// 	return make(high & Numeric.native32BitsInt, low & Numeric.native32BitsInt);
+	// }
 
 	// @:op(A - B) inline function subtraction(b:Int32):Int32 {
 	// 	var result = this - b.toInt();

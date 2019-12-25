@@ -181,7 +181,8 @@ class Numeric {
 	}
 
 	/**
-	 * Checks if the `result` of a signed addition of `value1` and `value2` overflows 32 bits.
+	 * Checks if the `result` of a signed addition of `value1` and `value2` overflows min or max Int32 values.
+	 * Assuming `value1` and `value2` are valid Int32 values.
 	 */
 	static inline function addSignedOverflows32(value1:Int, value2:Int, result:Int):Bool {
 		var sign1 = sign32(value1);
@@ -190,11 +191,10 @@ class Numeric {
 
 	/**
 	 * Checks if the `result` of an unsigned addition of `value1` and `value2` overflows 32 bits.
+	 * Assuming `value1` and `value2` are valid UInt32 values.
 	 */
 	static inline function addUnsignedOverflows32(value1:Int, value2:Int, result:Int):Bool {
-		var sign1 = sign32(value1);
-		var sign2 = sign32(value2);
-		return sign1 & sign2 == 1 || (sign1 | sign2 == 1 && sign32(result) == 0);
+		return sign32(value1) + sign32(value2) > sign32(result);
 	}
 }
 

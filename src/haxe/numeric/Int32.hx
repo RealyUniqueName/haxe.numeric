@@ -226,7 +226,7 @@ abstract Int32(Int) {
 		// regarding inline for cpp: https://github.com/HaxeFoundation/haxe/issues/8879
 		var result = this + b.toInt();
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		if((this < 0 && b.toInt() < 0 && result >= 0) || (this > 0 && b.toInt() > 0 && result <= 0)) {
+		if(Numeric.addSignedOverflows32(this, b.toInt(), result)) {
 			throw new OverflowException('($this + ${b.toInt()}) overflows Int32');
 		}
 		#end
