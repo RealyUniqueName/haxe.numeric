@@ -170,7 +170,7 @@ class Numeric {
 	}
 
 	/**
-	 * Function to avoid compiler's optimization of constant binops.
+	 * Function to avoid compiler's optimization of constant binary operations.
 	 */
 	@:pure(false) static function shiftLeft(i:Int, n:Int):Int {
 		return i << n;
@@ -190,11 +190,33 @@ class Numeric {
 	}
 
 	/**
+	 * Checks if the `result` of a signed subtraction of `value1` and `value2` overflows min or max Int32 values.
+	 * Assuming `value1` and `value2` are valid Int32 values.
+	 */
+	static inline function subSignedOverflows32(value1:Int, value2:Int, result:Int):Bool {
+		var sign2 = sign32(value2);
+		return sign32(value1) != sign2 && sign2 == sign32(result);
+	}
+
+	/**
 	 * Checks if the `result` of an unsigned addition of `value1` and `value2` overflows 32 bits.
 	 * Assuming `value1` and `value2` are valid UInt32 values.
 	 */
 	static inline function addUnsignedOverflows32(value1:Int, value2:Int, result:Int):Bool {
 		return sign32(value1) + sign32(value2) > sign32(result);
+	}
+
+	/**
+	 * Compare `value1` and `value2` as unsigned 32bit integers.
+	 * The result is negative for `value1 < value2`,
+	 * positive for `value1 > value2` and zero for `value1 == value2`
+	 */
+	static inline function compareUnsigned32(value1:Int, value2:Int):Int {
+		if(value1 < 0) {
+			return value2 < 0 ? (~value2 - ~value1) : 1;
+		} else {
+			return value2 < 0 ? -1 : (value1 - value2);
+		}
 	}
 }
 

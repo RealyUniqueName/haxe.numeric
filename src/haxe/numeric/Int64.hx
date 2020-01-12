@@ -6,10 +6,13 @@ import haxe.numeric.exceptions.OverflowException;
 using StringTools;
 
 private class TargetImpl {
-	public var high:Int = 0;
-	public var low:Int = 0;
+	public var high:Int;
+	public var low:Int;
 
-	public inline function new() {}
+	public inline function new(high:Int, low:Int) {
+		this.high = high;
+		this.low = low;
+	}
 }
 
 private typedef Impl = TargetImpl;
@@ -80,10 +83,7 @@ abstract Int64(Impl) {
 	static function get_MAX():Int64 {
 		return switch _MAX {
 			case null:
-				var max = new Impl();
-				max.low = Numeric.native32BitsInt;
-				max.high = 0x7FFFFFFF;
-				_MAX = new Int64(max);
+				_MAX = make(0x7FFFFFFF, Numeric.native32BitsInt);
 			case max:
 				max;
 		}
@@ -94,13 +94,18 @@ abstract Int64(Impl) {
 	static function get_MIN():Int64 {
 		return switch _MIN {
 			case null:
-				var min = new Impl();
-				min.high = Numeric.shiftLeft(1, 31);
-				_MIN = new Int64(min);
+				_MIN = make(Numeric.shiftLeft(1, 31), 0);
 			case min:
 				min;
 		}
 	}
+
+	var high(get,set):Int;
+	inline function get_high() return this.high;
+	inline function set_high(v:Int) return this.high = v;
+	var low(get,set):Int;
+	inline function get_low() return this.low;
+	inline function set_low(v:Int) return this.low = v;
 
 	/**
 	 * Creates Int64 from `value`.
@@ -121,12 +126,12 @@ abstract Int64(Impl) {
 	 * E.g. `Int64.createBits(-1)` produces a value of `4294967295` on 32bit platforms and `-1` on 64bit platforms.
 	 */
 	static public function createBits(value:Int):Int64 {
-		var result = new Impl();
-		result.low = value & Numeric.native32BitsInt;
-		if(value != result.low) {
-			result.high = ((value >> 31) >> 1) & Numeric.native32BitsInt;
+		var low = value & Numeric.native32BitsInt;
+		var high = 0;
+		if(value != low) {
+			high = ((value >> 31) >> 1) & Numeric.native32BitsInt;
 		}
-		return new Int64(result);
+		return make(high, low);
 	}
 
 	/**
@@ -165,10 +170,7 @@ abstract Int64(Impl) {
 	}
 
 	static inline function make(high:Int, low:Int):Int64 {
-		var result = new Impl();
-		result.low = low;
-		result.high = high;
-		return new Int64(result);
+		return new Int64(new Impl(high, low));
 	}
 
 	/**
@@ -387,14 +389,13 @@ abstract Int64(Impl) {
 	}
 
 	@:op(A + B) function add(b:Int64):Int64 {
-		var bImpl = b.toImpl();
-		var high = this.high + bImpl.high;
-		var low = this.low + bImpl.low;
-		if(Numeric.addUnsignedOverflows32(this.low, bImpl.low, low)) {
+		var high = this.high + b.high;
+		var low = this.low + b.low;
+		if(Numeric.addUnsignedOverflows32(this.low, b.low, low)) {
 			high++;
 		}
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			if(Numeric.addSignedOverflows32(this.high, bImpl.high, high)) {
+			if(Numeric.addSignedOverflows32(this.high, b.high, high)) {
 				throw new OverflowException('(${toString()} + $b) overflows Int64');
 			}
 		#end
@@ -404,16 +405,25 @@ abstract Int64(Impl) {
 		return inline a.add(inline create(b));
 	}
 
-	// @:op(A - B) inline function subtraction(b:Int32):Int32 {
-	// 	var result = this - b.toInt();
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if((this < 0 && b.toInt() > 0 && result >= 0) || (this > 0 && b.toInt() < 0 && result <= 0)) {
-	// 		throw new OverflowException('($this + ${b.toInt()}) overflows Int32');
-	// 	}
-	// 	#end
-	// 	return create(result);
-	// }
-	// @:op(A - B) static function subtractionFirstFloat(a:Int32, b:Float):Float;
+	@:op(A - B) function sub(b:Int64):Int64 {
+		var high = this.high - b.high;
+		var low = this.low - b.low;
+		if(Numeric.compareUnsigned32(this.low, b.low) < 0) {
+			high--;
+		}
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			if(Numeric.subSignedOverflows32(this.high, b.high, high)) {
+				throw new OverflowException('(${toString()} + $b) overflows Int64');
+			}
+		#end
+		return make(high & Numeric.native32BitsInt, low & Numeric.native32BitsInt);
+	}
+	@:op(A - B) static inline function subFirstInt(a:Int64, b:Int):Int64 {
+		return a.sub(create(b));
+	}
+	@:op(A - B) static inline function subSecondInt(a:Int, b:Int64):Int64 {
+		return create(a).sub(b);
+	}
 	// @:op(A - B) static function subtractionSecondFloat(a:Float, b:Int32):Float;
 
 	// @:op(A * B) inline function multiplication(b:Int32):Int32 {
@@ -451,7 +461,7 @@ abstract Int64(Impl) {
 	// @:op(A % B) static function moduloSecondFloat(a:Float, b:Int32):Float;
 
 	@:op(A == B) inline function equal(b:Int64):Bool {
-		return this.high == b.toImpl().high && this.low == b.toImpl().low;
+		return this.high == b.high && this.low == b.low;
 	}
 	// @:op(A == B) function equalInt8(b:Int8):Bool;
 	// @:op(A == B) function equalUInt8(b:UInt8):Bool;

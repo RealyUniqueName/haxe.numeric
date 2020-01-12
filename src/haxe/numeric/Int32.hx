@@ -238,7 +238,7 @@ abstract Int32(Int) {
 		var result = this - b.toInt();
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
 		if((this < 0 && b.toInt() > 0 && result >= 0) || (this > 0 && b.toInt() < 0 && result <= 0)) {
-			throw new OverflowException('($this + ${b.toInt()}) overflows Int32');
+			throw new OverflowException('($this - ${b.toInt()}) overflows Int32');
 		}
 		#end
 		return create(result);
