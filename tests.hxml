@@ -4,4 +4,4 @@
 -lib exception
 -lib utest
 -dce full
---macro nullSafety('haxe.numeric', StrictThreaded)
+--macro nullSafety('haxe.numeric', Strict)

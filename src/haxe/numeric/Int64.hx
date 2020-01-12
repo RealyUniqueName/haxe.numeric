@@ -230,9 +230,9 @@ abstract Int64(Impl) {
 		if(this.high == 0) {
 			inline function normalized() {
 				#if java
-					return (cast (Numeric.MAX_UINT32_AS_FLOAT + this + 1):java.lang.Number).longValue();
+					return (cast (Numeric.MAX_UINT32_AS_FLOAT + this.low + 1):java.lang.Number).longValue();
 				#elseif lua
-					return untyped __lua__('4294967295') + this + 1;
+					return untyped __lua__('4294967295') + this.low + 1;
 				#else
 					return Numeric.MAX_UINT32_AS_FLOAT + this.low + 1;
 				#end
