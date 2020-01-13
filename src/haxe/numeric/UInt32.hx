@@ -282,7 +282,7 @@ abstract UInt32(Int) {
 			#else
 				var bInt = b.toInt();
 				var bLower = bInt & 0xFFFF;
-				var bHigher = bInt >>> 16;
+				var bHigher = (bInt >> 16) & 0xFFFF;
 				var mulLower = (this * bLower) & Numeric.native32BitsInt;
 				var mulHigher = ((this * bHigher) & 0xFFFF) << 16;
 				return new UInt32((mulLower + mulHigher) & Numeric.native32BitsInt);

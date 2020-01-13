@@ -426,28 +426,71 @@ abstract Int64(Impl) {
 		#end
 		return make(clamp32(high), clamp32(low));
 	}
-	@:op(A - B) static inline function subFirstInt(a:Int64, b:Int):Int64 {
+	@:op(A - B) static inline function subInt(a:Int64, b:Int):Int64 {
 		return a.sub(create(b));
 	}
-	@:op(A - B) static inline function subSecondInt(a:Int, b:Int64):Int64 {
+	@:op(A - B) static inline function intSub(a:Int, b:Int64):Int64 {
 		return create(a).sub(b);
 	}
-	// @:op(A - B) static function subtractionSecondFloat(a:Float, b:Int32):Float;
 
-	// @:op(A * B) inline function multiplication(b:Int32):Int32 {
-	// 	var result = this * b.toInt();
-	// 	#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-	// 	if(
-	// 		(this < 0 && b.toInt() < 0 && result <= 0)
-	// 		|| (this > 0 && b.toInt() > 0 && result <= 0)
-	// 		|| (this < 0 && b.toInt() > 0 && result >= 0)
-	// 		|| (this > 0 && b.toInt() < 0 && result >= 0)
-	// 	) {
-	// 		throw new OverflowException('($this * ${b.toInt()}) overflows Int32');
-	// 	}
-	// 	#end
-	// 	return create(result);
-	// }
+	@:op(A * B) function mul(b:Int64):Int64 {
+		/**
+		 * this.lower = | 11111111 11111111 | 11111111 11111111 |
+		 *                        a1                  a2
+		 * b.lower    = | 11111111 11111111 | 11111111 11111111 |
+		 *                        b1                  b2
+		 *  =>
+		 * this.lower * b.lower =
+		 *           a1             a2
+		 *         * b1             b2
+		 *         --------------------
+		 *           a1b2          a2b2
+		 *  a1b1     a2b1
+		 * ----------------------------
+		 *  a1b1   (a1b2 + a2b1)   a2b2
+		 *
+		 * Each of aXbX fits 32 bits.
+		 * The excess of `a1b2 + a2b1` and `a1b1` go as additions to `this.high * b.high`.
+		 */
+		inline function clamp16(value:Int):Int {
+			return value & 0xFFFF;
+		}
+		var a1 = clamp16(this.low >> 16);
+		var a2 = clamp16(this.low);
+		var b1 = clamp16(b.low >> 16);
+		var b2 = clamp16(b.low);
+		var a2b2 = a2 * b2;
+		var a1b2 = a1 * b2;
+		var a2b1 = a2 * b1;
+		var a1b1 = a1 * b1;
+
+		var high = a1b1 + clamp16(a1b2 >> 16) + clamp16(a2b1 >> 16);
+		var add = clamp32(a1b2 << 16);
+		var low = a2b2 + add;
+		if(Numeric.compareUnsigned32(low, add) < 0) {
+			high++;
+		}
+		add = clamp32(a2b1 << 16);
+		low += add;
+		if(Numeric.compareUnsigned32(low, add) < 0) {
+			high++;
+		}
+
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			var overflow = (this.high != 0 && b.high != 0);
+			if(!overflow) {
+				var highFloat = high + this.low * 1.0 * b.high + this.high * 1.0 * b.low;
+				overflow = highFloat < -2147483648 || 2147483647 < highFloat;
+			}
+			if(overflow) {
+				throw new OverflowException('(${toString()} * $b) overflows Int64');
+			}
+		#end
+
+		high += this.low * b.high + this.high * b.low;
+
+		return make(clamp32(high), clamp32(low));
+	}
 	// @:op(A * B) @:commutative static function multiplicationFloat(a:Int32, b:Float):Float;
 
 	// @:op(A / B) function division(b:Int32):Float;
