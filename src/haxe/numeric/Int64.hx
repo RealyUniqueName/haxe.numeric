@@ -111,14 +111,14 @@ abstract Int64(Impl) {
 	 * Creates Int64 from `value`.
 	 */
 	static public function create(value:Int):Int64 {
-		var low = value & Numeric.native32BitsInt;
+		var low = clamp32(value);
 		var high = 0;
 		if(Numeric.MIN_INT32 <= value && value < 0) {
 			high = Numeric.native32BitsInt;
 		} else if(value != low) {
-			high = ((value >> 31) >> 1) & Numeric.native32BitsInt;
+			high = (value >> 31) >> 1;
 		}
-		return make(high, low);
+		return make(clamp32(high), low);
 	}
 
 	/**
@@ -126,10 +126,10 @@ abstract Int64(Impl) {
 	 * E.g. `Int64.createBits(-1)` produces a value of `4294967295` on 32bit platforms and `-1` on 64bit platforms.
 	 */
 	static public function createBits(value:Int):Int64 {
-		var low = value & Numeric.native32BitsInt;
+		var low = clamp32(value);
 		var high = 0;
 		if(value != low) {
-			high = ((value >> 31) >> 1) & Numeric.native32BitsInt;
+			high = clamp32((value >> 31) >> 1);
 		}
 		return make(high, low);
 	}
@@ -166,11 +166,20 @@ abstract Int64(Impl) {
 			check(lowBits, 'lowBits');
 		#end
 
-		return make(highBits & Numeric.native32BitsInt, lowBits & Numeric.native32BitsInt);
+		return make(clamp32(highBits), clamp32(lowBits));
 	}
 
 	static inline function make(high:Int, low:Int):Int64 {
 		return new Int64(new Impl(high, low));
+	}
+
+	static inline function clamp32(value:Int):Int {
+		// #if lua
+		// 	var sign = Numeric.sign32(value);
+		// 	return value & 0x7FFFFFFF | (sign << 31);
+		// #else
+			return value & Numeric.native32BitsInt;
+		// #end
 	}
 
 	/**
@@ -294,7 +303,7 @@ abstract Int64(Impl) {
 		var low = this.low;
 		if(negative) {
 			high = ~high;
-			low = (-low) & Numeric.native32BitsInt;
+			low = clamp32(-low);
 			if(low == 0) {
 				high += 1;
 			}
@@ -325,13 +334,12 @@ abstract Int64(Impl) {
 				throw new OverflowException('9223372036854775808 overflows Int64');
 			}
 		#end
-		var low = (-this.low) & Numeric.native32BitsInt;
+		var low = clamp32(-this.low);
 		var high = ~this.high;
 		if(low == 0) {
 			high++;
 		}
-		high = high & Numeric.native32BitsInt;
-		return make(high, low);
+		return make(clamp32(high), low);
 	}
 
 	@:op(++A) inline function prefixIncrement():Int64 {
@@ -340,12 +348,12 @@ abstract Int64(Impl) {
 				throw new OverflowException('9223372036854775808 overflows Int64');
 			}
 		#end
-		var low = (this.low + 1) & Numeric.native32BitsInt;
+		var low = clamp32(this.low + 1);
 		var high = this.high;
 		if(low == 0) {
 			high++;
 		}
-		var result = make(high & Numeric.native32BitsInt, low);
+		var result = make(clamp32(high), low);
 		this = result.toImpl();
 		return result;
 	}
@@ -367,12 +375,12 @@ abstract Int64(Impl) {
 				throw new OverflowException('-9223372036854775809 overflows Int64');
 			}
 		#end
-		var low = (this.low - 1) & Numeric.native32BitsInt;
+		var low = clamp32(this.low - 1);
 		var high = this.high;
 		if(low == Numeric.native32BitsInt) {
 			high--;
 		}
-		var result = make(high & Numeric.native32BitsInt, low);
+		var result = make(clamp32(high), low);
 		this = result.toImpl();
 		return result;
 	}
@@ -399,7 +407,7 @@ abstract Int64(Impl) {
 				throw new OverflowException('(${toString()} + $b) overflows Int64');
 			}
 		#end
-		return make(high & Numeric.native32BitsInt, low & Numeric.native32BitsInt);
+		return make(clamp32(high), clamp32(low));
 	}
 	@:op(A + B) @:commutative static function addInt(a:Int64, b:Int):Int64 {
 		return inline a.add(inline create(b));
@@ -416,7 +424,7 @@ abstract Int64(Impl) {
 				throw new OverflowException('(${toString()} + $b) overflows Int64');
 			}
 		#end
-		return make(high & Numeric.native32BitsInt, low & Numeric.native32BitsInt);
+		return make(clamp32(high), clamp32(low));
 	}
 	@:op(A - B) static inline function subFirstInt(a:Int64, b:Int):Int64 {
 		return a.sub(create(b));

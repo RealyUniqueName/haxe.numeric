@@ -173,7 +173,12 @@ class Numeric {
 	 * Function to avoid compiler's optimization of constant binary operations.
 	 */
 	@:pure(false) static function shiftLeft(i:Int, n:Int):Int {
-		return i << n;
+		//force lua to behave like 32bit integers
+		#if lua
+			return (i << n) & native32BitsInt;
+		#else
+			return i << n;
+		#end
 	}
 
 	static inline function sign32(value:Int):Int {
