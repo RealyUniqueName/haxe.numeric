@@ -259,28 +259,36 @@ class Int64Spec extends TestBase {
 		);
 	}
 
-	// public function specMultiplication() {
-	// 	Int32.create(50) == Int32.create(5) * Int32.create(10);
-	// 	Int32.create(-50) == Int32.create(5) * Int32.create(-10);
+	public function specMultiplication() {
+		Int64.create(50) == Int64.create(5) * Int64.create(10);
+		Int64.create(50) == Int64.create(-5) * Int64.create(-10);
+		Int64.create(-50) == Int64.create(5) * Int64.create(-10);
 
-	// 	246.0 == Int32.create(123) * 2.0;
-	// 	246.0 == 2.0 * Int32.create(123);
+		'9223372030412324865' == (Int64.createBits(Numeric.native32BitsInt) * Int64.create(0x7FFFFFFF)).toString();
 
-	// 	(Int32.create(0) * Int32.create(0)).isTypeInt32();
-	// 	(Int32.create(0) * 1.0).isTypeFloat();
-	// 	(1.0 * Int32.create(0)).isTypeFloat();
+		   Int64.parseBits('0000000000000000 0000000000000001 1000000000000001 1000000000000001')
+		 * Int64.parseBits('0000000000000000 0000000000000000 0100000000000000 0000000000000000')
+		== Int64.parseBits('0110000000000000 0110000000000000 0100000000000000 0000000000000000');
 
-	// 	overflow(
-	// 		function OVERFLOW_THROW() {
-	// 			Assert.raises(() -> Int32.MAX * Int32.create(2), OverflowException);
-	// 			Assert.raises(() -> Int32.MIN * Int32.create(2), OverflowException);
-	// 		},
-	// 		function OVERFLOW_WRAP() {
-	// 			Int32.parseBits('0111 1111 1111 1111 1111 1111 1111 1111') * Int32.create(2) == Int32.parseBits('1111 1111 1111 1111 1111 1111 1111 1110');
-	// 			Int32.parseBits('1000 0000 0000 0000 0000 0000 0000 0000') * Int32.create(2) == Int32.parseBits('0000 0000 0000 0000 0000 0000 0000 0000');
-	// 		}
-	// 	);
-	// }
+		Int64.create(246) == Int64.create(123) * 2;
+		Int64.create(246) == 2 * Int64.create(123);
+
+		(Int64.create(0) * Int64.create(0)).isTypeInt64();
+		(Int64.create(0) * 1).isTypeInt64();
+		(1 * Int64.create(0)).isTypeInt64();
+
+		overflow(
+			function OVERFLOW_THROW() {
+				Assert.raises(() -> Int64.MAX * Int64.create(2), OverflowException);
+				Assert.raises(() -> Int64.MIN * Int64.create(2), OverflowException);
+			},
+			function OVERFLOW_WRAP() {
+				Int64.MAX * Int64.MAX == Int64.create(1);
+				Int64.MIN * Int64.MIN == Int64.create(0);
+				Int64.MAX * Int64.create(2) == Int64.create(-2);
+			}
+		);
+	}
 
 	// public function specDivision() {
 	// 	7 == Int32.create(14) / Int32.create(2);

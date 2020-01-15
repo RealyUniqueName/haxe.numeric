@@ -170,6 +170,28 @@ class Numeric {
 	}
 
 	/**
+	 * Get binary representation of `amount` of less significant bits of `value`.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * ```haxe
+	 * Numeric.getBits(65535, 16, 4); // "1111 1111 1111 1111"
+	 * Numeric.getBits(2); // "00000000000000000000000000000010"
+	 * Numeric.getBits(2, 8); // "00000010"
+	 * ```
+	 */
+	static public function getBits(value:Int, amount:Int = 32, groupSize:Int = 0):String {
+		var result = '';
+		for(i in 0...amount) {
+			if(groupSize > 0 && i % groupSize == 0) {
+				result = ' ' + result;
+			}
+			result = (0 != value & (1 << i) ? '1' : '0') + result;
+		}
+		return result;
+	}
+
+	/**
 	 * Function to avoid compiler's optimization of constant binary operations.
 	 */
 	@:pure(false) static function shiftLeft(i:Int, n:Int):Int {
@@ -181,6 +203,9 @@ class Numeric {
 		#end
 	}
 
+	/**
+	 * Returns value of the 32nd bit.
+	 */
 	static inline function sign32(value:Int):Int {
 		return (value >> 31) & 1;
 	}
@@ -284,6 +309,20 @@ class Int8Utils {
 	static public inline function toUInt16Bits(i8:Int8):UInt16 {
 		return new UInt16(Int8.valueToBits(i8.toInt()));
 	}
+
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * Int8.MAX.bits(4); //"0111 1111"
+	 * ```
+	 */
+	static public function bits(i8:Int8, groupSize:Int = 0):String {
+		return Numeric.getBits(i8.toInt(), Int8.BITS_COUNT, groupSize);
+	}
 }
 
 class UInt8Utils {
@@ -316,6 +355,20 @@ class UInt8Utils {
 	static public inline function toUInt16(u8:UInt8):UInt16 {
 		return new UInt16(u8.toInt());
 	}
+
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * UInt8.MAX.bits(4); //"1111 1111"
+	 * ```
+	 */
+	static public function bits(u8:UInt8, groupSize:Int = 0):String {
+		return Numeric.getBits(u8.toInt(), UInt8.BITS_COUNT, groupSize);
+	}
 }
 
 class Int16Utils {
@@ -345,6 +398,20 @@ class Int16Utils {
 	static public inline function toUInt16Bits(i16:Int16):UInt16 {
 		return new UInt16(Int16.valueToBits(i16.toInt()));
 	}
+
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * Int16.MAX.bits(8); //"01111111 11111111"
+	 * ```
+	 */
+	static public function bits(i16:Int16, groupSize:Int = 0):String {
+		return Numeric.getBits(i16.toInt(), Int16.BITS_COUNT, groupSize);
+	}
 }
 
 class UInt16Utils {
@@ -362,6 +429,20 @@ class UInt16Utils {
 	 */
 	static public inline function toInt16Bits(u16:UInt16):Int16 {
 		return new Int16(Int16.bitsToValue(u16.toInt()));
+	}
+
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * UInt16.MAX.bits(8); //"11111111 11111111"
+	 * ```
+	 */
+	static public function bits(u16:UInt16, groupSize:Int = 0):String {
+		return Numeric.getBits(u16.toInt(), UInt16.BITS_COUNT, groupSize);
 	}
 }
 
@@ -381,6 +462,20 @@ class Int32Utils {
 	static public inline function toIntBits(i32:Int32):Int {
 		return Int32.valueToBits(i32.toInt());
 	}
+
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * Int32.MAX.bits(16); //"0111111111111111 1111111111111111"
+	 * ```
+	 */
+	static public function bits(i32:Int32, groupSize:Int = 0):String {
+		return Numeric.getBits(toIntBits(i32), Int32.BITS_COUNT, groupSize);
+	}
 }
 
 class UInt32Utils {
@@ -398,5 +493,40 @@ class UInt32Utils {
 	 */
 	static public inline function toIntBits(u32:UInt32):Int {
 		return u32.toInt();
+	}
+
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * UInt32.MAX.bits(16); //"1111111111111111 1111111111111111"
+	 * ```
+	 */
+	static public function bits(u32:UInt32, groupSize:Int = 0):String {
+		return Numeric.getBits(toIntBits(u32), UInt32.BITS_COUNT, groupSize);
+	}
+}
+
+class Int64Utils {
+	/**
+	 * Get binary representation of this value.
+	 *
+	 * If `groupSize` is positive then spaces will be inserted in the result string between each `groupSize` bits.
+	 *
+	 * Example;
+	 * ```haxe
+	 * Int64.MAX.bits(32);
+	 * //"01111111111111111111111111111111 11111111111111111111111111111111"
+	 * ```
+	 */
+	static public function bits(i64:Int64, groupSize:Int = 0):String {
+		var result = Numeric.getBits(i64.high, Int32.BITS_COUNT, groupSize);
+		if(groupSize == Int32.BITS_COUNT) {
+			result += ' ';
+		}
+		return result + Numeric.getBits(i64.low, Int32.BITS_COUNT, groupSize);
 	}
 }

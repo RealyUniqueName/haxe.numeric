@@ -435,10 +435,10 @@ abstract Int64(Impl) {
 
 	@:op(A * B) function mul(b:Int64):Int64 {
 		/**
-		 * this.lower = | 11111111 11111111 | 11111111 11111111 |
-		 *                        a1                  a2
-		 * b.lower    = | 11111111 11111111 | 11111111 11111111 |
-		 *                        b1                  b2
+		 * this.lower = | 1111111111111111 1111111111111111 | 1111111111111111 1111111111111111 |
+		 *                                a1                                  a2
+		 * b.lower    = | 1111111111111111 1111111111111111 | 1111111111111111 1111111111111111 |
+		 *                                b1                                  b2
 		 *  =>
 		 * this.lower * b.lower =
 		 *           a1             a2
@@ -467,31 +467,40 @@ abstract Int64(Impl) {
 		var high = a1b1 + clamp16(a1b2 >> 16) + clamp16(a2b1 >> 16);
 		var add = clamp32(a1b2 << 16);
 		var low = a2b2 + add;
-		if(Numeric.compareUnsigned32(low, add) < 0) {
+		if(Numeric.addUnsignedOverflows32(a2b2, add, low)) {
 			high++;
 		}
 		add = clamp32(a2b1 << 16);
-		low += add;
-		if(Numeric.compareUnsigned32(low, add) < 0) {
+		var newLow = low + add;
+		if(Numeric.addUnsignedOverflows32(low, add, newLow)) {
 			high++;
 		}
+		low = newLow;
 
-		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-			var overflow = (this.high != 0 && b.high != 0);
-			if(!overflow) {
-				var highFloat = high + this.low * 1.0 * b.high + this.high * 1.0 * b.low;
-				overflow = highFloat < -2147483648 || 2147483647 < highFloat;
-			}
-			if(overflow) {
-				throw new OverflowException('(${toString()} * $b) overflows Int64');
-			}
-		#end
+		// var thisHasHigh = this.high != 0 && this.high != Numeric.native32BitsInt;
+		// var bHasHigh = b.high != 0 && b.high != Numeric.native32BitsInt;
+		// var overflow = thisHasHigh && bHasHigh;
+		// if(!overflow) {
+		// 	var highFloat = high + this.low * 1.0 * b.high + this.high * 1.0 * b.low;
+		// 	trace(high);
+		// 	trace(highFloat);
+		// 	// 4294967296
+		// 	// 2147483647
+		// 	overflow = highFloat < -2147483648 || 2147483647 < highFloat;
+		// }
+		// #if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		// 	if(overflow) {
+		// 		throw new OverflowException('(${toString()} * $b) overflows Int64');
+		// 	}
+		// #end
 
 		high += this.low * b.high + this.high * b.low;
 
 		return make(clamp32(high), clamp32(low));
 	}
-	// @:op(A * B) @:commutative static function multiplicationFloat(a:Int32, b:Float):Float;
+	@:op(A * B) @:commutative static inline function mulInt(a:Int64, b:Int):Int64 {
+		return a.mul(create(b));
+	}
 
 	// @:op(A / B) function division(b:Int32):Float;
 	// @:op(A / B) function divisionInt8(b:Int8):Float;
