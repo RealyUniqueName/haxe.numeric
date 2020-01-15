@@ -477,22 +477,12 @@ abstract Int64(Impl) {
 		}
 		low = newLow;
 
-		// var thisHasHigh = this.high != 0 && this.high != Numeric.native32BitsInt;
-		// var bHasHigh = b.high != 0 && b.high != Numeric.native32BitsInt;
-		// var overflow = thisHasHigh && bHasHigh;
-		// if(!overflow) {
-		// 	var highFloat = high + this.low * 1.0 * b.high + this.high * 1.0 * b.low;
-		// 	trace(high);
-		// 	trace(highFloat);
-		// 	// 4294967296
-		// 	// 2147483647
-		// 	overflow = highFloat < -2147483648 || 2147483647 < highFloat;
-		// }
-		// #if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
-		// 	if(overflow) {
-		// 		throw new OverflowException('(${toString()} * $b) overflows Int64');
-		// 	}
-		// #end
+		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+			// TODO
+			// if(????) {
+			// 	throw new OverflowException('(${toString()} * $b) overflows Int64');
+			// }
+		#end
 
 		high += this.low * b.high + this.high * b.low;
 
