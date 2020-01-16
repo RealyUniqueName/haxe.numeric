@@ -492,15 +492,10 @@ abstract Int64(Impl) {
 		return a.mul(create(b));
 	}
 
-	// @:op(A / B) function division(b:Int32):Float;
-	// @:op(A / B) function divisionInt8(b:Int8):Float;
-	// @:op(A / B) function divisionUInt8(b:UInt8):Float;
-	// @:op(A / B) function divisionUInt16(b:UInt16):Float;
-	// @:op(A / B) static function divisionFirstInt(a:Int32, b:Int):Float;
-	// @:op(A / B) static function divisionSecondInt(a:Int, b:Int32):Float;
-	// @:op(A / B) static function divisionFirstFloat(a:Int32, b:Float):Float;
-	// @:op(A / B) static function divisionSecondFloat(a:Float, b:Int32):Float;
+	//TODO
+	// @:op(A / B) function div(b:Int64):Float;
 
+	//TODO
 	// @:op(A % B) function modulo(b:Int32):Int32;
 	// @:op(A % B) function moduloInt8(b:Int8):Int32;
 	// @:op(A % B) function moduloUInt8(b:UInt8):Int32;
@@ -513,27 +508,24 @@ abstract Int64(Impl) {
 	@:op(A == B) inline function equal(b:Int64):Bool {
 		return this.high == b.high && this.low == b.low;
 	}
-	// @:op(A == B) function equalInt8(b:Int8):Bool;
-	// @:op(A == B) function equalUInt8(b:UInt8):Bool;
-	// @:op(A == B) function equalUInt16(b:UInt16):Bool;
-	// @:op(A == B) @:commutative static function equalInt(a:Int32, b:Int):Bool;
-	// @:op(A == B) @:commutative static function equalFloat(a:Int32, b:Float):Bool;
+	@:op(A == B) @:commutative static inline function equalInt(a:Int64, b:Int):Bool {
+		return a.equal(create(b));
+	}
+	// @:op(A == B) @:commutative static function equalFloat(a:Int64, b:Float):Bool;
 
-	// @:op(A != B) function notEqual(b:Int32):Bool;
-	// @:op(A != B) function notEqualInt8(b:Int8):Bool;
-	// @:op(A != B) function notEqualUInt8(b:UInt8):Bool;
-	// @:op(A != B) function notEqualUInt16(b:UInt16):Bool;
-	// @:op(A != B) @:commutative static function notEqualInt(a:Int32, b:Int):Bool;
-	// @:op(A != B) @:commutative static function notEqualFloat(a:Int32, b:Float):Bool;
+	@:op(A != B) function notEqual(b:Int64):Bool {
+		return this.low != b.low || this.high != b.high;
+	}
+	@:op(A != B) @:commutative static inline function notEqualInt(a:Int64, b:Int):Bool {
+		return a.notEqual(create(b));
+	}
+	// @:op(A != B) @:commutative static function notEqualFloat(a:Int64, b:Float):Bool;
 
-	// @:op(A > B) function greater(b:Int32):Bool;
-	// @:op(A > B) function greaterInt8(b:Int8):Bool;
-	// @:op(A > B) function greaterUInt8(b:UInt8):Bool;
-	// @:op(A > B) function greaterUInt16(b:UInt16):Bool;
-	// @:op(A > B) static function greaterFirstInt(a:Int32, b:Int):Bool;
-	// @:op(A > B) static function greaterSecondInt(a:Int, b:Int32):Bool;
-	// @:op(A > B) static function greaterFirstFloat(a:Int32, b:Float):Bool;
-	// @:op(A > B) static function greaterSecondFloat(a:Float, b:Int32):Bool;
+	// @:op(A > B) function greater(b:Int64):Bool;
+	// @:op(A > B) static function greaterInt(a:Int64, b:Int):Bool;
+	// @:op(A > B) static function greaterSecondInt(a:Int, b:Int64):Bool;
+	// @:op(A > B) static function greaterFirstFloat(a:Int64, b:Float):Bool;
+	// @:op(A > B) static function greaterSecondFloat(a:Float, b:Int64):Bool;
 
 	// @:op(A >= B) function greaterOrEqual(b:Int32):Bool;
 	// @:op(A >= B) function greaterOrEqualInt8(b:Int8):Bool;

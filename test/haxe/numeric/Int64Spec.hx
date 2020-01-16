@@ -282,6 +282,7 @@ class Int64Spec extends TestBase {
 				// TODO
 				// Assert.raises(() -> Int64.MAX * Int64.create(2), OverflowException);
 				// Assert.raises(() -> Int64.MIN * Int64.create(2), OverflowException);
+				// Assert.raises(() -> Int64.parseBits('010000000000000000000000000000000000000000000000000000000000001') * Int32.create(4), OverflowException);
 			},
 			function OVERFLOW_WRAP() {
 				Int64.MAX * Int64.MAX == Int64.create(1);
@@ -292,52 +293,20 @@ class Int64Spec extends TestBase {
 	}
 
 	// public function specDivision() {
-	// 	7 == Int32.create(14) / Int32.create(2);
-	// 	7 == Int32.create(14) / 2;
-	// 	7 == 14 / Int32.create(2);
-	// 	7 == Int32.create(14) / 2.0;
-	// 	7 == 14.0 / Int32.create(2);
-
-	// 	(Int32.create(0) / Int32.create(1)).isTypeFloat();
-	// 	(Int32.create(0) / 1).isTypeFloat();
-	// 	(1 / Int32.create(1)).isTypeFloat();
-	// 	(Int32.create(0) / 1.0).isTypeFloat();
-	// 	(1.0 / Int32.create(1)).isTypeFloat();
+	//	TODO
 	// }
 
 	// public function specModulo() {
-	// 	Int32.create(7) == Int32.create(32767) % Int32.create(8);
-	// 	Int32.create(-8) == Int32.create(-32768) % Int32.create(63);
-	// 	Int32.create(7) == Int32.create(32767) % Int32.create(-8);
-
-	// 	Int32.create(7) == Int32.create(32767) % 8;
-	// 	Int32.create(-1) == Int32.create(-32768) % 7;
-	// 	Int32.create(7) == Int32.create(32767) % -8;
-	// 	Int32.create(1) == 100 % Int32.create(9);
-	// 	Int32.create(1) == 100 % Int32.create(-9);
-	// 	Int32.create(-1) == -100 % Int32.create(-9);
-
-	// 	54.25 == Int32.create(32767) % 117.25;
-	// 	-55.25 == Int32.create(-32768) % 117.25;
-	// 	-55.25 == Int32.create(-32768) % (-117.25);
-	// 	0.5 == 6.5 % Int32.create(3);
-	// 	-0.5 == -6.5 % Int32.create(3);
-	// 	-0.5 == -6.5 % Int32.create(-3);
-
-	// 	(Int32.create(0) % Int32.create(0)).isTypeInt32();
-	// 	(Int32.create(0) % 1).isTypeInt32();
-	// 	(1 % Int32.create(0)).isTypeInt32();
-	// 	(Int32.create(0) % 1.0).isTypeFloat();
-	// 	(1.0 % Int32.create(0)).isTypeFloat();
+	//	TODO
 	// }
 
-	// public function specEqual() {
-	// 	Int32.create(10) == Int32.create(10);
-	// 	10 == Int32.create(10);
-	// 	Int32.create(10) == 10;
-	// 	10.0 == Int32.create(10);
-	// 	Int32.create(10) == 10.0;
-	// }
+	public function specEqual() {
+		Int32.create(10) == Int32.create(10);
+		10 == Int32.create(10);
+		Int32.create(10) == 10;
+		10.0 == Int32.create(10);
+		Int32.create(10) == 10.0;
+	}
 
 	// public function specNotEqual() {
 	// 	Int32.create(10) != Int32.create(9);

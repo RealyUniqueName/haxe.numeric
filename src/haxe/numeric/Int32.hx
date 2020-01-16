@@ -249,6 +249,7 @@ abstract Int32(Int) {
 	@:op(A * B) inline function multiplication(b:Int32):Int32 {
 		var result = this * b.toInt();
 		#if ((debug && !OVERFLOW_WRAP) || OVERFLOW_THROW)
+		//TODO: this is wrong
 		if(
 			(this < 0 && b.toInt() < 0 && result <= 0)
 			|| (this > 0 && b.toInt() > 0 && result <= 0)
